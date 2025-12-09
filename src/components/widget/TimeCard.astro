@@ -27,14 +27,14 @@ const style = Astro.props.style;
                 </div>
             </div>
 
-            <div class="relative aspect-square flex items-center justify-center group cursor-help" id="date-progress-container">
+            <div class="relative aspect-square flex items-center justify-center group cursor-help" id="week-progress-container">
                 <svg class="w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
                     <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="transparent" class="text-black/5 dark:text-white/5" />
-                    <circle id="date-progress-circle" cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="transparent" stroke-linecap="round" class="text-[var(--primary)] transition-all duration-75 ease-linear" stroke-dasharray="282.743" stroke-dashoffset="282.743" />
+                    <circle id="week-progress-circle" cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="transparent" stroke-linecap="round" class="text-[var(--primary)] transition-all duration-75 ease-linear" stroke-dasharray="282.743" stroke-dashoffset="282.743" />
                 </svg>
                 <div class="absolute inset-0 flex items-center justify-center flex-col">
-                    <span id="date-progress-text" class="text-sm font-bold text-neutral-600 dark:text-neutral-400 tabular-nums">0日</span>
-                    <span class="text-[0.6rem] text-neutral-400 dark:text-neutral-500 scale-90 origin-center font-medium">日期</span>
+                    <span id="week-progress-text" class="text-sm font-bold text-neutral-600 dark:text-neutral-400 tabular-nums">星期</span>
+                    <span class="text-[0.6rem] text-neutral-400 dark:text-neutral-500 scale-90 origin-center font-medium">本周</span>
                 </div>
             </div>
 
@@ -44,7 +44,7 @@ const style = Astro.props.style;
                     <circle id="month-progress-circle" cx="50" cy="50" r="45" stroke="currentColor" stroke-width="8" fill="transparent" stroke-linecap="round" class="text-[var(--primary)] transition-all duration-75 ease-linear" stroke-dasharray="282.743" stroke-dashoffset="282.743" />
                 </svg>
                 <div class="absolute inset-0 flex items-center justify-center flex-col">
-                    <span id="month-progress-text" class="text-sm font-bold text-neutral-600 dark:text-neutral-400 tabular-nums">0天</span>
+                    <span id="month-progress-text" class="text-sm font-bold text-neutral-600 dark:text-neutral-400 tabular-nums">第0天</span>
                     <span class="text-[0.6rem] text-neutral-400 dark:text-neutral-500 scale-90 origin-center font-medium">本月</span>
                 </div>
             </div>
@@ -137,16 +137,20 @@ const style = Astro.props.style;
         // Day: Hours passed
         updateRing('day-progress', dayProgress, `${now.getHours()}时`, `今天已过去 ${dayProgress.toFixed(4)}%`);
         
-        // Date: Current Date (Progress = Month Progress or Day Progress? Let's use Month Progress for consistency with "Date position in month")
-        // User requested "Week -> Current Date".
-        // Progress of Date Ring: (DayOfMonth / DaysInMonth) * 100?
-        // Or just the same as Month Progress?
-        // Let's use (now.getDate() / daysInMonth * 100) which is slightly different from monthProgress (which includes time).
-        // Let's use precise monthProgress for smooth animation.
-        updateRing('date-progress', monthProgress, `${now.getDate()}日`, `当前日期: ${year}年${month}月${day}日`);
+        // Week: Weekday
+        const startOfWeek = new Date(now);
+        const currentDay = now.getDay(); // 0 (Sun) - 6 (Sat)
+        const diffToMonday = (currentDay + 6) % 7; // Mon=0, Tue=1, ..., Sun=6
+        startOfWeek.setDate(now.getDate() - diffToMonday);
+        startOfWeek.setHours(0, 0, 0, 0);
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 7);
+        const weekProgress = (now.getTime() - startOfWeek.getTime()) / (endOfWeek.getTime() - startOfWeek.getTime()) * 100;
+
+        updateRing('week-progress', weekProgress, `星期${weekDay}`, `本周已过去 ${weekProgress.toFixed(4)}%`);
 
         // Month: Days passed
-        updateRing('month-progress', monthProgress, `${now.getDate()}天`, `本月已过去 ${monthProgress.toFixed(4)}%`);
+        updateRing('month-progress', monthProgress, `第${now.getDate()}天`, `本月已过去 ${monthProgress.toFixed(4)}%`);
 
         // Year: Months passed
         updateRing('year-progress', yearProgress, `${now.getMonth()}月`, `今年已过去 ${yearProgress.toFixed(4)}%`);
