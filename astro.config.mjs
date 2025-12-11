@@ -48,7 +48,8 @@ export default defineConfig({
       "/tly": "https://tianlicloud.cn/aff/HNNCFKGP",
       "/wly": "https://wl.awcmam.com/#/register?code=FNQwOQBM",
       "/yyb": "https://www.rainyun.com/acofork_?s=bilibili",
-      "/iku": "https://ikuuu.de/auth/register?code=Bjou"
+      "/iku": "https://ikuuu.de/auth/register?code=Bjou",
+      "/esa": "https://tianchi.aliyun.com/specials/promotion/freetier/esa?taskCode=25254&recordId=c856e61228828a0423417a767828d166"
     },
     integrations: [tailwind({
         nesting: true,
