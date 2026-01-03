@@ -1,6 +1,10 @@
 # Typelin 的技術空間
 
+![網站預覽](https://github.com/Typelin/fuwari/blob/main/public/banner.png?raw=true)
+
 > 一個基於 Astro 構建的現代化個人部落格，專注於技術分享與實踐。
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/afoim/fuwari/blob/main/LICENSE)
 
 ## ✨ 特色
 
@@ -50,13 +54,13 @@ npm run build
 └── package.json
 ```
 
-## 🙏 致謝
+## 🙏 特別感謝
 
-本專案基於以下開源專案進行客製化開發：
+本專案的誕生離不開以下開源專案的支持：
 
-- [saicaca/fuwari](https://github.com/saicaca/fuwari) - 原始 Astro 部落格模板
-- [afoim/fuwari](https://github.com/afoim/fuwari) - 繁體中文化版本
+- [saicaca/fuwari](https://github.com/saicaca/fuwari) - 優秀的 Astro 部落格模板，提供了堅實的技術基礎
+- [afoim/fuwari](https://github.com/afoim/fuwari) - 提供了寶貴的技術指導與靜態網站追蹤用戶數的實現思路，讓這個專案成為可能，非常感謝！
 
 ## 📄 授權
 
-[MIT License](LICENSE)
+本專案採用 [MIT License](https://github.com/afoim/fuwari/blob/main/LICENSE) 授權。
