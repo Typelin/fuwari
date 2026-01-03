@@ -112,7 +112,7 @@ onMount(() => {
             before:w-1 before:h-4 before:rounded-md before:bg-[var(--primary)]
             before:absolute before:-left-3 before:top-[0.33rem]"
         >
-            主题模式
+            主題模式
         </div>
         <div class="flex gap-1">
             <button aria-label="Light Mode"
@@ -144,7 +144,7 @@ onMount(() => {
             before:w-1 before:h-4 before:rounded-md before:bg-[var(--primary)]
             before:absolute before:-left-3 before:top-[0.33rem]"
         >
-            主题色彩
+            主題色彩
             <button aria-label="Reset to Default" class="btn-regular w-7 h-7 rounded-md  active:scale-90"
                     class:opacity-0={hue === defaultHue} class:pointer-events-none={hue === defaultHue} on:click={resetHue}>
                 <div class="text-[var(--btn-content)]">
@@ -159,7 +159,7 @@ onMount(() => {
         </div>
     </div>
     <div class="w-full h-6 px-1 bg-[oklch(0.80_0.10_0)] dark:bg-[oklch(0.70_0.10_0)] rounded select-none mb-3">
-        <input aria-label="主题色彩" type="range" min="0" max="360" bind:value={hue} disabled={isRainbowMode}
+        <input aria-label="主題色彩" type="range" min="0" max="360" bind:value={hue} disabled={isRainbowMode}
                class="slider" id="colorSlider" step="1" style="width: 100%">
     </div>
 
@@ -189,7 +189,7 @@ onMount(() => {
             before:w-1 before:h-4 before:rounded-md before:bg-[var(--primary)]
             before:absolute before:-left-3 before:top-[0.33rem]"
         >
-            变换速率
+            變換速率
         </div>
         <div class="flex gap-1">
              <div class="transition bg-[var(--btn-regular-bg)] w-10 h-7 rounded-md flex justify-center
@@ -199,7 +199,7 @@ onMount(() => {
         </div>
     </div>
     <div class="w-full h-6 bg-[var(--btn-regular-bg)] rounded select-none overflow-hidden">
-        <input aria-label="变换速率" type="range" min="1" max="100" bind:value={rainbowSpeed} on:change={onSpeedChange}
+        <input aria-label="變換速率" type="range" min="1" max="100" bind:value={rainbowSpeed} on:change={onSpeedChange}
                class="slider" step="1" style="width: 100%; --value-percent: {(rainbowSpeed - 1) / 99 * 100}%">
     </div>
     {/if}
@@ -228,7 +228,7 @@ onMount(() => {
             before:w-1 before:h-4 before:rounded-md before:bg-[var(--primary)]
             before:absolute before:-left-3 before:top-[0.33rem]"
         >
-            开发模式
+            開發模式
         </div>
         <input type="checkbox" class="toggle-switch" checked={isDevMode} on:change={toggleDevMode} />
     </div>

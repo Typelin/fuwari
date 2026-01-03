@@ -5,10 +5,10 @@ import { Icon } from "astro-icon/components";
 import { siteConfig } from "@/config";
 ---
 
-<Layout title="页面未找到">
+<Layout title="找不到主人指定的路徑">
 	<MainGridLayout>
 		<div class="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-			<!-- 404 图标 -->
+			<!-- 404 圖示 -->
 			<div class="mb-8">
 				<div class="relative">
 					<div class="text-8xl md:text-9xl font-bold text-[var(--primary)] opacity-20">
@@ -20,26 +20,26 @@ import { siteConfig } from "@/config";
 				</div>
 			</div>
 
-			<!-- 错误信息 -->
+			<!-- 錯誤訊息 -->
 			<div class="card-base p-8 max-w-md mx-auto mb-8">
 				<h1 class="text-2xl md:text-3xl font-bold text-90 mb-4">
-					页面走丢了
+					找不到主人指定的位址
 				</h1>
 				<p class="text-75 mb-6 leading-relaxed">
-					抱歉，您访问的页面不存在或已被移动。
+					抱歉，您訪問的空間似乎不存在或已被移動。
 					<br>
-					请检查URL是否正确，或者返回首页继续浏览。
+					請檢查網址是否正確，或者返回首頁。
 				</p>
 				
-				<!-- 导航按钮 -->
+				<!-- 導覽按鈕 -->
 				<div class="flex flex-col sm:flex-row gap-3 justify-center">
 					<a href="/" class="btn-regular-dark px-6 py-3 rounded-lg text-white font-medium">
 						<Icon name="fa6-solid:house" class="mr-2" />
-						返回首页
+						返回首頁
 					</a>
 					<a href="/archive/" class="btn-regular px-6 py-3 rounded-lg font-medium">
 						<Icon name="fa6-solid:box-archive" class="mr-2" />
-						文章归档
+						文章歸檔
 					</a>
 				</div>
 			</div>
@@ -48,7 +48,7 @@ import { siteConfig } from "@/config";
 			<div class="mt-8 text-50 text-sm">
 				<p class="flex items-center justify-center">
 					<Icon name="fa6-solid:clock-rotate-left" class="mr-2" />
-					您也可以使用浏览器的后退按钮返回上一页
+					您也可以使用瀏覽器的後退按鈕返回上一頁
 				</p>
 			</div>
 		</div>

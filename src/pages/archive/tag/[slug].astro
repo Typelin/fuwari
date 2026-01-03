@@ -1,0 +1,71 @@
+---
+import { getCollection } from "astro:content";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import PostCard from "@components/PostCard.astro";
+import { getPostUrlBySlug } from "@utils/url-utils";
+
+export async function getStaticPaths() {
+    const allPosts = await getCollection("posts", ({ data }) => {
+        return import.meta.env.PROD ? data.draft !== true : true;
+    });
+    
+    // 收集所有標籤
+    const tags = new Set<string>();
+    allPosts.forEach(post => {
+        if (post.data.tags) {
+            post.data.tags.forEach(tag => tags.add(tag));
+        }
+    });
+    
+    return Array.from(tags).map(tag => ({
+        params: { slug: tag },
+        props: { tag }
+    }));
+}
+
+const { tag } = Astro.props;
+
+// 獲取該標籤的所有文章
+const allPosts = await getCollection("posts", ({ data }) => {
+    return import.meta.env.PROD ? data.draft !== true : true;
+});
+
+const posts = allPosts
+    .filter(post => post.data.tags && post.data.tags.includes(tag))
+    .sort((a, b) => {
+        const dateA = new Date(a.data.published);
+        const dateB = new Date(b.data.published);
+        return dateA > dateB ? -1 : 1;
+    });
+
+let delay = 0;
+const interval = 50;
+---
+
+<MainGridLayout title={`標籤: ${tag}`}>
+    <div class="flex flex-col gap-4">
+        <div class="card-base p-4 mb-4">
+            <h1 class="text-2xl font-bold text-90">
+                <span class="text-[var(--primary)]">#</span> {tag}
+            </h1>
+            <p class="text-50 mt-2">共 {posts.length} 篇文章</p>
+        </div>
+        
+        {posts.map((entry) => (
+            <PostCard
+                entry={entry}
+                title={entry.data.title}
+                published={entry.data.published}
+                updated={entry.data.updated}
+                tags={entry.data.tags || []}
+                category={entry.data.category || null}
+                url={getPostUrlBySlug(entry.slug)}
+                image={entry.data.image}
+                description={entry.data.description}
+                draft={entry.data.draft}
+                class:list="onload-animation"
+                style={`animation-delay: calc(var(--content-delay) + ${delay++ * interval}ms);`}
+            ></PostCard>
+        ))}
+    </div>
+</MainGridLayout>

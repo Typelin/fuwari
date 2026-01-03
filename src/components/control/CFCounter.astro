@@ -1,0 +1,128 @@
+---
+---
+
+<script>
+    /**
+     * CF-Counter 客戶端整合腳本 (V1.3 列表增強版)
+     * 功能：24 小時訪客鎖定、開發者調試模式、自動數據更新、列表頁批量獲取
+     */
+    async function updateCounter() {
+        const workerUrl = window.cfCounterUrl;
+        const devMode = window.counterDevMode;
+        if (!workerUrl) return;
+
+        const path = window.location.pathname;
+        const isPost = path.startsWith('/posts/') && path.length > 7; // 簡單判斷是否為文章頁
+        const currentSlug = isPost ? path.split('/').filter(Boolean).pop() : '__home__';
+
+        // --- 1. 處理當前頁面 (文章頁或首頁) 的計數 (Increment) ---
+        // 只有文章頁才需要 "Increment" 具體文章的計數；首頁通常只為了獲取全站數據，但舊邏輯是首頁也算一個 view？
+        // 根據舊代碼：slug = isPost ? ... : '__home__'，意味著這裡會對 __home__ 或 文章 slug 進行 increment。
+        // 我們保留這個行為。
+
+        const lastVisitKey = `cf-visit-${path}`;
+        const lastVisitTime = localStorage.getItem(lastVisitKey);
+        const now = Date.now();
+        const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+
+        let isNewVisitor = false;
+        
+        if (devMode) {
+            isNewVisitor = true;
+            console.log(`[CF-Counter] 開發者模式已開啟：無視 24 小時限制`);
+        } else {
+            if (!lastVisitTime || (now - parseInt(lastVisitTime)) > TWENTY_FOUR_HOURS) {
+                isNewVisitor = true;
+                localStorage.setItem(lastVisitKey, now.toString());
+            }
+        }
+
+        try {
+            // A. 主請求：針對當前頁面進行計數 (Mode: increment)
+            const mainParams = new URLSearchParams({
+                path: path,
+                mode: 'increment',
+                new_visitor: isNewVisitor.toString(),
+                dev: devMode.toString()
+            });
+
+            // 併發請求 1: 更新當前頁面數據 & 全站數據
+            fetch(`${workerUrl}?${mainParams.toString()}`)
+                .then(res => res.json())
+                .then(data => {
+                    // 更新文章頁 UI (如果存在)
+                    const postViewsEl = document.getElementById(`page-views-${currentSlug}`);
+                    const postVisitorsEl = document.getElementById(`page-visitors-${currentSlug}`);
+                    
+                    if (postViewsEl && data.views) postViewsEl.textContent = `${data.views}`; // PostCard 裡已經有 "次" 了嗎？不，PostCard 我們沒加單位，這裡加還是不加？
+                    // PostCard 裡的結構是 <div>...</div>，這裡我們看看 PostCard.astro
+                    // PostCard: <div>|</div> <div> ... <span ... id="...">-</span> </div>
+                    // 我們在 PostCard 裡沒有寫 "次" 或 "人"，所以這裡需要加上單位，或者改 PostCard。
+                    // 為了統一，我們在 JS 裡加單位。
+                    
+                    if (postViewsEl) postViewsEl.textContent = `${data.views} 次`;
+                    if (postVisitorsEl) postVisitorsEl.textContent = `${data.visitors} 人`;
+
+                    // 更新側邊欄 UI (全站總計)
+                    const siteViewsEl = document.getElementById('site-views');
+                    const siteVisitorsEl = document.getElementById('site-visitors');
+
+                    if (siteViewsEl && data.totalViews) siteViewsEl.textContent = data.totalViews;
+                    if (siteVisitorsEl && data.totalVisitors) siteVisitorsEl.textContent = data.totalVisitors;
+                })
+                .catch(e => console.error('[CF-Counter] Main update failed:', e));
+
+
+            // B. 列表請求：掃描頁面上其他的 .cf-post-counter (用於首頁文章列表)
+            // 這些只需要獲取數據 (Mode: get)，不需要增加計數
+            const listCounters = document.querySelectorAll('.cf-post-counter');
+            if (listCounters.length > 0) {
+                // 使用 Set 過濾重複的 slug (雖然一般列表不會重複，但保險起見)
+                // 並且排除掉 currentSlug (因為上面已經請求過了，雖然多請求一次也無妨但節省資源)
+                const slugsToFetch = new Set();
+                listCounters.forEach(el => {
+                    const slug = el.getAttribute('data-slug');
+                    if (slug && slug !== currentSlug) {
+                        slugsToFetch.add(slug);
+                    }
+                });
+
+                // 對列表中的每個文章發送請求
+                // 注意：如果列表很長，這會產生很多請求。建議 Worker 端支援批量查詢，但目前假設 Worker 只能單個查。
+                slugsToFetch.forEach(slug => {
+                    // 構建 path，假設文章路徑結構固定為 /posts/slug/
+                    // *注意*：這裡需要確認 Worker 是用 path 當 key 還是 slug 當 key。
+                    // 根據舊代碼 `const path = window.location.pathname;`，看來是用 path。
+                    // 所以我們需要還原該文章的完整 path。
+                    const postPath = `/posts/${slug}/`; 
+
+                    const listParams = new URLSearchParams({
+                        path: postPath,
+                        mode: 'get', // 告訴 Worker 只要數據，不要計數
+                        dev: devMode.toString()
+                    });
+
+                    fetch(`${workerUrl}?${listParams.toString()}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            const pViews = document.getElementById(`page-views-${slug}`);
+                            const pVisitors = document.getElementById(`page-visitors-${slug}`);
+                            if (pViews && data.views) pViews.textContent = `${data.views} 次`;
+                            if (pVisitors && data.visitors) pVisitors.textContent = `${data.visitors} 人`;
+                        })
+                        .catch(e => console.error(`[CF-Counter] List fetch failed for ${slug}:`, e));
+                });
+            }
+
+        } catch (error) {
+            console.error('[CF-Counter] General error:', error);
+        }
+    }
+
+    // 支援 Swup 與 Astro View Transitions
+    if (window.swup) {
+        document.addEventListener('swup:content:replace', updateCounter);
+    }
+    document.addEventListener('DOMContentLoaded', updateCounter);
+    document.addEventListener('astro:page-load', updateCounter);
+</script>

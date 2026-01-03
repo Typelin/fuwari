@@ -13,7 +13,15 @@ export function getPostUrlBySlug(slug: string): string {
 	return url(`/posts/${slug}/`);
 }
 
+export function getCategoryUrl(category: string): string {
+	if (!category) return url("/posts/");
+	return url(`/archive/category/${encodeURIComponent(category)}/`);
+}
 
+export function getTagUrl(tag: string): string {
+	if (!tag) return url("/posts/");
+	return url(`/archive/tag/${encodeURIComponent(tag)}/`);
+}
 
 export function getDir(path: string): string {
 	const lastSlashIndex = path.lastIndexOf("/");
@@ -26,3 +34,4 @@ export function getDir(path: string): string {
 export function url(path: string) {
 	return joinUrl("", import.meta.env.BASE_URL, path);
 }
+

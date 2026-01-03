@@ -30,29 +30,24 @@ try {
 <div class="transition border-t border-black/10 dark:border-white/15 my-10 border-dashed mx-4 md:mx-32"></div>
 <div class="card-base w-fit mx-auto rounded-xl mt-4 mb-4">
     <div class="transition text-50 text-sm text-center p-6">
-        &copy; <span id="copyright-year">2024 - {currentYear}</span> <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://space.bilibili.com/325903362"> {profileConfig.name} </a>，采用
-        <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可
+        &copy; <span id="copyright-year">2024 - {currentYear}</span> <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://space.bilibili.com/383913921"> {profileConfig.name} </a>
         <br>
         <a class="transition link text-[var(--primary)] font-medium" target="_blank" href={url('rss.xml')}>RSS</a> /
-        <a class="transition link text-[var(--primary)] font-medium" target="_blank" href={url('sitemap-index.xml')}>网站地图</a>
+        <a class="transition link text-[var(--primary)] font-medium" target="_blank" href={url('sitemap-index.xml')}>網站地圖</a>
         <br>
         由
         <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://astro.build">Astro</a> 和
-        <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://github.com/saicaca/fuwari">Fuwari</a> 强力驱动
+        <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://github.com/saicaca/fuwari">Fuwari</a> 強力驅動
         <br>
-        本网站代码
-        <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://github.com/afoim/fuwari">已开源</a>
-        <a class="transition link text-black/30 dark:text-white/30 hover:text-[var(--primary)] text-xs ml-1" target="_blank" href={`https://github.com/afoim/fuwari/commit/${commitHash}`}>({commitHash} @ {buildDate})</a>
+        本站程式碼
+        <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://github.com/Typelin/fuwari">已在 GitHub 存檔</a>
+        <a class="transition link text-black/30 dark:text-white/30 hover:text-[var(--primary)] text-xs ml-1" target="_blank" href={`https://github.com/Typelin/fuwari/commit/${commitHash}`}>({commitHash} @ {buildDate})</a>
         <br>
-
-		<a class="transition link text-[var(--primary)] font-medium inline-flex items-center" href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank"><img alt="" src="/favicon/foot-icp.png" class="h-4 mr-1">皖ICP备2025099787号-2</a>
-        <br>
+        <!-- 法律與備案資訊已移除 -->
         <div class="server-info-wrapper flex items-center justify-center">
             <span class="server-info text-black/30 dark:text-white/30 text-xs"></span>
             <img class="server-icon h-5 ml-1 hidden bg-white rounded p-0.5" alt="Server Icon">
         </div>
-         <!-- <a class="transition link text-[var(--primary)] font-medium inline-flex items-center" href="https://beian.mps.gov.cn/#/query/webSearch?code=34010302002608" target="_blank"><img alt="" src="/favicon/foot-ga.png" class="h-4 mr-1">皖公网安备34010302002608号</a>
-        <br> -->
     </div>
 </div>
 
@@ -64,7 +59,7 @@ try {
             const serverIcon = wrapper.querySelector('.server-icon');
             if (serverInfo) {
                 if (server) {
-                    serverInfo.innerText = `访问节点：${server}`;
+                    serverInfo.innerText = `訪問節點：${server}`;
                     if (serverIcon) {
                         const serverLower = server.toLowerCase();
                         if (serverLower === 'edgeone-pages') {
@@ -85,7 +80,7 @@ try {
                         }
                     }
                 } else {
-                    serverInfo.innerText = "访问节点：未知";
+                    serverInfo.innerText = "訪問節點：未知";
                     serverInfo.classList.remove('hidden');
                     if (serverIcon) serverIcon.classList.add('hidden');
                 }

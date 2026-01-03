@@ -1,0 +1,22 @@
+---
+---
+
+<div id="reading-progress" class="fixed top-0 left-0 w-0 h-[2px] bg-[oklch(0.75_0.14_var(--hue))] z-[100] transition-all duration-150 pointer-events-none"></div>
+
+<script>
+    function updateProgress() {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        const progressBar = document.getElementById("reading-progress");
+        if (progressBar) {
+            progressBar.style.width = scrolled + "%";
+        }
+    }
+
+    window.addEventListener("scroll", updateProgress);
+    
+    // Support for Swup page transitions
+    document.addEventListener('swup:content:replace', updateProgress);
+    document.addEventListener('astro:page-load', updateProgress);
+</script>

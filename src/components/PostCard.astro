@@ -3,11 +3,11 @@ import path from "node:path";
 import type { CollectionEntry } from "astro:content";
 import { Icon } from "astro-icon/components";
 
-import { getDir } from "../utils/url-utils";
+import { umamiConfig } from "../config";
 import { formatDateToYYYYMMDD } from "../utils/date-utils";
+import { getDir } from "../utils/url-utils";
 import PostMetadata from "./PostMeta.astro";
 import ImageWrapper from "./misc/ImageWrapper.astro";
-import { umamiConfig } from "../config";
 
 interface Props {
 	class?: string;
@@ -16,21 +16,15 @@ interface Props {
 	url: string;
 	published: Date;
 	updated?: Date;
+	tags: string[];
+	category: string | null;
 	image: string;
 	description: string;
 	draft: boolean;
 	style: string;
 }
-const {
-	entry,
-	title,
-	url,
-	published,
-	updated,
-	image,
-	description,
-	style,
-} = Astro.props;
+const { entry, title, url, published, updated, tags, category, image, description, style } =
+	Astro.props;
 
 const isPinned = entry.data.pinned === true;
 const className = Astro.props.class;
@@ -41,7 +35,7 @@ const coverWidth = "28%";
 
 const { remarkPluginFrontmatter } = await entry.render();
 ---
-<div class:list={["card-base border border-black/10 dark:border-white/10 flex flex-col w-full rounded-[var(--radius-large)] overflow-hidden relative", className]} style={style}>
+<div class:list={["card-base card-hover flex flex-col w-full relative", className]} style={style}>
     <div class:list={["pl-9 pr-2 pt-6 pb-6 relative", {"w-[calc(100%_-_52px_-_12px)]": !hasCover, "w-[calc(100%_-_var(--coverWidth)_-_12px)]": hasCover}]}>
         <a href={url}
            class="transition group w-full block font-bold mb-2 md:mb-3 text-xl md:text-3xl text-90 relative
@@ -60,16 +54,25 @@ const { remarkPluginFrontmatter } = await entry.render();
             { description || remarkPluginFrontmatter.excerpt }
         </div>
 
-        <!-- metadata -->
-        <PostMetadata published={published} updated={updated} hideUpdateDate={true} hidePublishedDate={true} slug={entry.slug} class="mb-2 md:mb-4"></PostMetadata>
+        <!-- metadata: 日期 + 類別 + 標籤 -->
+        <PostMetadata published={published} updated={updated} tags={tags} category={category} hideUpdateDate={true} hideTagsForMobile={true} class="mb-4"></PostMetadata>
 
-        <!-- word count, read time and page views -->
-        <div class="text-sm text-black/30 dark:text-white/30 flex gap-4 transition">
-            <div>{formatDateToYYYYMMDD(published)}</div>
-            <div>|</div>
+        <!-- word count, read time, and page views (底部小字行) -->
+        <div class="text-sm text-black/30 dark:text-white/30 flex gap-4 transition items-center">
             <div>{remarkPluginFrontmatter.words} 字</div>
             <div>|</div>
-            <div>{remarkPluginFrontmatter.minutes} 分钟</div>
+            <div>{remarkPluginFrontmatter.minutes} 分鐘</div>
+            <div>|</div>
+            <!-- 瀏覽量 -->
+            <div class="flex items-center gap-1">
+                <Icon name="material-symbols:visibility-outline" class="text-sm"></Icon>
+                <span class="cf-post-counter" data-slug={entry.slug} id={`page-views-${entry.slug}`}>-</span>
+            </div>
+            <!-- 訪客數 -->
+            <div class="flex items-center gap-1">
+                <Icon name="material-symbols:person" class="text-sm"></Icon>
+                <span class="cf-post-counter-visitor" id={`page-visitors-${entry.slug}`}>-</span>
+            </div>
         </div>
 
     </div>
@@ -80,7 +83,7 @@ const { remarkPluginFrontmatter } = await entry.render();
                         "w-[var(--coverWidth)] absolute top-3 bottom-3 right-3 rounded-xl overflow-hidden active:scale-95"
                     ]} >
         <div class="absolute pointer-events-none z-10 w-full h-full group-hover:bg-black/30 group-active:bg-black/50 transition"></div>
-        <!-- 封面图上的箭头 -->
+        <!-- 封面圖上的箭頭 -->
         <div class="absolute pointer-events-none z-20 w-full h-full flex items-center justify-center ">
             <Icon name="material-symbols:chevron-right-rounded"
                   class="transition opacity-0 group-hover:opacity-100 scale-50 group-hover:scale-100 text-white text-5xl">

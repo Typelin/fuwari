@@ -58,7 +58,7 @@ const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 					`${post.title} ${post.description} ${post.content}`.toLowerCase();
 				const urlPath = `/posts/${post.link}`;
 				
-				// 支持内容搜索和URL后缀搜索
+				// 支援內容搜尋和 URL 字尾搜尋
 				return searchText.includes(keywordLower) || 
 					   urlPath.toLowerCase().includes(keywordLower) ||
 					   post.link.toLowerCase().includes(keywordLower);
@@ -142,7 +142,7 @@ $: search(keywordMobile, false);
       dark:bg-white/5 dark:hover:bg-white/10 dark:focus-within:bg-white/10
 ">
     <Icon icon="material-symbols:search" class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"></Icon>
-    <input placeholder="搜索" bind:value={keywordDesktop} on:focus={() => search(keywordDesktop, true)}
+    <input placeholder="搜尋" bind:value={keywordDesktop} on:focus={() => search(keywordDesktop, true)}
            class="transition-all pl-10 text-sm bg-transparent outline-0
          h-full w-40 active:w-60 focus:w-60 text-black/50 dark:text-white/50"
     >

@@ -1,14 +1,16 @@
 ---
 import { Icon } from "astro-icon/components";
 
-import { getDir, url } from "../utils/url-utils";
+import { getDir, getCategoryUrl, getTagUrl } from "../utils/url-utils";
 import { formatDateToYYYYMMDD } from "../utils/date-utils";
-import { umamiConfig } from "../config";
 
 interface Props {
 	class: string;
 	published: Date;
 	updated?: Date;
+	tags?: string[];
+	category?: string | null;
+	hideTagsForMobile?: boolean;
 	hideUpdateDate?: boolean;
 	hidePublishedDate?: boolean;
 	slug?: string;
@@ -16,6 +18,9 @@ interface Props {
 const {
 	published,
 	updated,
+	tags = [],
+	category,
+	hideTagsForMobile = false,
 	hideUpdateDate = false,
 	hidePublishedDate = false,
 	slug,
@@ -45,7 +50,44 @@ const className = Astro.props.class;
         </div>
     )}
 
-    <!-- page views & visitors -->
+    <!-- category -->
+    {category && (
+        <div class="flex items-center">
+            <div class="meta-icon">
+                <Icon name="material-symbols:book-2-outline-rounded" class="text-xl"></Icon>
+            </div>
+            <div class="flex flex-row flex-nowrap items-center">
+                <a href={getCategoryUrl(category)} aria-label={`查看所有 ${category} 類別的文章`}
+                   class="link-lg transition text-50 text-sm font-medium
+                                hover:text-[var(--primary)] dark:hover:text-[var(--primary)] whitespace-nowrap">
+                    {category}
+                </a>
+            </div>
+        </div>
+    )}
+
+    <!-- tags -->
+    {tags && tags.length > 0 && (
+        <div class:list={["items-center", {"flex": !hideTagsForMobile, "hidden md:flex": hideTagsForMobile}]}>
+            <div class="meta-icon">
+                <Icon name="material-symbols:tag-rounded" class="text-xl"></Icon>
+            </div>
+            <div class="flex flex-row flex-nowrap items-center">
+                {tags.map((tag, i) => (
+                    <>
+                        <div class:list={[{"hidden": i == 0}, "mx-1.5 text-[var(--meta-divider)] text-sm"]}>/</div>
+                        <a href={getTagUrl(tag)} aria-label={`查看所有帶有 ${tag.trim()} 標籤的文章`}
+                           class="link-lg transition text-50 text-sm font-medium
+                                        hover:text-[var(--primary)] dark:hover:text-[var(--primary)] whitespace-nowrap">
+                            {tag.trim()}
+                        </a>
+                    </>
+                ))}
+            </div>
+        </div>
+    )}
+
+    <!-- page views & visitors (只在有 slug 時顯示，用於文章頁) -->
     {slug && (
         <>
             <div class="flex items-center">
@@ -64,39 +106,4 @@ const className = Astro.props.class;
     )}
 </div>
 
-{slug && (
-    <script define:vars={{ slug, umamiConfig }}>
-        
-        // 获取访问量统计
-        async function fetchPageViews() {
-            if (!umamiConfig.enable) return;
-            try {
-                const statsData = await fetchUmamiStats(umamiConfig.baseUrl, umamiConfig.shareId, {
-                    timezone: umamiConfig.timezone,
-                    path: `eq./posts/${slug}/`
-                });
-                
-                const pageViews = statsData.pageviews || 0;
-                const visits = statsData.visitors || 0;
-                
-                const viewsElement = document.getElementById(`page-views-${slug}`);
-                const visitorsElement = document.getElementById(`page-visitors-${slug}`);
-                if (viewsElement) viewsElement.textContent = `${pageViews} 次`;
-                if (visitorsElement) visitorsElement.textContent = `${visits} 人`;
-            } catch (error) {
-                console.error('Error fetching page views:', error);
-                const viewsElement = document.getElementById(`page-views-${slug}`);
-                const visitorsElement = document.getElementById(`page-visitors-${slug}`);
-                if (viewsElement) viewsElement.textContent = '-';
-                if (visitorsElement) visitorsElement.textContent = '-';
-            }
-        }
-
-        // 页面加载完成后获取统计数据
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', fetchPageViews);
-        } else {
-            fetchPageViews();
-        }
-    </script>
-)}
+{/* 訪問量由 CFCounter.astro 自動更新 */}

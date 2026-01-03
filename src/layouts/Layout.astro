@@ -4,7 +4,9 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
-import { profileConfig, siteConfig } from "@/config";
+import { profileConfig, siteConfig, cfCounterUrl, counterDevMode } from "@/config";
+import ReadingProgress from "@components/control/ReadingProgress.astro";
+import CFCounter from "@components/control/CFCounter.astro";
 import ConfigCarrier from "@components/ConfigCarrier.astro";
 import {
 	AUTO_MODE,
@@ -114,8 +116,7 @@ const bannerOffset =
 
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<script src="/js/umami-share.js" defer></script>
-		<script data-swup-ignore-script is:inline src="https://pic.acofork.com/random.js"></script>
+				<script data-swup-ignore-script is:inline src="https://pic.acofork.com/random.js"></script>
 		
 		
 		
@@ -130,7 +131,9 @@ const bannerOffset =
 		))}
 
 		<!-- Set the theme before the page is rendered to avoid a flash -->
-		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, PAGE_WIDTH, configHue, forceDarkMode: siteConfig.themeColor.forceDarkMode}}>
+		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, PAGE_WIDTH, configHue, forceDarkMode: siteConfig.themeColor.forceDarkMode, cfCounterUrl: cfCounterUrl, counterDevMode: counterDevMode}}>
+			window.cfCounterUrl = cfCounterUrl; // 注入全局變數
+			window.counterDevMode = counterDevMode; // 注入開發者模式開關
 			// Force dark mode if configured
 			if (forceDarkMode) {
 				document.documentElement.classList.add('dark');
@@ -287,6 +290,8 @@ var _hmt = _hmt || [];
 	<body class=" min-h-screen transition " class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
 		  data-overlayscrollbars-initialize
 	>
+        <ReadingProgress />
+        <CFCounter />
 		<div id="bg-box"></div>
 		<ConfigCarrier></ConfigCarrier>
 		<slot />

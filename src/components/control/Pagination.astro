@@ -58,10 +58,10 @@ const getPageUrl = (p: number) => {
     >
         <Icon name="material-symbols:chevron-left-rounded" class="text-[1.75rem]"></Icon>
     </a>
-    <div class="bg-[var(--card-bg)] flex flex-row rounded-lg items-center text-neutral-700 dark:text-neutral-300 font-bold" style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+    <div class="bg-[var(--card-bg)] flex flex-row rounded-lg items-center text-neutral-700 dark:text-neutral-300 font-bold">
         {pages.map((p) => {
             if (p == HIDDEN)
-                return <Icon name="material-symbols:more-horiz" class="mx-1"/>;
+                return <Icon name="material-symbols:more-horiz" class="mx-1"/>
             if (p == page.currentPage)
                 return <div class="h-11 w-11 rounded-lg bg-[var(--primary)] flex items-center justify-center
                     font-bold text-white dark:text-black/70"
@@ -69,7 +69,7 @@ const getPageUrl = (p: number) => {
                     {p}
                 </div>
             return <a href={url(getPageUrl(p))} aria-label=`Page ${p}`
-                class="transition flex items-center justify-center w-11 h-11 rounded-lg overflow-hidden active:scale-[0.85] hover:bg-[var(--btn-card-bg-hover)] active:bg-[var(--btn-card-bg-active)] text-black/75 dark:text-white/75"
+                class="transition flex items-center justify-center w-11 h-11 rounded-lg overflow-hidden hover:bg-[var(--btn-card-bg-hover)] active:bg-[var(--btn-card-bg-active)] text-black/75 dark:text-white/75"
             >{p}</a>
         })}
     </div>

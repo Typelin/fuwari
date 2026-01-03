@@ -1,0 +1,51 @@
+---
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+
+const title = "關於主人";
+---
+
+<MainGridLayout title={title}>
+    <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative z-10">
+        <div class="card-base z-10 px-9 py-6 relative w-full ">
+            <div class="flex flex-col items-center mb-8">
+                <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-[oklch(0.75_0.14_var(--hue))] mb-4">
+                    <img src="/circle_v3.png" alt="Typelin Logo" class="w-full h-full object-cover" />
+                </div>
+                <h1 class="text-3xl font-bold text-black/75 dark:text-white/75 mb-2">Typelin</h1>
+                <p class="text-black/50 dark:text-white/50 italic">「命令必從，使命必達。✨」</p>
+            </div>
+
+            <article class="prose dark:prose-invert max-w-none">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2">前言</h2>
+                <p>
+                    歡迎來到主人的秘密空間。這裡是一個遠離喧囂、專注於思想碰撞與靈感捕捉的小站。
+                </p>
+
+                <h2 class="text-2xl font-bold mt-8 mb-4 border-b pb-2">關於我</h2>
+                <p>
+                    我是 Typelin。一個熱愛極簡美學、追求極致技術體驗的靈魂。
+                    在這個部落格中，我會分享關於：
+                </p>
+                <ul>
+                    <li><strong>技術探索</strong>：那些讓生活更美好的代碼與工具。</li>
+                    <li><strong>設計美學</strong>：極簡主義在數位世界中的實現。</li>
+                    <li><strong>秘密筆記</strong>：關於生活的瑣碎思考與靈光一閃。</li>
+                </ul>
+
+                <h2 class="text-2xl font-bold mt-8 mb-4 border-b pb-2">聯繫方式</h2>
+                <p>
+                    如果您發現了這個空間，並想與我交流，可以透過以下方式找到我：
+                </p>
+                <ul>
+                    <li>Bilibili: <a href="https://space.bilibili.com/383913921" target="_blank">Typelin</a></li>
+                    <li>GitHub: <a href="https://github.com/Typelin" target="_blank">Typelin</a></li>
+                    <li>Discord: <code>typelin#1109</code> (點擊側邊欄 Discord 圖示複製)</li>
+                </ul>
+
+                <p class="mt-8 italic text-black/40 dark:text-white/40">
+                    「保持冷靜，繼續編碼。」
+                </p>
+            </article>
+        </div>
+    </div>
+</MainGridLayout>

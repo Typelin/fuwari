@@ -47,8 +47,6 @@ const friends = Object.values(import.meta.glob<Friend>("@/data/friends/*.json", 
         transition-property: all;
         transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         transition-duration: 0.15s;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
     }
     
     .friend-card:active {
