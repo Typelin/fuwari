@@ -303,6 +303,11 @@ var _hmt = _hmt || [];
 		<script is:inline define:vars={{officialSites: siteConfig.officialSites || []}}>
 			// 域名检测功能
 			function checkDomain() {
+				// 如果沒有設定官方網站，直接返回不執行檢測
+				if (!officialSites || officialSites.length === 0) {
+					return;
+				}
+				
 				try {
 					// 获取当前访问的完整URL
 					const currentUrl = window.location.href;
