@@ -1,6 +1,6 @@
 # Typelin 的技術空間
 
-![網站預覽](https://github.com/Typelin/fuwari/blob/main/public/banner.png?raw=true)
+![網站預覽](螢幕擷取畫面%202026-01-04%20040612.png)
 
 > 一個基於 Astro 構建的現代化個人部落格，專注於技術分享與實踐。
 
