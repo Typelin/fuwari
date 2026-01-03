@@ -11,10 +11,10 @@ import type {
 import { LinkPreset } from "./types/config";
 
 export const siteConfig: SiteConfig = {
-	title: "主人的秘密空間",
+	title: "Typelin 的技術空間",
 	subtitle: "隨心所欲的技術與生活分享",
 	description:
-		"這是主人的個人部落格，記錄著各種有趣的探索與心得。",
+		"這是 Typelin 的個人部落格，記錄著各種有趣的探索與心得。",
 
 	keywords: ["Typelin", "極簡部落格", "技術分享", "秘密空間", "生活隨筆", "Fuwari"],
 	lang: "zh_TW", // 'en', 'zh_CN', 'zh_TW', 'ja', 'ko', 'es', 'th'
@@ -50,15 +50,12 @@ export const siteConfig: SiteConfig = {
 	favicon: [
 		// Leave this array empty to use the default favicon
 		{
-			src: "/circle_v3.png", // 使用主人選定的 V3 標誌作為分頁圖示
+			src: "/circle_v3.png", // 使用 V3 Logo 作為分頁圖示
 			//   theme: 'light',              // (Optional) Either 'light' or 'dark', set only if you have different favicons for light and dark mode
 			//   sizes: '32x32',              // (Optional) Size of the favicon, set only if you have favicons of different sizes
 		},
 	],
-	officialSites: [
-		{ url: "https://acofork.com", alias: "EdgeOne CN" },
-		{ url: "https://2x.nz", alias: "Global" },
-	],
+	officialSites: [], // 停用官方網站彈窗
 };
 
 export const navBarConfig: NavBarConfig = {
@@ -66,7 +63,7 @@ export const navBarConfig: NavBarConfig = {
 		LinkPreset.Home,
 		LinkPreset.Archive,
 		{
-			name: "關於主人",
+			name: "關於我",
 			url: "/about/",
 			external: false,
 		},
@@ -74,9 +71,9 @@ export const navBarConfig: NavBarConfig = {
 };
 
 export const profileConfig: ProfileConfig = {
-	avatar: "/circle_v3.png", // 主人選定的 V3：鼠尾草綠字母融合之圓
-	name: "主人 (Typelin)",
-	bio: "命令必從，使命必達。✨",
+	avatar: "/circle_v3.png", // V3 Logo
+	name: "Typelin",
+	bio: "吾心吾行澄如明鏡，所作所為皆為正義",
 	links: [
 		{
 			name: "Bilibli",

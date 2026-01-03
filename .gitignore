@@ -30,3 +30,15 @@ yarn.lock
 
 # 忽略上游仓库
 ori
+
+# 私有文件 (內部使用，不對外公開)
+.private/
+
+# 原始 fuwari 模板 (不需要上傳)
+fuwari-main/
+
+# PDF 和其他臨時檔案
+*.pdf
+
+# Obsidian 設定
+.obsidian/

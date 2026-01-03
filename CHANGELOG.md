@@ -2,6 +2,49 @@
 
 所有時間皆為當地時間 (Local Time)。
 
+## [2026-01-04] 🚀 正式上線準備
+
+### 03:55 - 網站正式對外準備 ✅
+- **[修復]** 移除 `officialSites` 配置，解決首頁彈窗問題
+- **[更新]** README.md 改為繁體中文，更新專案說明
+- **[更新]** 標語統一為「吾心吾行澄如明鏡，所作所為皆為正義」
+- **[更新]** 文章「從零打造技術部落格」增加上游專案致謝 (saicaca/fuwari, afoim/fuwari)
+
+### 03:40 - 專案清理 ✅
+- **[刪除]** `.github/workflows/` - GitHub Actions 工作流程
+- **[刪除]** `.obsidian/` - Obsidian 編輯器設定
+- **[刪除]** `edgeone.json` - EdgeOne 配置
+- **[刪除]** `wrangler.jsonc` - Wrangler 配置
+- **[刪除]** `frontmatter.json` - Frontmatter 設定
+
+### 03:35 - 隱私文件處理 ✅
+- **[新增]** `.private/` 資料夾（不上傳至 GitHub）
+- **[移動]** `task.md` → `.private/`
+- **[移動]** `USER_PROMPT_BACKUP.md` → `.private/`
+- **[移動]** `PROJECT_STATUS.md` → `.private/`
+- **[移動]** `STARTUP_COMMANDS.md` → `.private/`
+- **[移動]** `訊號與系統期末考_考古題 (1).pdf` → `.private/`
+- **[更新]** `.gitignore` 添加 `.private/`、`fuwari-main/`、`*.pdf`、`.obsidian/`
+
+### 03:30 - 移除「主人」「女僕」字樣 ✅
+- **[修改]** `config.ts` - 網站名稱改為「Typelin 的技術空間」
+- **[修改]** `config.ts` - 個人資料名稱改為「Typelin」
+- **[修改]** `config.ts` - 導航改為「關於我」
+- **[修改]** `about.astro` - 頁面標題和內容更新
+- **[修改]** `404.astro` - 錯誤訊息更新
+- **[修改]** `hello-master.md` - 文章內容更新
+- **[修改]** `how-to-build-typelin-space.md` - 文章內容更新
+
+### 02:00 - 訊號與系統文章增強 ✅
+- **[新增]** 8 題考試答題模板
+- **[新增]** 卷積過程圖解（翻轉、滑動、重疊區域）
+- **[新增]** `conv_step1_flip.png` - 翻轉過程圖
+- **[新增]** `conv_sliding_animation.png` - 滑動動畫圖
+- **[新增]** `conv_complete_process.png` - 完整過程圖
+- **[新增]** `generate_convolution_steps.py` - 圖表生成腳本
+
+---
+
 ## [2026-01-03]
 
 ### 13:20 - 文章圖片與格式修復 ✅
