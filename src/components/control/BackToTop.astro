@@ -3,9 +3,9 @@ import { Icon } from "astro-icon/components";
 ---
 
 <!-- There can't be a filter on parent element, or it will break `fixed` -->
-<div class="back-to-top-wrapper hidden lg:block">
+<div class="back-to-top-wrapper block">
     <div id="back-to-top-btn" class="back-to-top-btn hide flex items-center rounded-2xl overflow-hidden transition" onclick="backToTop()">
-        <button aria-label="Back to Top" class="btn-card h-[3.75rem] w-[3.75rem]">
+        <button aria-label="Back to Top" class="btn-card h-11 w-11 lg:h-[3.75rem] lg:w-[3.75rem]">
             <Icon name="material-symbols:keyboard-arrow-up-rounded" class="mx-auto"></Icon>
         </button>
     </div>
@@ -26,19 +26,29 @@ import { Icon } from "astro-icon/components";
     font-weight: bold
     border: none
     position: fixed
-    bottom: 10rem
+    bottom: 6rem
+    right: 1rem
     opacity: 1
     cursor: pointer
-    transform: translateX(5rem)
+    transform: translateX(0)
     pointer-events: auto
+    z-index: 50
+    @media (min-width: 1024px)
+        bottom: 10rem
+        right: auto
+        transform: translateX(5rem)
     i
         font-size: 1.75rem
     &.hide
-        transform: translateX(5rem) scale(0.9)
+        transform: translateX(0) scale(0.9)
         opacity: 0
         pointer-events: none
+        @media (min-width: 1024px)
+            transform: translateX(5rem) scale(0.9)
     &:active
-      transform: translateX(5rem) scale(0.9)
+        transform: translateX(0) scale(0.9)
+        @media (min-width: 1024px)
+            transform: translateX(5rem) scale(0.9)
 
 </style>
 
@@ -47,3 +57,4 @@ function backToTop() {
     window.scroll({ top: 0, behavior: 'smooth' });
 }
 </script>
+

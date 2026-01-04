@@ -1,5 +1,5 @@
 ---
-title: "🎉 2026 新年快樂！迎接嶄新的一年"
+title: "2026 新年快樂！迎接嶄新的一年"
 published: 2026-01-01
 description: "新年新希望！在這個特別的日子，祝大家 2026 年一切順利、心想事成。讓我們一起迎接充滿可能性的新一年！"
 image: "/images/articles/new-year-2026.png"

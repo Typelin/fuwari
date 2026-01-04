@@ -1,5 +1,5 @@
 ---
-title: "🚀 Flutter 完整開發環境建置指南 - 從零開始在 VS Code 寫 App"
+title: "Flutter 完整開發環境建置指南 - 從零開始在 VS Code 寫 App"
 published: 2026-01-03
 description: "一篇超詳細的 Flutter 環境配置教學，包含 Flutter SDK 安裝、Android Studio 設定、VS Code 擴充套件安裝，以及常用指令整理。附帶圖解說明，讓你快速上手跨平台 App 開發！"
 image: "/images/articles/flutter-hello-world.png"
