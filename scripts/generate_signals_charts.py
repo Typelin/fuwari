@@ -592,59 +592,126 @@ def problem6_sampling():
 
 
 # =====================================================
-# 第 7 題：傅立葉級數頻譜
+# 第 7 題：傅立葉級數頻譜（改進版）
 # =====================================================
 def problem7_fourier_series():
-    """第7題：方波傅立葉級數頻譜"""
-    fig, ax = plt.subplots(figsize=(12, 5))
+    """第7題：方波傅立葉級數頻譜 - 改進版標註"""
+    fig, ax = plt.subplots(figsize=(14, 7))
     fig.patch.set_facecolor(DARK_BG)
     ax.set_facecolor(DARK_AXES_BG)
     
     fp = get_font_prop(12)
     fp_title = get_font_prop(16, bold=True)
+    fp_label = get_font_prop(10)
     
     # 傅立葉級數係數（假設 f0 = 100 Hz）
     f0 = 100
-    freqs = [0, f0, 3*f0, 5*f0, 7*f0, 9*f0]
-    # DC: 1/2, 其他: 2/(n*pi) for n = 1, 3, 5, ...
-    amps = [0.5, 2/np.pi, 2/(3*np.pi), 2/(5*np.pi), 2/(7*np.pi), 2/(9*np.pi)]
     
-    # 雙邊頻譜
+    # 單邊頻譜數據（振幅形式）
+    # DC: 1/2, 其他: 2/(n*pi) for n = 1, 3, 5, 7, 9
+    harmonics_data = [
+        (0, 0.5, '½', '(DC)'),
+        (f0, 2/np.pi, '2/π', ''),
+        (3*f0, 2/(3*np.pi), '2/3π', ''),
+        (5*f0, 2/(5*np.pi), '2/5π', ''),
+        (7*f0, 2/(7*np.pi), '2/7π', ''),
+        (9*f0, 2/(9*np.pi), '2/9π', ''),
+    ]
+    
+    # 構建雙邊頻譜
     all_freqs = []
     all_amps = []
-    for f, a in zip(freqs, amps):
-        if f == 0:
-            all_freqs.append(0)
-            all_amps.append(a)
-        else:
-            all_freqs.extend([-f, f])
-            all_amps.extend([a/2, a/2])  # 非DC要除以2
+    all_labels = []
     
+    for freq, amp, label, extra in harmonics_data:
+        if freq == 0:
+            # DC 分量不除以 2
+            all_freqs.append(0)
+            all_amps.append(amp)
+            all_labels.append(f'{label}\n{extra}')
+        else:
+            # 雙邊頻譜：正負頻率，振幅除以 2
+            # 正頻率
+            all_freqs.append(freq)
+            all_amps.append(amp/2)
+            all_labels.append(f'{label[0]}/{label[2:]}' if '/' in label else label)  # 2/π -> 1/π
+            # 負頻率
+            all_freqs.append(-freq)
+            all_amps.append(amp/2)
+            all_labels.append('')  # 負頻率不重複標註
+    
+    # 重新構建標籤（雙邊形式）
+    # DC: 1/2, 其他: 1/(n*pi)
+    double_sided_labels = {
+        0: '½\n(DC)',
+        100: '1/π',
+        -100: '1/π',
+        300: '1/3π',
+        -300: '1/3π',
+        500: '1/5π',
+        -500: '1/5π',
+        700: '1/7π',
+        -700: '1/7π',
+        900: '1/9π',
+        -900: '1/9π',
+    }
+    
+    # 畫頻譜
     markerline, stemlines, baseline = ax.stem(all_freqs, all_amps, 
         linefmt='-', markerfmt='o', basefmt=' ')
-    plt.setp(stemlines, color=ACCENT_COLORS['purple'], linewidth=2)
-    plt.setp(markerline, color=ACCENT_COLORS['purple'], markersize=8)
+    plt.setp(stemlines, color=ACCENT_COLORS['purple'], linewidth=2.5)
+    plt.setp(markerline, color=ACCENT_COLORS['purple'], markersize=10)
     
-    # 標記
-    ax.annotate('DC=0.5\n(不除以2)', (0, 0.5), textcoords="offset points", 
-               xytext=(30, 10), fontsize=10, fontweight='bold', color=ACCENT_COLORS['yellow'],
-               arrowprops=dict(arrowstyle='->', color=ACCENT_COLORS['yellow'], lw=1.5), fontproperties=fp)
-    ax.annotate(f'1次諧波: {2/np.pi/2:.3f}', (f0, 2/np.pi/2), textcoords="offset points", 
-               xytext=(10, 10), fontsize=9, color=TEXT_COLOR, fontproperties=fp)
+    # 標記每個點的振幅值（分數形式）
+    for freq, amp in zip(all_freqs, all_amps):
+        label = double_sided_labels.get(freq, '')
+        if label:
+            # DC 分量特殊處理
+            if freq == 0:
+                ax.annotate(label, (freq, amp), textcoords="offset points", 
+                           xytext=(25, 10), fontsize=12, fontweight='bold', 
+                           color=ACCENT_COLORS['yellow'],
+                           arrowprops=dict(arrowstyle='->', color=ACCENT_COLORS['yellow'], lw=1.5),
+                           fontproperties=fp)
+            else:
+                # 正頻率標在上方，負頻率標在下方或跳過
+                if freq > 0:
+                    ax.annotate(label, (freq, amp), textcoords="offset points", 
+                               xytext=(0, 12), ha='center', fontsize=11, 
+                               fontweight='bold', color=ACCENT_COLORS['cyan'],
+                               fontproperties=fp_label)
+                else:
+                    # 負頻率只標主要的幾個
+                    if freq in [-100, -300]:
+                        ax.annotate(label, (freq, amp), textcoords="offset points", 
+                                   xytext=(0, 12), ha='center', fontsize=10, 
+                                   color=ACCENT_COLORS['cyan'], alpha=0.7,
+                                   fontproperties=fp_label)
+    
+    # 添加說明框
+    textbox = (
+        '📐 雙邊頻譜規則：\n'
+        '• DC 分量不除以 2\n'
+        '• 其他分量除以 2\n'
+        '  (單邊 2/π → 雙邊 1/π)'
+    )
+    ax.text(0.02, 0.97, textbox, transform=ax.transAxes, fontsize=10,
+           verticalalignment='top', fontproperties=fp,
+           bbox=dict(boxstyle='round', facecolor=DARK_AXES_BG, edgecolor=ACCENT_COLORS['green'], alpha=0.9))
     
     ax.axhline(y=0, color=TEXT_COLOR, linewidth=1)
-    ax.axvline(x=0, color=ACCENT_COLORS['orange'], linewidth=0.5, linestyle='--', alpha=0.7)
+    ax.axvline(x=0, color=ACCENT_COLORS['orange'], linewidth=1, linestyle='--', alpha=0.7)
     ax.set_xlim(-1100, 1100)
-    ax.set_ylim(0, 0.7)
+    ax.set_ylim(0, 0.65)
     ax.set_xlabel('頻率 f (Hz)', fontsize=12, fontproperties=fp)
     ax.set_ylabel('振幅', fontsize=12, fontproperties=fp)
-    ax.set_title(f'方波傅立葉級數 - 雙邊頻譜 (f0 = {f0} Hz)', fontsize=16, fontweight='bold', fontproperties=fp_title)
+    ax.set_title(f'方波傅立葉級數 - 雙邊頻譜 (f₀ = {f0} Hz, 0↔1 方波)', fontsize=16, fontweight='bold', fontproperties=fp_title)
     ax.grid(True, alpha=0.3)
     
     plt.tight_layout()
     plt.savefig(f'{OUTPUT_DIR}problem7_fourier_series.png', dpi=150, bbox_inches='tight', facecolor=DARK_BG)
     plt.close()
-    print(f"✅ 已儲存: problem7_fourier_series.png")
+    print(f"✅ 已儲存: problem7_fourier_series.png (改進版)")
 
 # =====================================================
 # 第 8 題：三角頻譜取樣
