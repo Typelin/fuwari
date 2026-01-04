@@ -1,5 +1,5 @@
 ---
-title: "🤖 2025 雲端 AI 大語言模型比較：GPT 5.2 vs Claude 4.5 vs Gemini 3 vs DeepSeek V3.2 vs Grok 4"
+title: "🤖 2026 雲端 AI 大語言模型比較：GPT 5.2 vs Claude 4.5 vs Gemini 3 vs DeepSeek V3.2 vs Grok 4"
 published: 2026-01-03
 description: "深入比較 OpenAI GPT 5.2、Anthropic Claude Sonnet/Opus 4.5、Google Gemini 3 Pro/Flash、DeepSeek V3.2、xAI Grok 4 五大最新 AI 模型，涵蓋常規問答、程式碼能力、多模態、生成圖片/影片、API 定價與訂閱方案，附權威基準測試數據！"
 image: "/images/articles/ai-models-comparison.png"
@@ -8,25 +8,25 @@ category: "技術探索"
 draft: false
 ---
 
-# 2025 雲端 AI 大語言模型比較
+# 2026 雲端 AI 大語言模型比較
 
 > 🎯 **本篇目標**：幫助你了解當今五大 AI 模型的最新差異，選擇最適合你的 AI 助手！
 
-AI 大語言模型 (LLM) 已經成為生產力不可或缺的工具。本文將深入比較五家頂尖 AI 公司的 **2025 年最新旗艦模型**，讓你做出明智選擇。
+AI 大語言模型 (LLM) 已經成為生產力不可或缺的工具。本文將深入比較五家頂尖 AI 公司的 **2026 年最新旗艦模型**，讓你做出明智選擇。
 
-> ⚠️ **資料來源聲明**：本文數據來自 OpenAI、Anthropic、Google、DeepSeek、xAI 官方定價頁面，以及 LLM-Stats.com、Vellum.ai 等權威評測平台，數據更新至 2025 年 12 月。
+> ⚠️ **資料來源聲明**：本文數據來自 OpenAI、Anthropic、Google、DeepSeek、xAI 官方定價頁面，以及 LLM-Stats.com、Vellum.ai 等權威評測平台，數據更新至 2026 年 1 月。
 
 ---
 
 # Part 1：五大最新模型概覽
 
-先認識五大 AI 模型的 2025 年最新版本和定位。
+先認識五大 AI 模型的 2026 年最新版本和定位。
 
 ---
 
 ## 🟢 1.1 OpenAI GPT 5.2
 
-OpenAI 是 AI 領域的開創者，GPT 5.2 於 2025 年 12 月發布，是其最強旗艦模型。
+OpenAI 是 AI 領域的開創者，GPT 5.2 於 2026 年初發布，是其最強旗艦模型。
 
 | 項目 | 規格 |
 |------|------|
@@ -68,7 +68,7 @@ Google 的 AI 模型，Gemini 3 於 2025 年底發布，整合於 Google 生態�
 
 ## 🟣 1.4 DeepSeek V3.2
 
-中國 AI 新創 DeepSeek，以極低成本提供頂級性能，2025 年 9 月發布 V3.2 並降價 50%。
+中國 AI 新創 DeepSeek，以極低成本提供頂級性能，2025 年發布 V3.2 並降價 50%。
 
 | 項目 | 規格 |
 |------|------|
@@ -82,7 +82,7 @@ Google 的 AI 模型，Gemini 3 於 2025 年底發布，整合於 Google 生態�
 
 ## ⚫ 1.5 xAI Grok 4
 
-Elon Musk 的 xAI 公司推出，Grok 4 於 2025 年 7 月發布，整合 X (Twitter) 平台。
+Elon Musk 的 xAI 公司推出，Grok 4 於 2025 年發布，整合 X (Twitter) 平台。
 
 | 項目 | 規格 |
 |------|------|
@@ -96,13 +96,13 @@ Elon Musk 的 xAI 公司推出，Grok 4 於 2025 年 7 月發布，整合 X (Twi
 
 # Part 2：能力比較與基準測試
 
-根據 2025 年最新權威基準測試 (Benchmark) 比較各模型能力。
+根據 2026 年最新權威基準測試 (Benchmark) 比較各模型能力。
 
 ---
 
 ## 📊 2.1 常規問答與推理能力
 
-使用 **GPQA Diamond** (研究所等級科學問答) 和 **AIME 2025** (數學競賽) 評測。
+使用 **GPQA Diamond** (研究所等級科學問答) 和 **AIME 2026** (數學競賽) 評測。
 
 | 模型 | GPQA Diamond | AIME 2025 | 評價 |
 |------|-------------|-----------|------|
@@ -112,7 +112,7 @@ Elon Musk 的 xAI 公司推出，Grok 4 於 2025 年 7 月發布，整合 X (Twi
 | DeepSeek V3.2 | ~72% | ~88% | 技術推理強，性價比王 |
 | Grok 4 | **88.0%** | ~96% | ARC-AGI 表現頂尖 |
 
-> 📚 **數據來源**：OpenAI、xAI 官方發布、LLM-Stats.com (2025 年 12 月)
+> 📚 **數據來源**：OpenAI、xAI 官方發布、LLM-Stats.com (2026 年 1 月)
 
 ---
 
@@ -159,7 +159,7 @@ Elon Musk 的 xAI 公司推出，Grok 4 於 2025 年 7 月發布，整合 X (Twi
 
 # Part 3：定價與方案比較
 
-選擇 AI 模型時，成本是重要考量因素。以下為 **2025 年 12 月最新定價**。
+選擇 AI 模型時，成本是重要考量因素。以下為 **2026 年 1 月最新定價**。
 
 ---
 

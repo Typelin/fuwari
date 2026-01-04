@@ -11,8 +11,8 @@ import type {
 import { LinkPreset } from "./types/config";
 
 export const siteConfig: SiteConfig = {
-	title: "Typelin 的技術空間",
-	subtitle: "隨心所欲的技術與生活分享",
+	title: "Typelin Blog",
+	subtitle: "技術分享",
 	description:
 		"這是 Typelin 的個人部落格，記錄著各種有趣的探索與心得。",
 
