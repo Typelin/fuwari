@@ -119,10 +119,45 @@
         }
     }
 
-    // 支援 Swup 與 Astro View Transitions
-    if (window.swup) {
-        document.addEventListener('swup:content:replace', updateCounter);
+    // 防重機制：避免多個事件監聽器同時觸發
+    let lastCountedPath = '';
+    let isUpdating = false;
+    
+    async function safeUpdateCounter() {
+        const currentPath = window.location.pathname;
+        
+        // 如果正在更新或已經計數過同一頁面，跳過
+        if (isUpdating || lastCountedPath === currentPath) {
+            console.log('[CF-Counter] 跳過重複計數:', currentPath);
+            return;
+        }
+        
+        isUpdating = true;
+        lastCountedPath = currentPath;
+        
+        try {
+            await updateCounter();
+        } finally {
+            isUpdating = false;
+        }
     }
-    document.addEventListener('DOMContentLoaded', updateCounter);
-    document.addEventListener('astro:page-load', updateCounter);
+
+    // 只使用一個主要的事件監聽器
+    // 優先使用 astro:page-load（Astro 原生支援）
+    // 如果 Swup 存在且沒有 Astro View Transitions，則用 Swup 事件
+    
+    // 初始載入
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', safeUpdateCounter, { once: true });
+    } else {
+        // DOM 已經載入完成
+        safeUpdateCounter();
+    }
+    
+    // 後續頁面切換使用 astro:page-load
+    document.addEventListener('astro:page-load', () => {
+        // 重置路徑追蹤，允許新頁面計數
+        lastCountedPath = '';
+        safeUpdateCounter();
+    });
 </script>
