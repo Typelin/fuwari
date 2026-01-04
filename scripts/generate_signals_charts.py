@@ -662,7 +662,7 @@ def problem7_fourier_series():
     plt.setp(stemlines, color=ACCENT_COLORS['purple'], linewidth=2.5)
     plt.setp(markerline, color=ACCENT_COLORS['purple'], markersize=10)
     
-    # 標記每個點的振幅值（分數形式）
+    # 標記每個點的振幅值（分數形式）- 所有點都標註
     for freq, amp in zip(all_freqs, all_amps):
         label = double_sided_labels.get(freq, '')
         if label:
@@ -674,30 +674,11 @@ def problem7_fourier_series():
                            arrowprops=dict(arrowstyle='->', color=ACCENT_COLORS['yellow'], lw=1.5),
                            fontproperties=fp)
             else:
-                # 正頻率標在上方，負頻率標在下方或跳過
-                if freq > 0:
-                    ax.annotate(label, (freq, amp), textcoords="offset points", 
-                               xytext=(0, 12), ha='center', fontsize=11, 
-                               fontweight='bold', color=ACCENT_COLORS['cyan'],
-                               fontproperties=fp_label)
-                else:
-                    # 負頻率只標主要的幾個
-                    if freq in [-100, -300]:
-                        ax.annotate(label, (freq, amp), textcoords="offset points", 
-                                   xytext=(0, 12), ha='center', fontsize=10, 
-                                   color=ACCENT_COLORS['cyan'], alpha=0.7,
-                                   fontproperties=fp_label)
-    
-    # 添加說明框
-    textbox = (
-        '📐 雙邊頻譜規則：\n'
-        '• DC 分量不除以 2\n'
-        '• 其他分量除以 2\n'
-        '  (單邊 2/π → 雙邊 1/π)'
-    )
-    ax.text(0.02, 0.97, textbox, transform=ax.transAxes, fontsize=10,
-           verticalalignment='top', fontproperties=fp,
-           bbox=dict(boxstyle='round', facecolor=DARK_AXES_BG, edgecolor=ACCENT_COLORS['green'], alpha=0.9))
+                # 所有頻率都標註（正負都標）
+                ax.annotate(label, (freq, amp), textcoords="offset points", 
+                           xytext=(0, 12), ha='center', fontsize=10, 
+                           fontweight='bold', color=ACCENT_COLORS['cyan'],
+                           fontproperties=fp_label)
     
     ax.axhline(y=0, color=TEXT_COLOR, linewidth=1)
     ax.axvline(x=0, color=ACCENT_COLORS['orange'], linewidth=1, linestyle='--', alpha=0.7)
@@ -705,7 +686,7 @@ def problem7_fourier_series():
     ax.set_ylim(0, 0.65)
     ax.set_xlabel('頻率 f (Hz)', fontsize=12, fontproperties=fp)
     ax.set_ylabel('振幅', fontsize=12, fontproperties=fp)
-    ax.set_title(f'方波傅立葉級數 - 雙邊頻譜 (f₀ = {f0} Hz, 0↔1 方波)', fontsize=16, fontweight='bold', fontproperties=fp_title)
+    ax.set_title(f'方波傅立葉級數 - 雙邊頻譜 (f0 = {f0} Hz, 0 到 1 方波)', fontsize=16, fontweight='bold', fontproperties=fp_title)
     ax.grid(True, alpha=0.3)
     
     plt.tight_layout()

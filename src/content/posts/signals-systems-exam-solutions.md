@@ -1,8 +1,8 @@
 ---
 title: "📡 訊號與系統期末考完整解析：8 道題目詳解與公式整理"
 published: 2026-01-03
-description: "南台科大訊號與系統期末考考古題完整解析，涵蓋訊號分類、LTI系統、傅立葉轉換、卷積、理想濾波器、取樣定理、傅立葉級數等核心概念，附詳細解題步驟與公式推導！"
-image: "/images/articles/signals-exam-page1.png"
+description: "訊號與系統期末考完整解析，涵蓋訊號分類、LTI系統、傅立葉轉換、卷積、理想濾波器、取樣定理、傅立葉級數等核心概念，附詳細解題步驟與公式推導！"
+image: "/images/articles/problem3_spectrum.png"
 tags: ["訊號與系統", "傅立葉轉換", "取樣定理", "卷積", "期末考"]
 category: "課業筆記"
 draft: false
