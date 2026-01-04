@@ -475,15 +475,16 @@ def problem5_filters():
     print(f"✅ 已儲存: problem5_filters.png")
 
 # =====================================================
-# 第 6 題：取樣頻譜
+# 第 6 題：取樣頻譜（改進版）
 # =====================================================
 def problem6_sampling():
-    """第6題：原始頻譜與取樣頻譜"""
-    fig, axes = plt.subplots(2, 1, figsize=(14, 8))
+    """第6題：原始頻譜與取樣頻譜 - 改進版標註"""
+    fig, axes = plt.subplots(2, 1, figsize=(16, 10))
     fig.patch.set_facecolor(DARK_BG)
     
     fp = get_font_prop(12)
     fp_title = get_font_prop(16, bold=True)
+    fp_label = get_font_prop(11)
     
     # 原始頻譜
     ax = axes[0]
@@ -492,15 +493,23 @@ def problem6_sampling():
     amps = [1, 2, 3, 2, 1]
     
     markerline, stemlines, baseline = ax.stem(freqs, amps, linefmt='-', markerfmt='o', basefmt=' ')
-    plt.setp(stemlines, color=ACCENT_COLORS['blue'], linewidth=2)
-    plt.setp(markerline, color=ACCENT_COLORS['blue'], markersize=10)
+    plt.setp(stemlines, color=ACCENT_COLORS['blue'], linewidth=2.5)
+    plt.setp(markerline, color=ACCENT_COLORS['blue'], markersize=12)
     
     for f, a in zip(freqs, amps):
-        ax.annotate(f'{a}', (f, a), textcoords="offset points", xytext=(0, 10), 
-                   ha='center', fontsize=11, fontweight='bold', color=ACCENT_COLORS['yellow'])
+        ax.annotate(f'{a}', (f, a), textcoords="offset points", xytext=(0, 12), 
+                   ha='center', fontsize=12, fontweight='bold', color=ACCENT_COLORS['yellow'])
+    
+    # 標記最大頻率
+    ax.annotate('fmax = 250 Hz', (250, 1), textcoords="offset points", xytext=(30, 20), 
+               fontsize=11, color=ACCENT_COLORS['red'], fontproperties=fp_label,
+               arrowprops=dict(arrowstyle='->', color=ACCENT_COLORS['red'], lw=1.5))
+    ax.annotate('fmax = -250 Hz', (-250, 1), textcoords="offset points", xytext=(-80, 20), 
+               fontsize=11, color=ACCENT_COLORS['red'], fontproperties=fp_label,
+               arrowprops=dict(arrowstyle='->', color=ACCENT_COLORS['red'], lw=1.5))
     
     ax.axhline(y=0, color=TEXT_COLOR, linewidth=1)
-    ax.axvline(x=0, color=ACCENT_COLORS['orange'], linewidth=0.5, linestyle='--', alpha=0.7)
+    ax.axvline(x=0, color=ACCENT_COLORS['orange'], linewidth=1, linestyle='--', alpha=0.7)
     ax.set_xlim(-400, 400)
     ax.set_ylim(0, 4.5)
     ax.set_xlabel('頻率 f (Hz)', fontsize=12, fontproperties=fp)
@@ -508,37 +517,68 @@ def problem6_sampling():
     ax.set_title('原始頻譜 X(f)', fontsize=16, fontweight='bold', fontproperties=fp_title)
     ax.grid(True, alpha=0.3)
     
-    # 取樣後頻譜
+    # =========================================
+    # 取樣後頻譜（改進版標註）
+    # =========================================
     ax = axes[1]
     ax.set_facecolor(DARK_AXES_BG)
     fs = 800  # 取樣頻率
     
-    # 原始頻譜 + 複製
-    colors = [ACCENT_COLORS['blue'], ACCENT_COLORS['red'], ACCENT_COLORS['green']]
-    labels = ['原始 (n=0)', '複製 (n=1)', '複製 (n=-1)']
+    # 定義三個複製品
+    replicas = [
+        (0, ACCENT_COLORS['blue'], '原始 (n=0)'),
+        (fs, ACCENT_COLORS['red'], '複製 (n=1)'),
+        (-fs, ACCENT_COLORS['green'], '複製 (n=-1)'),
+    ]
     
-    for n, (color, label) in enumerate(zip(colors, labels)):
-        if n == 0:
-            shift = 0
-        elif n == 1:
-            shift = fs
-        else:
-            shift = -fs
-            
+    for shift, color, label in replicas:
         shifted_freqs = [f + shift for f in freqs]
         markerline, stemlines, baseline = ax.stem(shifted_freqs, amps, 
             linefmt='-', markerfmt='o', basefmt=' ', label=label)
         plt.setp(stemlines, color=color, linewidth=2)
-        plt.setp(markerline, color=color, markersize=8)
+        plt.setp(markerline, color=color, markersize=10)
+    
+    # =========================================
+    # 關鍵標註：Fs 間隔
+    # =========================================
+    # 標記複製品中心位置
+    for center, label_text in [(0, '中心\n0 Hz'), (800, '中心\n+800 Hz'), (-800, '中心\n-800 Hz')]:
+        ax.axvline(x=center, color=ACCENT_COLORS['purple'], linewidth=1.5, linestyle=':', alpha=0.8)
+        ax.annotate(label_text, (center, 4.0), ha='center', va='bottom', fontsize=10, 
+                   color=ACCENT_COLORS['purple'], fontweight='bold', fontproperties=fp_label)
+    
+    # 標記 Fs 間隔（從 0 到 800）
+    ax.annotate('', xy=(0, 3.5), xytext=(800, 3.5),
+                arrowprops=dict(arrowstyle='<->', color=ACCENT_COLORS['yellow'], lw=2.5))
+    ax.text(400, 3.7, 'Fs = 800 Hz', ha='center', fontsize=13, 
+           color=ACCENT_COLORS['yellow'], fontweight='bold', fontproperties=fp)
+    
+    # 標記 Fs/2 = 400 Hz（Nyquist 頻率）
+    ax.axvline(x=400, color=ACCENT_COLORS['red'], linestyle='--', linewidth=2.5, label='fs/2 = 400 Hz')
+    ax.axvline(x=-400, color=ACCENT_COLORS['red'], linestyle='--', linewidth=2.5)
     
     # 標記無混疊區域
     ax.axvspan(-400, 400, alpha=0.15, color=ACCENT_COLORS['green'])
-    ax.axvline(x=400, color=ACCENT_COLORS['red'], linestyle='--', linewidth=2, label='fs/2 = 400 Hz')
-    ax.axvline(x=-400, color=ACCENT_COLORS['red'], linestyle='--', linewidth=2)
+    ax.text(0, 0.3, '← Nyquist 區間 →\n可完美還原', ha='center', fontsize=11, 
+           color=ACCENT_COLORS['green'], fontweight='bold', fontproperties=fp_label)
+    
+    # 標記原始與複製品的邊界（混疊檢查）
+    ax.annotate('原始最右邊\n250 Hz', (250, 1), textcoords="offset points", xytext=(0, -50), 
+               fontsize=9, color=ACCENT_COLORS['cyan'], ha='center', fontproperties=fp_label,
+               arrowprops=dict(arrowstyle='->', color=ACCENT_COLORS['cyan'], lw=1))
+    ax.annotate('複製最左邊\n550 Hz', (550, 1), textcoords="offset points", xytext=(0, -50), 
+               fontsize=9, color=ACCENT_COLORS['cyan'], ha='center', fontproperties=fp_label,
+               arrowprops=dict(arrowstyle='->', color=ACCENT_COLORS['cyan'], lw=1))
+    
+    # 間隙標註
+    ax.annotate('', xy=(250, 1.5), xytext=(550, 1.5),
+                arrowprops=dict(arrowstyle='<->', color=ACCENT_COLORS['cyan'], lw=2))
+    ax.text(400, 1.7, '間隙 = 300 Hz\n(無混疊!)', ha='center', fontsize=10, 
+           color=ACCENT_COLORS['cyan'], fontweight='bold', fontproperties=fp_label)
     
     ax.axhline(y=0, color=TEXT_COLOR, linewidth=1)
     ax.set_xlim(-1200, 1200)
-    ax.set_ylim(0, 4.5)
+    ax.set_ylim(0, 4.8)
     ax.set_xlabel('頻率 f (Hz)', fontsize=12, fontproperties=fp)
     ax.set_ylabel('振幅', fontsize=12, fontproperties=fp)
     ax.set_title(f'取樣後頻譜 (fs = {fs} Hz)：無混疊！', fontsize=16, fontweight='bold', fontproperties=fp_title)
@@ -548,7 +588,8 @@ def problem6_sampling():
     plt.tight_layout()
     plt.savefig(f'{OUTPUT_DIR}problem6_sampling.png', dpi=150, bbox_inches='tight', facecolor=DARK_BG)
     plt.close()
-    print(f"✅ 已儲存: problem6_sampling.png")
+    print(f"✅ 已儲存: problem6_sampling.png (改進版)")
+
 
 # =====================================================
 # 第 7 題：傅立葉級數頻譜
