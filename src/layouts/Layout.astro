@@ -116,9 +116,32 @@ const bannerOffset =
 
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-				<!-- 隨機背景圖 API (備份舊: https://pic.acofork.com/random.js) -->
-			<script data-swup-ignore-script is:inline src="https://img.072103.xyz/h"></script>
-		
+			<!-- 隨機背景圖 API (備份舊: https://pic.acofork.com/random.js) -->
+		<script data-swup-ignore-script is:inline>
+			// 設定隨機背景圖
+			function initRandomBg() {
+				const bgBox = document.getElementById('bg-box');
+				if (bgBox) {
+					// 添加時間戳避免快取
+					const randomImgUrl = 'https://img.072103.xyz/h?' + Date.now();
+					bgBox.style.backgroundImage = 'url(' + randomImgUrl + ')';
+					
+					// 預載圖片後顯示
+					const img = new Image();
+					img.onload = function() {
+						bgBox.classList.add('loaded');
+					};
+					img.src = randomImgUrl;
+				}
+			}
+			
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', initRandomBg);
+			} else {
+				initRandomBg();
+			}
+		</script>
+
 		
 		
 		{/* <!-- Content Security Policy -->
