@@ -13,10 +13,16 @@ import { LinkPreset } from "./types/config";
 export const siteConfig: SiteConfig = {
 	title: "Typelin Blog",
 	subtitle: "技術分享",
-	description:
-		"這是 Typelin 的個人部落格，記錄著各種有趣的探索與心得。",
+	description: "這是 Typelin 的個人部落格，記錄著各種有趣的探索與心得。",
 
-	keywords: ["Typelin", "極簡部落格", "技術分享", "秘密空間", "生活隨筆", "Fuwari"],
+	keywords: [
+		"Typelin",
+		"極簡部落格",
+		"技術分享",
+		"秘密空間",
+		"生活隨筆",
+		"Fuwari",
+	],
 	lang: "zh_TW", // 'en', 'zh_CN', 'zh_TW', 'ja', 'ko', 'es', 'th'
 	themeColor: {
 		hue: 250, // Default hue for the theme color, from 0 to 360. e.g. red: 0, teal: 200, cyan: 250, pink: 345

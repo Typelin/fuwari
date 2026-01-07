@@ -13,13 +13,13 @@ import {
 	setRainbowSpeed,
 	getBgBlur,
 	setBgBlur,
-    setBgHueRotate,
-    getHideBg,
-    setHideBg,
-    getDevMode,
-    setDevMode,
-    getDevServer,
-    setDevServer,
+	setBgHueRotate,
+	getHideBg,
+	setHideBg,
+	getDevMode,
+	setDevMode,
+	getDevServer,
+	setDevServer,
 } from "@utils/setting-utils";
 import { AUTO_MODE, DARK_MODE, LIGHT_MODE } from "@constants/constants";
 
@@ -46,7 +46,7 @@ $: if ((hue || hue === 0) && !isRainbowMode) {
 }
 
 $: {
-    setBgBlur(bgBlur);
+	setBgBlur(bgBlur);
 }
 
 function switchTheme(newTheme: string) {
@@ -69,12 +69,12 @@ function toggleRainbow() {
 
 	if (isRainbowMode) {
 		lastUpdate = performance.now();
-        rainbowHue = 0; // Reset rotation start
+		rainbowHue = 0; // Reset rotation start
 		animationId = requestAnimationFrame(updateRainbow);
 	} else {
 		cancelAnimationFrame(animationId);
-        // Reset background rotation to 0 when stopped
-        setBgHueRotate(0);
+		// Reset background rotation to 0 when stopped
+		setBgHueRotate(0);
 	}
 }
 
@@ -100,9 +100,9 @@ onMount(() => {
 	if (isRainbowMode) {
 		updateRainbow();
 	}
-    return () => {
-        if (animationId) cancelAnimationFrame(animationId);
-    }
+	return () => {
+		if (animationId) cancelAnimationFrame(animationId);
+	};
 });
 </script>
 

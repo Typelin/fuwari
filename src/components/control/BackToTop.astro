@@ -4,6 +4,13 @@ import { Icon } from "astro-icon/components";
 
 <!-- There can't be a filter on parent element, or it will break `fixed` -->
 <div class="back-to-top-wrapper block">
+    <!-- 查閱背景圖按鈕 -->
+    <div id="view-bg-btn" class="view-bg-btn hide flex items-center rounded-2xl overflow-hidden transition" onclick="viewBackgroundImage()">
+        <button aria-label="查閱背景圖" class="btn-card h-11 w-11 lg:h-[3.75rem] lg:w-[3.75rem]" title="查閱當前背景隨機圖">
+            <Icon name="material-symbols:image-outline-rounded" class="mx-auto"></Icon>
+        </button>
+    </div>
+    <!-- 回到頂部按鈕 -->
     <div id="back-to-top-btn" class="back-to-top-btn hide flex items-center rounded-2xl overflow-hidden transition" onclick="backToTop()">
         <button aria-label="Back to Top" class="btn-card h-11 w-11 lg:h-[3.75rem] lg:w-[3.75rem]">
             <Icon name="material-symbols:keyboard-arrow-up-rounded" class="mx-auto"></Icon>
@@ -50,11 +57,59 @@ import { Icon } from "astro-icon/components";
         @media (min-width: 1024px)
             transform: translateX(5rem) scale(0.9)
 
+.view-bg-btn
+    color: var(--primary)
+    font-size: 2.25rem
+    font-weight: bold
+    border: none
+    position: fixed
+    bottom: 10rem
+    right: 1rem
+    opacity: 1
+    cursor: pointer
+    transform: translateX(0)
+    pointer-events: auto
+    z-index: 50
+    @media (min-width: 1024px)
+        bottom: 14rem
+        right: auto
+        transform: translateX(5rem)
+    i
+        font-size: 1.75rem
+    &.hide
+        transform: translateX(0) scale(0.9)
+        opacity: 0
+        pointer-events: none
+        @media (min-width: 1024px)
+            transform: translateX(5rem) scale(0.9)
+    &:active
+        transform: translateX(0) scale(0.9)
+        @media (min-width: 1024px)
+            transform: translateX(5rem) scale(0.9)
+
 </style>
 
 <script is:raw is:inline>
 function backToTop() {
     window.scroll({ top: 0, behavior: 'smooth' });
 }
-</script>
 
+function viewBackgroundImage() {
+    const bgBox = document.getElementById('bg-box');
+    if (!bgBox) {
+        alert('找不到背景圖片元素');
+        return;
+    }
+    
+    const bgStyle = window.getComputedStyle(bgBox).backgroundImage;
+    // 從 url("...") 格式中提取 URL
+    const urlMatch = bgStyle.match(/url\(["']?([^"')]+)["']?\)/);
+    
+    if (urlMatch && urlMatch[1] && urlMatch[1] !== 'none') {
+        // 在新視窗中開啟圖片
+        window.open(urlMatch[1], '_blank');
+    } else {
+        alert('目前沒有設定背景圖片');
+    }
+}
+</script>

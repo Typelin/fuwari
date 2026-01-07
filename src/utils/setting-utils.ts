@@ -52,33 +52,36 @@ export function setBgBlur(blur: number): void {
 	localStorage.setItem("bg-blur", String(blur));
 	const bgBox = document.getElementById("bg-box");
 	if (bgBox) {
-        // Retrieve existing hue-rotate value if any, or 0
-        const currentFilter = bgBox.style.filter || "";
-        const hueRotateMatch = currentFilter.match(/hue-rotate\((.*?)deg\)/);
-        const hueRotate = hueRotateMatch ? hueRotateMatch[1] : "0";
-		bgBox.style.setProperty("filter", `blur(${blur}px) hue-rotate(${hueRotate}deg)`);
+		// Retrieve existing hue-rotate value if any, or 0
+		const currentFilter = bgBox.style.filter || "";
+		const hueRotateMatch = currentFilter.match(/hue-rotate\((.*?)deg\)/);
+		const hueRotate = hueRotateMatch ? hueRotateMatch[1] : "0";
+		bgBox.style.setProperty(
+			"filter",
+			`blur(${blur}px) hue-rotate(${hueRotate}deg)`,
+		);
 	}
 }
 
 export function setBgHueRotate(hue: number): void {
-    const bgBox = document.getElementById("bg-box");
-    if (bgBox) {
-        // Retrieve existing blur value
-        const currentFilter = bgBox.style.filter || "";
-        const blurMatch = currentFilter.match(/blur\((.*?)px\)/);
-        const blur = blurMatch ? blurMatch[1] : getBgBlur();
-        bgBox.style.setProperty("filter", `blur(${blur}px) hue-rotate(${hue}deg)`);
-    }
+	const bgBox = document.getElementById("bg-box");
+	if (bgBox) {
+		// Retrieve existing blur value
+		const currentFilter = bgBox.style.filter || "";
+		const blurMatch = currentFilter.match(/blur\((.*?)px\)/);
+		const blur = blurMatch ? blurMatch[1] : getBgBlur();
+		bgBox.style.setProperty("filter", `blur(${blur}px) hue-rotate(${hue}deg)`);
+	}
 }
 
 export function getBgHueRotate(): number {
-    const bgBox = document.getElementById("bg-box");
-    if (bgBox) {
-        const currentFilter = bgBox.style.filter || "";
-        const hueRotateMatch = currentFilter.match(/hue-rotate\((.*?)deg\)/);
-        return hueRotateMatch ? Number.parseInt(hueRotateMatch[1]) : 0;
-    }
-    return 0;
+	const bgBox = document.getElementById("bg-box");
+	if (bgBox) {
+		const currentFilter = bgBox.style.filter || "";
+		const hueRotateMatch = currentFilter.match(/hue-rotate\((.*?)deg\)/);
+		return hueRotateMatch ? Number.parseInt(hueRotateMatch[1]) : 0;
+	}
+	return 0;
 }
 
 export function getHideBg(): boolean {

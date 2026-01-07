@@ -5,38 +5,38 @@ import PostCard from "@components/PostCard.astro";
 import { getPostUrlBySlug } from "@utils/url-utils";
 
 export async function getStaticPaths() {
-    const allPosts = await getCollection("posts", ({ data }) => {
-        return import.meta.env.PROD ? data.draft !== true : true;
-    });
-    
-    // 收集所有標籤
-    const tags = new Set<string>();
-    allPosts.forEach(post => {
-        if (post.data.tags) {
-            post.data.tags.forEach(tag => tags.add(tag));
-        }
-    });
-    
-    return Array.from(tags).map(tag => ({
-        params: { slug: tag },
-        props: { tag }
-    }));
+	const allPosts = await getCollection("posts", ({ data }) => {
+		return import.meta.env.PROD ? data.draft !== true : true;
+	});
+
+	// 收集所有標籤
+	const tags = new Set<string>();
+	allPosts.forEach((post) => {
+		if (post.data.tags) {
+			post.data.tags.forEach((tag) => tags.add(tag));
+		}
+	});
+
+	return Array.from(tags).map((tag) => ({
+		params: { slug: tag },
+		props: { tag },
+	}));
 }
 
 const { tag } = Astro.props;
 
 // 獲取該標籤的所有文章
 const allPosts = await getCollection("posts", ({ data }) => {
-    return import.meta.env.PROD ? data.draft !== true : true;
+	return import.meta.env.PROD ? data.draft !== true : true;
 });
 
 const posts = allPosts
-    .filter(post => post.data.tags && post.data.tags.includes(tag))
-    .sort((a, b) => {
-        const dateA = new Date(a.data.published);
-        const dateB = new Date(b.data.published);
-        return dateA > dateB ? -1 : 1;
-    });
+	.filter((post) => post.data.tags && post.data.tags.includes(tag))
+	.sort((a, b) => {
+		const dateA = new Date(a.data.published);
+		const dateB = new Date(b.data.published);
+		return dateA > dateB ? -1 : 1;
+	});
 
 let delay = 0;
 const interval = 50;

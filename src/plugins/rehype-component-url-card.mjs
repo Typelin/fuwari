@@ -10,46 +10,46 @@ import { h } from "hastscript";
  * @returns {import('mdast').Parent} The created URL Card component.
  */
 export function UrlCardComponent(properties, children) {
-    if (Array.isArray(children) && children.length !== 0)
-        return h("div", { class: "hidden" }, [
-            'Invalid directive. ("url" directive must be leaf type "::url{href="https://example.com"}")',
-        ]);
+	if (Array.isArray(children) && children.length !== 0)
+		return h("div", { class: "hidden" }, [
+			'Invalid directive. ("url" directive must be leaf type "::url{href="https://example.com"}")',
+		]);
 
-    if (!properties.href)
-        return h(
-            "div",
-            { class: "hidden" },
-            'Invalid URL. ("href" attribute must be provided)',
-        );
+	if (!properties.href)
+		return h(
+			"div",
+			{ class: "hidden" },
+			'Invalid URL. ("href" attribute must be provided)',
+		);
 
-    const url = properties.href;
-    const cardUuid = `UC${Math.random().toString(36).slice(-6)}`; // Collisions are not important
+	const url = properties.href;
+	const cardUuid = `UC${Math.random().toString(36).slice(-6)}`; // Collisions are not important
 
-    const nImage = h(`div#${cardUuid}-image`, { class: "uc-image" });
-    
-    const nTitle = h("div", { class: "uc-titlebar" }, [
-        h("div", { class: "uc-titlebar-left" }, [
-            h(`div#${cardUuid}-favicon`, { class: "uc-favicon" }),
-            h("div", { class: "uc-domain" }, new URL(url).hostname),
-        ]),
-    ]);
+	const nImage = h(`div#${cardUuid}-image`, { class: "uc-image" });
 
-    const nDescription = h(
-        `div#${cardUuid}-description`,
-        { class: "uc-description" },
-        "Waiting for api.microlink.io...",
-    );
+	const nTitle = h("div", { class: "uc-titlebar" }, [
+		h("div", { class: "uc-titlebar-left" }, [
+			h(`div#${cardUuid}-favicon`, { class: "uc-favicon" }),
+			h("div", { class: "uc-domain" }, new URL(url).hostname),
+		]),
+	]);
 
-    const nTitleText = h(
-        `div#${cardUuid}-title`,
-        { class: "uc-title-text" },
-        "Loading..."
-    );
+	const nDescription = h(
+		`div#${cardUuid}-description`,
+		{ class: "uc-description" },
+		"Waiting for api.microlink.io...",
+	);
 
-    const nScript = h(
-        `script#${cardUuid}-script`,
-        { type: "text/javascript", defer: true },
-        `
+	const nTitleText = h(
+		`div#${cardUuid}-title`,
+		{ class: "uc-title-text" },
+		"Loading...",
+	);
+
+	const nScript = h(
+		`script#${cardUuid}-script`,
+		{ type: "text/javascript", defer: true },
+		`
       fetch('https://api.microlink.io?url=${encodeURIComponent(url)}').then(response => response.json()).then(data => {
         if (data.status === 'success') {
             const meta = data.data;
@@ -85,26 +85,22 @@ export function UrlCardComponent(properties, children) {
         console.warn("[URL-CARD] (Error) Loading card for ${url} | ${cardUuid}.", err)
       })
     `,
-    );
+	);
 
-    return h(
-        `a#${cardUuid}-card`,
-        {
-            class: "card-url fetch-waiting no-styling",
-            href: url,
-            target: "_blank",
-            url,
-        },
-        [
-            h(`div#${cardUuid}-container`, { class: "uc-container" }, [
-                h("div", { class: "uc-content" }, [
-                    nTitle,
-                    nTitleText,
-                    nDescription,
-                ]),
-                nImage,
-            ]),
-            nScript,
-        ],
-    );
+	return h(
+		`a#${cardUuid}-card`,
+		{
+			class: "card-url fetch-waiting no-styling",
+			href: url,
+			target: "_blank",
+			url,
+		},
+		[
+			h(`div#${cardUuid}-container`, { class: "uc-container" }, [
+				h("div", { class: "uc-content" }, [nTitle, nTitleText, nDescription]),
+				nImage,
+			]),
+			nScript,
+		],
+	);
 }

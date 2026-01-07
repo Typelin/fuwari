@@ -38,6 +38,7 @@ export type SiteConfig = {
 	};
 
 	favicon: Favicon[];
+
 	officialSites?: (string | { url: string; alias: string })[];
 };
 
@@ -91,8 +92,6 @@ export type UmamiConfig = {
 	shareId: string;
 	timezone: string;
 };
-
-
 
 export type LIGHT_DARK_MODE =
 	| typeof LIGHT_MODE

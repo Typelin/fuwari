@@ -5,38 +5,38 @@ import PostCard from "@components/PostCard.astro";
 import { getPostUrlBySlug } from "@utils/url-utils";
 
 export async function getStaticPaths() {
-    const allPosts = await getCollection("posts", ({ data }) => {
-        return import.meta.env.PROD ? data.draft !== true : true;
-    });
-    
-    // 收集所有類別
-    const categories = new Set<string>();
-    allPosts.forEach(post => {
-        if (post.data.category) {
-            categories.add(post.data.category);
-        }
-    });
-    
-    return Array.from(categories).map(category => ({
-        params: { slug: category },
-        props: { category }
-    }));
+	const allPosts = await getCollection("posts", ({ data }) => {
+		return import.meta.env.PROD ? data.draft !== true : true;
+	});
+
+	// 收集所有類別
+	const categories = new Set<string>();
+	allPosts.forEach((post) => {
+		if (post.data.category) {
+			categories.add(post.data.category);
+		}
+	});
+
+	return Array.from(categories).map((category) => ({
+		params: { slug: category },
+		props: { category },
+	}));
 }
 
 const { category } = Astro.props;
 
 // 獲取該類別的所有文章
 const allPosts = await getCollection("posts", ({ data }) => {
-    return import.meta.env.PROD ? data.draft !== true : true;
+	return import.meta.env.PROD ? data.draft !== true : true;
 });
 
 const posts = allPosts
-    .filter(post => post.data.category === category)
-    .sort((a, b) => {
-        const dateA = new Date(a.data.published);
-        const dateB = new Date(b.data.published);
-        return dateA > dateB ? -1 : 1;
-    });
+	.filter((post) => post.data.category === category)
+	.sort((a, b) => {
+		const dateA = new Date(a.data.published);
+		const dateB = new Date(b.data.published);
+		return dateA > dateB ? -1 : 1;
+	});
 
 let delay = 0;
 const interval = 50;

@@ -1,5 +1,4 @@
 <script lang="ts">
-
 import Icon from "@iconify/svelte";
 import { url } from "@utils/url-utils.ts";
 import { onMount } from "svelte";
@@ -57,35 +56,37 @@ const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 				const searchText =
 					`${post.title} ${post.description} ${post.content}`.toLowerCase();
 				const urlPath = `/posts/${post.link}`;
-				
+
 				// 支援內容搜尋和 URL 字尾搜尋
-				return searchText.includes(keywordLower) || 
-					   urlPath.toLowerCase().includes(keywordLower) ||
-					   post.link.toLowerCase().includes(keywordLower);
+				return (
+					searchText.includes(keywordLower) ||
+					urlPath.toLowerCase().includes(keywordLower) ||
+					post.link.toLowerCase().includes(keywordLower)
+				);
 			})
 			.map((post) => {
 				const contentLower = post.content.toLowerCase();
 				const keywordLower = keyword.toLowerCase();
 				const contentIndex = contentLower.indexOf(keywordLower);
-				
-				let excerpt = '';
+
+				let excerpt = "";
 				if (contentIndex !== -1) {
 					const start = Math.max(0, contentIndex - 50);
 					const end = Math.min(post.content.length, contentIndex + 100);
 					excerpt = post.content.substring(start, end);
-					if (start > 0) excerpt = '...' + excerpt;
-					if (end < post.content.length) excerpt = excerpt + '...';
+					if (start > 0) excerpt = "..." + excerpt;
+					if (end < post.content.length) excerpt = excerpt + "...";
 				} else {
-					excerpt = post.description || post.content.substring(0, 150) + '...';
+					excerpt = post.description || post.content.substring(0, 150) + "...";
 				}
 
 				return {
 					url: url(`/posts/${post.link}/`),
 					meta: {
-						title: post.title
+						title: post.title,
 					},
 					excerpt: highlightText(excerpt, keyword),
-					urlPath: `/posts/${post.link}`
+					urlPath: `/posts/${post.link}`,
 				};
 			});
 
@@ -111,11 +112,11 @@ onMount(async () => {
 		posts = Array.from(items).map((item) => {
 			// 尝试多种方式获取content:encoded内容
 			let content = "";
-			const contentEncoded = 
+			const contentEncoded =
 				item.getElementsByTagNameNS("*", "encoded")[0]?.textContent ||
 				item.querySelector("*|encoded")?.textContent ||
 				"";
-			
+
 			if (contentEncoded) {
 				content = contentEncoded.replace(/<[^>]*>/g, "");
 			}
@@ -124,7 +125,10 @@ onMount(async () => {
 				title: item.querySelector("title")?.textContent || "",
 				description: item.querySelector("description")?.textContent || "",
 				content: content,
-				link: item.querySelector("link")?.textContent?.replace(/.*\/posts\/(.*?)\//, "$1") || "",
+				link:
+					item
+						.querySelector("link")
+						?.textContent?.replace(/.*\/posts\/(.*?)\//, "$1") || "",
 			};
 		});
 	} catch (error) {

@@ -31,9 +31,9 @@ const jsonLd = {
 	"@type": "BlogPosting",
 	headline: entry.data.title,
 	description: entry.data.description || entry.data.title,
-    author: {
-      "@type": "Person",
-      name: profileConfig.name,
+	author: {
+		"@type": "Person",
+		name: profileConfig.name,
 		url: Astro.site,
 	},
 	datePublished: formatDateToYYYYMMDD(entry.data.published),

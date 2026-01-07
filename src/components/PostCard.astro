@@ -23,8 +23,18 @@ interface Props {
 	draft: boolean;
 	style: string;
 }
-const { entry, title, url, published, updated, tags, category, image, description, style } =
-	Astro.props;
+const {
+	entry,
+	title,
+	url,
+	published,
+	updated,
+	tags,
+	category,
+	image,
+	description,
+	style,
+} = Astro.props;
 
 const isPinned = entry.data.pinned === true;
 const className = Astro.props.class;

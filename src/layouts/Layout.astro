@@ -1,10 +1,15 @@
 ---
-import Analytics from '@vercel/analytics/astro'
+import Analytics from "@vercel/analytics/astro";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
-import { profileConfig, siteConfig, cfCounterUrl, counterDevMode } from "@/config";
+import {
+	profileConfig,
+	siteConfig,
+	cfCounterUrl,
+	counterDevMode,
+} from "@/config";
 import ReadingProgress from "@components/control/ReadingProgress.astro";
 import CFCounter from "@components/control/CFCounter.astro";
 import ConfigCarrier from "@components/ConfigCarrier.astro";
@@ -662,6 +667,7 @@ if (window?.swup?.hooks) {
 }
 
 let backToTopBtn = document.getElementById('back-to-top-btn');
+let viewBgBtn = document.getElementById('view-bg-btn');
 let toc = document.getElementById('toc-wrapper');
 let navbar = document.getElementById('navbar-wrapper')
 function scrollFunction() {
@@ -672,6 +678,15 @@ function scrollFunction() {
 			backToTopBtn.classList.remove('hide')
 		} else {
 			backToTopBtn.classList.add('hide')
+		}
+	}
+
+	// 同步 view-bg-btn 的顯示邏輯
+	if (viewBgBtn) {
+		if (document.body.scrollTop > bannerHeight || document.documentElement.scrollTop > bannerHeight) {
+			viewBgBtn.classList.remove('hide')
+		} else {
+			viewBgBtn.classList.add('hide')
 		}
 	}
 

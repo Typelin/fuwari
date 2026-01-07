@@ -37,10 +37,6 @@ const config = profileConfig;
                 <Icon name={config.links[0].icon} class="text-[1.5rem]"></Icon>
                 {config.links[0].name}
             </a>}
-            <button aria-label="查看背景圖" class="btn-regular rounded-lg h-10 w-10 active:scale-90 relative overflow-hidden transition-all group"
-                onclick="const bg = window.getComputedStyle(document.getElementById('bg-box')).backgroundImage; const url = bg.match(/url\([&quot;']?(.*?)['&quot;]?\)/)[1]; if(url) window.open(url, '_blank');">
-                <Icon name="fa6-solid:image" class="text-[1.5rem] text-neutral-400 group-hover:text-primary transition-colors"></Icon>
-            </button>
         </div>
         
         <!-- 全站訪問量統計 -->
