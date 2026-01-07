@@ -90,6 +90,11 @@ export const profileConfig: ProfileConfig = {
 			icon: "fa6-brands:discord",
 			url: "typelin#1109", // 這個欄位將在組件中特殊處理為「點擊複製」
 		},
+		{
+			name: "QQ",
+			icon: "fa6-brands:qq",
+			url: "3825383356",
+		},
 	],
 };
 

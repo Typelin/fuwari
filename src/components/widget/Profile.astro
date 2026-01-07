@@ -17,16 +17,16 @@ const config = profileConfig;
         <div class="text-center text-neutral-400 mb-2.5 transition">{config.bio}</div>
         <div class="flex flex-wrap gap-2 justify-center mb-1">
             {config.links.length > 1 && config.links.map(item => {
-                const isDiscord = item.name.toLowerCase() === 'discord';
+                const isVirtual = ['discord', 'qq'].includes(item.name.toLowerCase());
                 return (
                     <a 
                         rel="me" 
                         aria-label={item.name} 
-                        href={isDiscord ? "#" : item.url} 
-                        target={isDiscord ? "_self" : "_blank"} 
+                        href={isVirtual ? "#" : item.url} 
+                        target={isVirtual ? "_self" : "_blank"} 
                         class="btn-regular rounded-lg h-10 w-10 active:scale-90 discord-copy-btn relative overflow-hidden"
-                        data-discord-id={isDiscord ? item.url : undefined}
-                        onclick={isDiscord ? `event.preventDefault(); navigator.clipboard.writeText('${item.url}'); this.classList.add('copied'); setTimeout(() => this.classList.remove('copied'), 1500);` : undefined}
+                        data-virtual-id={isVirtual ? item.url : undefined}
+                        onclick={isVirtual ? `event.preventDefault(); navigator.clipboard.writeText('${item.url}'); this.classList.add('copied'); setTimeout(() => this.classList.remove('copied'), 1500);` : undefined}
                     >
                         <Icon name={item.icon} class="text-[1.5rem]"></Icon>
                     </a>
