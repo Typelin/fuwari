@@ -875,6 +875,170 @@ $$X_s(f) = f_s \sum_{n=-\infty}^{\infty} X(f - nf_s) \quad \text{(取樣頻譜)}
 
 ---
 
+# 📌 EX：餘弦波的傅立葉級數展開
+
+這部分補充說明：當給定一個 **cos 波**，如何求其傅立葉級數係數 $C_n$、如何繪製頻譜圖，以及 $C_n$ 與振幅 $A$ 的關係。
+
+---
+
+## 🔢 傅立葉級數的複數形式
+
+對於週期為 $T_0$ 的訊號 $x(t)$，其傅立葉級數的**複數指數形式**為：
+
+$$x(t) = \sum_{n=-\infty}^{\infty} C_n \cdot e^{j n \omega_0 t}$$
+
+其中 $\omega_0 = \frac{2\pi}{T_0}$ 是基本角頻率，$C_n$ 是複數傅立葉係數：
+
+$$C_n = \frac{1}{T_0} \int_{T_0} x(t) \cdot e^{-j n \omega_0 t} \, dt$$
+
+---
+
+## 🎯 餘弦波的 $C_n$ 計算
+
+### 題目範例
+
+給定訊號：$x(t) = A \cos(\omega_0 t + \phi)$
+
+求其傅立葉級數係數 $C_n$。
+
+### 解法
+
+利用尤拉公式展開餘弦：
+
+$$\cos(\omega_0 t + \phi) = \frac{e^{j(\omega_0 t + \phi)} + e^{-j(\omega_0 t + \phi)}}{2}$$
+
+因此：
+
+$$A \cos(\omega_0 t + \phi) = \frac{A}{2} e^{j\phi} \cdot e^{j\omega_0 t} + \frac{A}{2} e^{-j\phi} \cdot e^{-j\omega_0 t}$$
+
+對照傅立葉級數形式 $\sum C_n e^{jn\omega_0 t}$，可得：
+
+| n | $C_n$ 值 |
+|---|---------|
+| $n = 1$ | $\frac{A}{2} e^{j\phi}$ |
+| $n = -1$ | $\frac{A}{2} e^{-j\phi}$ |
+| 其他 | $0$ |
+
+### 📊 頻譜圖特性
+
+| 項目 | 值 |
+|------|-----|
+| 頻譜位置 | $f = \pm f_0$（其中 $f_0 = \frac{\omega_0}{2\pi}$）|
+| 振幅譜 $|C_n|$ | $\frac{A}{2}$（在 $n = \pm 1$ 處）|
+| 相位譜 $\angle C_n$ | $+\phi$（在 $n = 1$）、$-\phi$（在 $n = -1$）|
+
+---
+
+## 🆚 $C_n$ 與振幅 $A$ 的差異
+
+這是初學者最容易混淆的地方！
+
+| 概念 | 符號 | 說明 | 例子 |
+|------|------|------|------|
+| **時域振幅** | $A$ | 餘弦波的**峰值**，即波形最大值 | $2\cos(\omega_0 t)$ 的 $A = 2$ |
+| **傅立葉係數** | $C_n$ | 雙邊頻譜中**單一頻率**的複數係數 | $C_1 = C_{-1} = \frac{A}{2} = 1$ |
+| **單邊振幅** | $A$ | 單邊頻譜中正頻率處的振幅 | 在 $f_0$ 處振幅 = 2 |
+| **雙邊振幅** | $|C_n|$ | 雙邊頻譜中正負頻率各一半 | 在 $\pm f_0$ 處各 = 1 |
+
+> ⚠️ **重點記憶**：
+> - **單邊頻譜**：振幅 = $A$（完整振幅）
+> - **雙邊頻譜**：振幅 = $\frac{A}{2}$（各一半在 $\pm f$）
+> - $|C_n| = \frac{A}{2}$（對於純餘弦波）
+
+### 公式總結
+
+$$\boxed{A = 2|C_n| = 2|C_1| = 2|C_{-1}|}$$
+
+---
+
+## 🐍 Python 繪製頻譜圖
+
+以下代碼繪製 $x(t) = 3\cos(2\pi \cdot 50 \cdot t + \frac{\pi}{6})$ 的雙邊振幅譜與相位譜：
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+# ========== 訊號參數 ==========
+A = 3           # 振幅
+f0 = 50         # 頻率 (Hz)
+phi = np.pi/6   # 相位 (30°)
+
+# ========== 傅立葉係數計算 ==========
+# 對於 A*cos(ω₀t + φ)，Cn 只在 n = ±1 處非零
+C_plus1 = (A / 2) * np.exp(1j * phi)    # C₁
+C_minus1 = (A / 2) * np.exp(-1j * phi)  # C₋₁
+
+# ========== 頻譜數據 ==========
+frequencies = [-f0, 0, f0]
+amplitudes = [np.abs(C_minus1), 0, np.abs(C_plus1)]  # |C_n|
+phases_deg = [np.angle(C_minus1) * 180/np.pi, 0, np.angle(C_plus1) * 180/np.pi]
+
+# ========== 繪圖設定（深色主題）==========
+plt.style.use('dark_background')
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
+
+# 振幅譜
+colors = ['#FF6B6B', '#4ECDC4', '#FF6B6B']  # 紅、青、紅
+ax1.stem(frequencies, amplitudes, linefmt='-', markerfmt='o', basefmt='w-')
+for i, (f, a) in enumerate(zip(frequencies, amplitudes)):
+    if a > 0:
+        ax1.annotate(f'$|C_{{{1 if f > 0 else -1}}}| = {a:.1f}$', 
+                    (f, a), textcoords="offset points", 
+                    xytext=(0, 10), ha='center', fontsize=11, color='#FFE66D')
+ax1.set_ylabel('振幅 $|C_n|$', fontsize=12)
+ax1.set_title(f'雙邊振幅頻譜：$x(t) = {A}\\cos(2\\pi \\cdot {f0}t + \\pi/6)$', fontsize=14)
+ax1.grid(True, alpha=0.3)
+ax1.set_ylim(0, A/2 + 0.5)
+
+# 相位譜
+ax2.stem(frequencies, phases_deg, linefmt='-', markerfmt='s', basefmt='w-')
+for f, p in zip(frequencies, phases_deg):
+    if abs(p) > 0:
+        ax2.annotate(f'${p:.0f}°$', (f, p), textcoords="offset points",
+                    xytext=(0, 10 if p > 0 else -15), ha='center', 
+                    fontsize=11, color='#FFE66D')
+ax2.set_xlabel('頻率 (Hz)', fontsize=12)
+ax2.set_ylabel('相位 (°)', fontsize=12)
+ax2.set_title('雙邊相位頻譜', fontsize=14)
+ax2.grid(True, alpha=0.3)
+ax2.set_ylim(-45, 45)
+
+plt.tight_layout()
+plt.savefig('cos_spectrum.png', dpi=150, bbox_inches='tight', 
+            facecolor='#1a1a2e', edgecolor='none')
+plt.show()
+
+# ========== 輸出驗證 ==========
+print(f"訊號: x(t) = {A}cos(2π·{f0}t + π/6)")
+print(f"時域振幅 A = {A}")
+print(f"傅立葉係數 |C₁| = |C₋₁| = {A/2}")
+print(f"驗證: A = 2|C₁| = {2 * A/2} ✓")
+```
+
+### 輸出結果
+
+```
+訊號: x(t) = 3cos(2π·50t + π/6)
+時域振幅 A = 3
+傅立葉係數 |C₁| = |C₋₁| = 1.5
+驗證: A = 2|C₁| = 3 ✓
+```
+
+---
+
+## 📋 快速對照表
+
+| 訊號類型 | 時域表達式 | $C_n$ | $|C_n|$ | 頻譜特徵 |
+|---------|-----------|-------|---------|---------|
+| 純餘弦 | $A\cos(\omega_0 t)$ | $\frac{A}{2}$ at $n=\pm 1$ | $\frac{A}{2}$ | 只有 $\pm f_0$ 兩根莖 |
+| 帶相位餘弦 | $A\cos(\omega_0 t + \phi)$ | $\frac{A}{2}e^{\pm j\phi}$ at $n=\pm 1$ | $\frac{A}{2}$ | 相位譜有 $\pm\phi$ |
+| DC + 餘弦 | $D + A\cos(\omega_0 t)$ | $D$ at $n=0$, $\frac{A}{2}$ at $n=\pm 1$ | $D$, $\frac{A}{2}$ | 多一根 $f=0$ |
+
+---
+
+> 💡 **考試技巧**：看到 $\cos$ 就記得 $C_n = \frac{A}{2}$，雙邊頻譜振幅是時域振幅的一半！
+
 ## 🔗 相關資源
 
 | 資源 | 連結 |
