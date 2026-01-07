@@ -966,22 +966,72 @@ $$x(t) = \underbrace{1 \cdot e^{\pm j500\pi t}}_{A=2 \to 1} + \underbrace{2 \cdo
 
 ## 🆚 $|C_n|$ vs 振幅 $A$
 
-| 概念           | 公式                      | 說明                 |
-|----------------|---------------------------|----------------------|
-| 時域振幅       | $A$                       | cos 波前面的係數     |
-| 傅立葉係數     | $\|C_n\| = \frac{A}{2}$   | 雙邊頻譜各半         |
-| 單邊 → 雙邊    | 除以 2                    |                      |
-| 雙邊 → 單邊    | 乘以 2                    |                      |
+<table>
+  <thead>
+    <tr>
+      <th>概念</th>
+      <th>公式</th>
+      <th>說明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>時域振幅</td>
+      <td>$A$</td>
+      <td>cos 波前面的係數</td>
+    </tr>
+    <tr>
+      <td>傅立葉係數</td>
+      <td>$|C_n| = \frac{A}{2}$</td>
+      <td>雙邊頻譜各半</td>
+    </tr>
+    <tr>
+      <td>單邊 → 雙邊</td>
+      <td>除以 2</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>雙邊 → 單邊</td>
+      <td>乘以 2</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
 ## 📋 速查表
 
-| 時域                      | 頻率      | $\|C_n\|$ | δ 係數 |
-|---------------------------|-----------|-----------|--------|
-| $2\cos(500\pi t)$         | 250 Hz    | 1         | 1      |
-| $4\cos(1000\pi t)$        | 500 Hz    | 2         | 2      |
-| $-8\cos(2000\pi t)$       | 1000 Hz   | 4         | -4     |
+<table>
+  <thead>
+    <tr>
+      <th>時域</th>
+      <th>頻率</th>
+      <th>$|C_n|$</th>
+      <th>δ 係數</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>$2\cos(500\pi t)$</td>
+      <td>250 Hz</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>$4\cos(1000\pi t)$</td>
+      <td>500 Hz</td>
+      <td>2</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>$-8\cos(2000\pi t)$</td>
+      <td>1000 Hz</td>
+      <td>4</td>
+      <td>-4</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
