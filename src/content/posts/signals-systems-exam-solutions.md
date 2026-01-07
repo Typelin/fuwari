@@ -188,27 +188,32 @@ $$\mathcal{F}\{2\cos(60\pi t + \frac{\pi}{4})\} = e^{j\frac{\pi}{4}}\delta(f - 3
 
 **第二項** $-4\cos(100\pi t)$：
 
-$$\mathcal{F}\{-4\cos(100\pi t)\} = -2\delta(f - 50) - 2\delta(f + 50)$$
+視為 $4\cos(100\pi t + \pi)$，振幅 $A=4$，相位 $\phi = \pi$。
+
+$$\mathcal{F}\{4\cos(100\pi t + \pi)\} = 2e^{j\pi}\delta(f - 50) + 2e^{-j\pi}\delta(f + 50)$$
+
+> 💡 **註**：$e^{j\pi} = -1$，所以這與 $-2\delta(f-50)-2\delta(f+50)$ 是完全一樣的。但寫成指數形式更能看出相位是 $+180°$。
 
 **合併結果：**
 
-$$\boxed{X(f) = e^{j\frac{\pi}{4}}\delta(f - 30) + e^{-j\frac{\pi}{4}}\delta(f + 30) - 2\delta(f - 50) - 2\delta(f + 50)}$$
+$$\boxed{X(f) = e^{j\frac{\pi}{4}}\delta(f - 30) + e^{-j\frac{\pi}{4}}\delta(f + 30) + 2e^{j\pi}\delta(f - 50) + 2e^{-j\pi}\delta(f + 50)}$$
 
 ### 📝 考試答題模板
 
 ```
 Step 1: 提取頻率 f = ω/(2π)
 第一項 2cos(60πt + π/4)：f₁ = 30 Hz, A₁ = 2, φ₁ = 45°
-第二項 -4cos(100πt)：f₂ = 50 Hz, A₂ = 4, φ₂ = 180°（負號 = +180°）
+第二項 -4cos(100πt)：f₂ = 50 Hz, A₂ = 4, φ₂ = 180°（負號 = +180° = π）
 
 Step 2: 畫頻譜
 單邊：在 f₁, f₂ 處畫振幅 A₁, A₂
 雙邊：在 ±f₁, ±f₂ 處畫振幅 A/2（DC 不除 2）
 
 Step 3: 傅立葉轉換
-cos(2πf₀t + φ) → (1/2)[e^(jφ)δ(f-f₀) + e^(-jφ)δ(f+f₀)]
+cos(2πf₀t + φ) → (A/2)[e^(jφ)δ(f-f₀) + e^(-jφ)δ(f+f₀)]
 
-答案：X(f) = e^(jπ/4)δ(f-30) + e^(-jπ/4)δ(f+30) - 2δ(f-50) - 2δ(f+50)
+答案：
+X(f) = e^(jπ/4)δ(f-30) + e^(-jπ/4)δ(f+30) + 2e^(jπ)δ(f-50) + 2e^(-jπ)δ(f+50)
 ```
 
 ---
