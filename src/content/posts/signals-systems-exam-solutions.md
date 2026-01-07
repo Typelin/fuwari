@@ -875,169 +875,242 @@ $$X_s(f) = f_s \sum_{n=-\infty}^{\infty} X(f - nf_s) \quad \text{(取樣頻譜)}
 
 ---
 
-# 📌 EX：餘弦波的傅立葉級數展開
+# 📌 EX：餘弦波的傅立葉分析
 
-這部分補充說明：當給定一個 **cos 波**，如何求其傅立葉級數係數 $C_n$、如何繪製頻譜圖，以及 $C_n$ 與振幅 $A$ 的關係。
-
----
-
-## 🔢 傅立葉級數的複數形式
-
-對於週期為 $T_0$ 的訊號 $x(t)$，其傅立葉級數的**複數指數形式**為：
-
-$$x(t) = \sum_{n=-\infty}^{\infty} C_n \cdot e^{j n \omega_0 t}$$
-
-其中 $\omega_0 = \frac{2\pi}{T_0}$ 是基本角頻率，$C_n$ 是複數傅立葉係數：
-
-$$C_n = \frac{1}{T_0} \int_{T_0} x(t) \cdot e^{-j n \omega_0 t} \, dt$$
+這部分補充說明：當給定 **cos 波組合**，如何求**傅立葉轉換**與**傅立葉級數**，以及 $C_n$ 與振幅 $A$ 的關係。
 
 ---
 
-## 🎯 餘弦波的 $C_n$ 計算
+## 📝 範例訊號
 
-### 題目範例
+$$x(t) = 2\cos(500\pi t) + 4\cos(1000\pi t) - 8\cos(2000\pi t)$$
 
-給定訊號：$x(t) = A \cos(\omega_0 t + \phi)$
+**Step 1：提取各分量的頻率**
 
-求其傅立葉級數係數 $C_n$。
+從 $\cos(2\pi f t)$ 格式中，$f = \frac{\text{係數}}{2\pi}$：
 
-### 解法
+| 分量 | 表達式 | 頻率計算 | 振幅 $A$ | 相位 |
+|------|--------|---------|---------|------|
+| 第 1 項 | $2\cos(500\pi t)$ | $f_1 = \frac{500\pi}{2\pi} = 250$ Hz | $2$ | $0°$ |
+| 第 2 項 | $4\cos(1000\pi t)$ | $f_2 = \frac{1000\pi}{2\pi} = 500$ Hz | $4$ | $0°$ |
+| 第 3 項 | $-8\cos(2000\pi t)$ | $f_3 = \frac{2000\pi}{2\pi} = 1000$ Hz | $8$ | $180°$ |
 
-利用尤拉公式展開餘弦：
+> ⚠️ **注意**：$-8\cos(\theta) = 8\cos(\theta + \pi)$，負號 = 相位加 $180°$！
 
-$$\cos(\omega_0 t + \phi) = \frac{e^{j(\omega_0 t + \phi)} + e^{-j(\omega_0 t + \phi)}}{2}$$
+---
+
+## 🔄 傅立葉轉換 $X(f)$
+
+### 公式
+
+對於單一餘弦波 $A\cos(2\pi f_0 t + \phi)$，傅立葉轉換為：
+
+$$\mathcal{F}\{A\cos(2\pi f_0 t + \phi)\} = \frac{A}{2}\left[e^{j\phi}\delta(f - f_0) + e^{-j\phi}\delta(f + f_0)\right]$$
+
+### 計算各分量
+
+**第 1 項** $2\cos(500\pi t) = 2\cos(2\pi \cdot 250 \cdot t)$：
+
+$$\mathcal{F}\{2\cos(2\pi \cdot 250 \cdot t)\} = \delta(f - 250) + \delta(f + 250)$$
+
+**第 2 項** $4\cos(1000\pi t) = 4\cos(2\pi \cdot 500 \cdot t)$：
+
+$$\mathcal{F}\{4\cos(2\pi \cdot 500 \cdot t)\} = 2\delta(f - 500) + 2\delta(f + 500)$$
+
+**第 3 項** $-8\cos(2000\pi t) = 8\cos(2\pi \cdot 1000 \cdot t + \pi)$：
+
+$$\mathcal{F}\{-8\cos(2\pi \cdot 1000 \cdot t)\} = -4\delta(f - 1000) - 4\delta(f + 1000)$$
+
+### 合併結果
+
+$$\boxed{X(f) = \delta(f - 250) + \delta(f + 250) + 2\delta(f - 500) + 2\delta(f + 500) - 4\delta(f - 1000) - 4\delta(f + 1000)}$$
+
+---
+
+## 📊 傅立葉級數 $C_n$ 
+
+### 傅立葉級數的複數形式
+
+$$x(t) = \sum_{n=-\infty}^{\infty} C_n \cdot e^{j 2\pi n f_0 t}$$
+
+其中 $f_0$ 是基頻（fundamental frequency），$C_n$ 是複數係數。
+
+### 單一餘弦波的 $C_n$
+
+對於 $A\cos(2\pi f_0 t + \phi)$，利用尤拉公式：
+
+$$\cos(2\pi f_0 t + \phi) = \frac{e^{j(2\pi f_0 t + \phi)} + e^{-j(2\pi f_0 t + \phi)}}{2}$$
 
 因此：
 
-$$A \cos(\omega_0 t + \phi) = \frac{A}{2} e^{j\phi} \cdot e^{j\omega_0 t} + \frac{A}{2} e^{-j\phi} \cdot e^{-j\omega_0 t}$$
+$$A\cos(2\pi f_0 t + \phi) = \frac{A}{2}e^{j\phi} \cdot e^{j 2\pi f_0 t} + \frac{A}{2}e^{-j\phi} \cdot e^{-j 2\pi f_0 t}$$
 
-對照傅立葉級數形式 $\sum C_n e^{jn\omega_0 t}$，可得：
+對照標準形式，得到：
 
-| n | $C_n$ 值 |
-|---|---------|
-| $n = 1$ | $\frac{A}{2} e^{j\phi}$ |
-| $n = -1$ | $\frac{A}{2} e^{-j\phi}$ |
+| $n$ | $C_n$ |
+|-----|-------|
+| $n = +1$ | $\frac{A}{2}e^{j\phi}$ |
+| $n = -1$ | $\frac{A}{2}e^{-j\phi}$ |
 | 其他 | $0$ |
 
-### 📊 頻譜圖特性
+### 本範例的 $C_n$ 值
 
-| 項目 | 值 |
-|------|-----|
-| 頻譜位置 | $f = \pm f_0$（其中 $f_0 = \frac{\omega_0}{2\pi}$）|
-| 振幅譜 $|C_n|$ | $\frac{A}{2}$（在 $n = \pm 1$ 處）|
-| 相位譜 $\angle C_n$ | $+\phi$（在 $n = 1$）、$-\phi$（在 $n = -1$）|
+假設基頻 $f_0 = 250$ Hz（最大公因數），則各分量對應：
+
+| 分量 | 頻率 | 諧波次數 $n$ | $C_n$ | $|C_n|$ |
+|------|------|-------------|-------|---------|
+| $2\cos(500\pi t)$ | 250 Hz | $n = \pm 1$ | $1$ | $1$ |
+| $4\cos(1000\pi t)$ | 500 Hz | $n = \pm 2$ | $2$ | $2$ |
+| $-8\cos(2000\pi t)$ | 1000 Hz | $n = \pm 4$ | $-4$ | $4$ |
 
 ---
 
 ## 🆚 $C_n$ 與振幅 $A$ 的差異
 
-這是初學者最容易混淆的地方！
+這是最容易混淆的地方！
 
-| 概念 | 符號 | 說明 | 例子 |
+| 概念 | 符號 | 說明 | 範例 |
 |------|------|------|------|
-| **時域振幅** | $A$ | 餘弦波的**峰值**，即波形最大值 | $2\cos(\omega_0 t)$ 的 $A = 2$ |
-| **傅立葉係數** | $C_n$ | 雙邊頻譜中**單一頻率**的複數係數 | $C_1 = C_{-1} = \frac{A}{2} = 1$ |
-| **單邊振幅** | $A$ | 單邊頻譜中正頻率處的振幅 | 在 $f_0$ 處振幅 = 2 |
-| **雙邊振幅** | $|C_n|$ | 雙邊頻譜中正負頻率各一半 | 在 $\pm f_0$ 處各 = 1 |
+| **時域振幅** | $A$ | 餘弦波的**峰值** | $2\cos(500\pi t)$ 的 $A = 2$ |
+| **傅立葉係數** | $C_n$ | 雙邊頻譜中**單一頻率**的係數 | $C_1 = C_{-1} = \frac{A}{2} = 1$ |
+| **單邊振幅** | $A$ | 單邊頻譜振幅（只畫正頻率） | 在 250 Hz 處振幅 = $2$ |
+| **雙邊振幅** | $|C_n|$ | 雙邊頻譜振幅（正負各一半） | 在 $\pm 250$ Hz 處各 = $1$ |
 
-> ⚠️ **重點記憶**：
-> - **單邊頻譜**：振幅 = $A$（完整振幅）
-> - **雙邊頻譜**：振幅 = $\frac{A}{2}$（各一半在 $\pm f$）
-> - $|C_n| = \frac{A}{2}$（對於純餘弦波）
+### 核心公式
 
-### 公式總結
+$$\boxed{A = 2|C_n|}$$
 
-$$\boxed{A = 2|C_n| = 2|C_1| = 2|C_{-1}|}$$
+> ⚠️ **記憶口訣**：
+> - **單邊 → 雙邊**：振幅除以 2
+> - **雙邊 → 單邊**：振幅乘以 2
 
 ---
 
 ## 🐍 Python 繪製頻譜圖
-
-以下代碼繪製 $x(t) = 3\cos(2\pi \cdot 50 \cdot t + \frac{\pi}{6})$ 的雙邊振幅譜與相位譜：
 
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
 
 # ========== 訊號參數 ==========
-A = 3           # 振幅
-f0 = 50         # 頻率 (Hz)
-phi = np.pi/6   # 相位 (30°)
+# x(t) = 2cos(500πt) + 4cos(1000πt) - 8cos(2000πt)
+components = [
+    {'A': 2, 'f': 250, 'phi': 0},       # 2cos(500πt)
+    {'A': 4, 'f': 500, 'phi': 0},       # 4cos(1000πt)
+    {'A': 8, 'f': 1000, 'phi': np.pi},  # -8cos(2000πt) = 8cos(...+π)
+]
 
-# ========== 傅立葉係數計算 ==========
-# 對於 A*cos(ω₀t + φ)，Cn 只在 n = ±1 處非零
-C_plus1 = (A / 2) * np.exp(1j * phi)    # C₁
-C_minus1 = (A / 2) * np.exp(-1j * phi)  # C₋₁
+# ========== 計算傅立葉係數 Cn ==========
+frequencies = []
+Cn_values = []
 
-# ========== 頻譜數據 ==========
-frequencies = [-f0, 0, f0]
-amplitudes = [np.abs(C_minus1), 0, np.abs(C_plus1)]  # |C_n|
-phases_deg = [np.angle(C_minus1) * 180/np.pi, 0, np.angle(C_plus1) * 180/np.pi]
+for comp in components:
+    A, f, phi = comp['A'], comp['f'], comp['phi']
+    # 正頻率
+    frequencies.append(f)
+    Cn_values.append((A/2) * np.exp(1j * phi))
+    # 負頻率
+    frequencies.append(-f)
+    Cn_values.append((A/2) * np.exp(-1j * phi))
 
-# ========== 繪圖設定（深色主題）==========
+# 加入 f=0 (DC)
+frequencies.append(0)
+Cn_values.append(0)
+
+# 排序
+sorted_data = sorted(zip(frequencies, Cn_values), key=lambda x: x[0])
+frequencies, Cn_values = zip(*sorted_data)
+
+amplitudes = [np.abs(c) for c in Cn_values]
+phases = [np.angle(c) * 180/np.pi for c in Cn_values]
+
+# ========== 繪圖（深色主題）==========
 plt.style.use('dark_background')
-fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 7), sharex=True)
 
 # 振幅譜
-colors = ['#FF6B6B', '#4ECDC4', '#FF6B6B']  # 紅、青、紅
-ax1.stem(frequencies, amplitudes, linefmt='-', markerfmt='o', basefmt='w-')
-for i, (f, a) in enumerate(zip(frequencies, amplitudes)):
+colors = ['#FF6B6B' if a > 0 else '#4ECDC4' for a in amplitudes]
+markerline, stemlines, baseline = ax1.stem(frequencies, amplitudes, 
+                                            linefmt='-', markerfmt='o', basefmt='w-')
+plt.setp(stemlines, color='#4ECDC4', linewidth=2)
+plt.setp(markerline, color='#FF6B6B', markersize=8)
+
+for f, a in zip(frequencies, amplitudes):
     if a > 0:
-        ax1.annotate(f'$|C_{{{1 if f > 0 else -1}}}| = {a:.1f}$', 
-                    (f, a), textcoords="offset points", 
-                    xytext=(0, 10), ha='center', fontsize=11, color='#FFE66D')
+        ax1.annotate(f'{a:.0f}', (f, a), textcoords="offset points",
+                    xytext=(0, 8), ha='center', fontsize=10, color='#FFE66D')
+
 ax1.set_ylabel('振幅 $|C_n|$', fontsize=12)
-ax1.set_title(f'雙邊振幅頻譜：$x(t) = {A}\\cos(2\\pi \\cdot {f0}t + \\pi/6)$', fontsize=14)
+ax1.set_title(r'雙邊振幅頻譜：$x(t) = 2\cos(500\pi t) + 4\cos(1000\pi t) - 8\cos(2000\pi t)$', 
+              fontsize=13)
 ax1.grid(True, alpha=0.3)
-ax1.set_ylim(0, A/2 + 0.5)
+ax1.set_ylim(0, 5)
 
 # 相位譜
-ax2.stem(frequencies, phases_deg, linefmt='-', markerfmt='s', basefmt='w-')
-for f, p in zip(frequencies, phases_deg):
-    if abs(p) > 0:
-        ax2.annotate(f'${p:.0f}°$', (f, p), textcoords="offset points",
-                    xytext=(0, 10 if p > 0 else -15), ha='center', 
-                    fontsize=11, color='#FFE66D')
+markerline2, stemlines2, baseline2 = ax2.stem(frequencies, phases,
+                                               linefmt='-', markerfmt='s', basefmt='w-')
+plt.setp(stemlines2, color='#9B59B6', linewidth=2)
+plt.setp(markerline2, color='#E74C3C', markersize=8)
+
+for f, p in zip(frequencies, phases):
+    if abs(p) > 1:
+        ax2.annotate(f'{p:.0f}°', (f, p), textcoords="offset points",
+                    xytext=(0, 8 if p > 0 else -12), ha='center', 
+                    fontsize=10, color='#FFE66D')
+
 ax2.set_xlabel('頻率 (Hz)', fontsize=12)
 ax2.set_ylabel('相位 (°)', fontsize=12)
-ax2.set_title('雙邊相位頻譜', fontsize=14)
+ax2.set_title('雙邊相位頻譜', fontsize=13)
 ax2.grid(True, alpha=0.3)
-ax2.set_ylim(-45, 45)
+ax2.set_ylim(-200, 200)
 
 plt.tight_layout()
-plt.savefig('cos_spectrum.png', dpi=150, bbox_inches='tight', 
+plt.savefig('ex_spectrum.png', dpi=150, bbox_inches='tight',
             facecolor='#1a1a2e', edgecolor='none')
 plt.show()
 
 # ========== 輸出驗證 ==========
-print(f"訊號: x(t) = {A}cos(2π·{f0}t + π/6)")
-print(f"時域振幅 A = {A}")
-print(f"傅立葉係數 |C₁| = |C₋₁| = {A/2}")
-print(f"驗證: A = 2|C₁| = {2 * A/2} ✓")
+print("=" * 50)
+print("訊號: x(t) = 2cos(500πt) + 4cos(1000πt) - 8cos(2000πt)")
+print("=" * 50)
+print(f"{'頻率 (Hz)':<12} {'時域振幅 A':<12} {'|Cn| = A/2':<12}")
+print("-" * 50)
+for comp in components:
+    print(f"{comp['f']:<12} {comp['A']:<12} {comp['A']/2:<12}")
+print("=" * 50)
 ```
 
 ### 輸出結果
 
 ```
-訊號: x(t) = 3cos(2π·50t + π/6)
-時域振幅 A = 3
-傅立葉係數 |C₁| = |C₋₁| = 1.5
-驗證: A = 2|C₁| = 3 ✓
+==================================================
+訊號: x(t) = 2cos(500πt) + 4cos(1000πt) - 8cos(2000πt)
+==================================================
+頻率 (Hz)    時域振幅 A   |Cn| = A/2   
+--------------------------------------------------
+250          2            1.0         
+500          4            2.0         
+1000         8            4.0         
+==================================================
 ```
 
 ---
 
 ## 📋 快速對照表
 
-| 訊號類型 | 時域表達式 | $C_n$ | $|C_n|$ | 頻譜特徵 |
-|---------|-----------|-------|---------|---------|
-| 純餘弦 | $A\cos(\omega_0 t)$ | $\frac{A}{2}$ at $n=\pm 1$ | $\frac{A}{2}$ | 只有 $\pm f_0$ 兩根莖 |
-| 帶相位餘弦 | $A\cos(\omega_0 t + \phi)$ | $\frac{A}{2}e^{\pm j\phi}$ at $n=\pm 1$ | $\frac{A}{2}$ | 相位譜有 $\pm\phi$ |
-| DC + 餘弦 | $D + A\cos(\omega_0 t)$ | $D$ at $n=0$, $\frac{A}{2}$ at $n=\pm 1$ | $D$, $\frac{A}{2}$ | 多一根 $f=0$ |
+| 時域表達式 | 頻率 | 傅立葉轉換 $X(f)$ | 傅立葉係數 $|C_n|$ |
+|-----------|------|------------------|-------------------|
+| $2\cos(500\pi t)$ | 250 Hz | $\delta(f \pm 250)$ | $1$ |
+| $4\cos(1000\pi t)$ | 500 Hz | $2\delta(f \pm 500)$ | $2$ |
+| $-8\cos(2000\pi t)$ | 1000 Hz | $-4\delta(f \pm 1000)$ | $4$ |
 
 ---
 
-> 💡 **考試技巧**：看到 $\cos$ 就記得 $C_n = \frac{A}{2}$，雙邊頻譜振幅是時域振幅的一半！
+> 💡 **考試技巧**：
+> 1. 從 $\cos(k\pi t)$ 提取頻率：$f = \frac{k}{2}$ Hz
+> 2. 傅立葉轉換的 $\delta$ 係數 = $\frac{A}{2}$
+> 3. 傅立葉級數 $|C_n| = \frac{A}{2}$
+> 4. 負號 = 相位 $180°$
 
 ## 🔗 相關資源
 
