@@ -18,7 +18,14 @@ const className = Astro.props.class;
 const style = Astro.props.style;
 ---
 <WidgetLayout name="標籤" id="tags" isCollapsed={isCollapsed} collapsedHeight={COLLAPSED_HEIGHT} class={className} style={style}>
-    <div class="flex gap-2 flex-wrap">
+    <!-- Search Bar -->
+    <div class="mb-3 relative">
+        <input type="text" id="tag-search" placeholder="搜尋標籤..." 
+               class="w-full bg-[var(--card-bg-hover)] text-sm rounded-lg px-3 py-2 outline-none border border-transparent focus:border-[var(--primary)] transition-colors"
+        />
+    </div>
+
+    <div id="tag-list" class="flex gap-2 flex-wrap">
         {tags.map(t => (
             <ButtonTag href={getTagUrl(t.name)} label={`查看所有帶有 ${t.name.trim()} 標籤的文章`}>
                 {t.name.trim()}
@@ -26,3 +33,24 @@ const style = Astro.props.style;
         ))}
     </div>
 </WidgetLayout>
+
+<script>
+    const searchInput = document.getElementById('tag-search');
+    const tagList = document.getElementById('tag-list');
+    
+    if (searchInput && tagList) {
+        searchInput.addEventListener('input', (e) => {
+            const query = (e.target as HTMLInputElement).value.toLowerCase();
+            const items = tagList.querySelectorAll('a');
+            
+            items.forEach(item => {
+                const text = item.textContent?.toLowerCase() || '';
+                if (text.includes(query)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    }
+</script>

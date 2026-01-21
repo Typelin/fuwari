@@ -12,47 +12,26 @@ interface Props {
 const { id, name, isCollapsed, collapsedHeight, style } = Astro.props;
 const className = Astro.props.class;
 ---
-<widget-layout data-id={id} data-is-collapsed={String(isCollapsed)} class={"pb-4 card-base " + className} style={style}>
-    <div class="font-bold transition text-lg text-neutral-900 dark:text-neutral-100 relative ml-8 mt-4 mb-2
-        before:w-1 before:h-4 before:rounded-md before:bg-[var(--primary)]
-        before:absolute before:left-[-16px] before:top-[5.5px]">{name}</div>
-    <div id={id} class:list={["collapse-wrapper px-4 overflow-hidden", {"collapsed": isCollapsed}]}>
-        <slot></slot>
-    </div>
-    {isCollapsed && <div class="expand-btn px-4 -mb-2">
-        <button class="btn-plain rounded-lg w-full h-9">
-            <div class="text-[var(--primary)] flex items-center justify-center gap-2 -translate-x-2">
-                <Icon name="material-symbols:more-horiz" class="text-[1.75rem]"></Icon> 更多
-            </div>
-        </button>
-    </div>}
-</widget-layout>
+<div data-id={id} class={"card-base " + className} style={style}>
+    <details class="group transition duration-300" open={!isCollapsed}>
+        <summary class="flex justify-between items-center font-bold text-lg text-neutral-900 dark:text-neutral-100 px-8 py-4 cursor-pointer select-none
+            hover:bg-[var(--card-bg-hover)] transition-colors rounded-t-2xl relative
+            before:w-1 before:h-4 before:rounded-md before:bg-[var(--primary)]
+            before:absolute before:left-4 before:top-[1.35rem]">
+            {name}
+            <Icon name="material-symbols:keyboard-arrow-down-rounded" class="text-3xl transition-transform duration-300 group-open:rotate-180 text-neutral-400 group-hover:text-[var(--primary)]"></Icon>
+        </summary>
+        <div id={id} class="px-4 pb-4 animate-fade-in-down">
+            <slot></slot>
+        </div>
+    </details>
+</div>
 
-<style define:vars={{ collapsedHeight }}>
-    .collapsed {
-        height: var(--collapsedHeight);
+<style>
+    details > summary {
+        list-style: none;
+    }
+    details > summary::-webkit-details-marker {
+        display: none;
     }
 </style>
-
-<script>
-    class WidgetLayout extends HTMLElement {
-        constructor() {
-            super();
-
-            if (this.dataset.isCollapsed !== "true")
-                return;
-
-            const id = this.dataset.id;
-            const btn = this.querySelector('.expand-btn');
-            const wrapper = this.querySelector(`#${id}`)
-            btn!.addEventListener('click', () => {
-                wrapper!.classList.remove('collapsed');
-                btn!.classList.add('hidden');
-            })
-        }
-    }
-
-    if (!customElements.get("widget-layout")) {
-        customElements.define("widget-layout", WidgetLayout);
-    }
-</script>

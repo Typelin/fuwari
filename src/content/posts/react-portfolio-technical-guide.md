@@ -3,8 +3,8 @@ title: "從零打造現代化個人作品集：React 19 + Three.js 技術實踐"
 published: 2026-01-06
 description: "深度解析一個結合 Vite、React 19、Three.js 與 Framer Motion 的前端作品集專案，從架構設計到效能優化的完整技術剖析。"
 image: "/images/articles/react-portfolio-cover.png"
-tags: ["React", "Three.js", "前端開發", "Vite", "Framer Motion"]
-category: "技術分享"
+tags: ["React", "Three.js", "Vite", "Framer Motion"]
+category: "💻 技術實戰"
 ---
 
 在這個前端技術日新月異的時代，一個優秀的個人作品集不僅是展示技能的窗口，更是技術實力的直接體現。本文將深度剖析一個基於 **React 19 + Vite** 的現代化作品集專案，從架構設計到動畫實現，完整呈現「前端審美」與「工程實踐」的結合。

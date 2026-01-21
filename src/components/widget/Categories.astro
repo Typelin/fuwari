@@ -21,13 +21,43 @@ const style = Astro.props.style;
 <WidgetLayout name="類別" id="categories" isCollapsed={isCollapsed} collapsedHeight={COLLAPSED_HEIGHT}
                 class={className} style={style}
 >
-    {categories.map((c) =>
-        <ButtonLink
-            url={c.url}
-            badge={String(c.count)}
-            label={`查看所有 ${c.name.trim()} 類別的文章`}
-        >
-            {c.name.trim()}
-        </ButtonLink>
-    )}
+    <!-- Search Bar -->
+    <div class="mb-3 relative">
+        <input type="text" id="category-search" placeholder="搜尋類別..." 
+               class="w-full bg-[var(--card-bg-hover)] text-sm rounded-lg px-3 py-2 outline-none border border-transparent focus:border-[var(--primary)] transition-colors"
+        />
+    </div>
+
+    <div id="category-list" class="flex flex-col gap-1">
+        {categories.map((c) =>
+            <ButtonLink
+                url={c.url}
+                badge={String(c.count)}
+                label={`查看所有 ${c.name.trim()} 類別的文章`}
+            >
+                {c.name.trim()}
+            </ButtonLink>
+        )}
+    </div>
 </WidgetLayout>
+
+<script>
+    const searchInput = document.getElementById('category-search');
+    const categoryList = document.getElementById('category-list');
+    
+    if (searchInput && categoryList) {
+        searchInput.addEventListener('input', (e) => {
+            const query = (e.target as HTMLInputElement).value.toLowerCase();
+            const items = categoryList.querySelectorAll('a');
+            
+            items.forEach(item => {
+                const text = item.textContent?.toLowerCase() || '';
+                if (text.includes(query)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    }
+</script>

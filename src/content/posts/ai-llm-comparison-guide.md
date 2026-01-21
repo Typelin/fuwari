@@ -3,8 +3,8 @@ title: "2026 雲端 AI 大語言模型比較：GPT 5.2 vs Claude 4.5 vs Gemini 3
 published: 2026-01-03
 description: "深入比較 OpenAI GPT 5.2、Anthropic Claude Sonnet/Opus 4.5、Google Gemini 3 Pro/Flash、DeepSeek V3.2、xAI Grok 4 五大最新 AI 模型，涵蓋常規問答、程式碼能力、多模態、生成圖片/影片、API 定價與訂閱方案，附權威基準測試數據！"
 image: "/images/articles/ai-llm-cover.png"
-tags: ["AI", "ChatGPT", "Claude", "Gemini", "DeepSeek", "LLM"]
-category: "技術探索"
+tags: ["AI", "ChatGPT", "Claude", "Gemini", "DeepSeek"]
+category: "💻 技術實戰"
 draft: false
 ---
 

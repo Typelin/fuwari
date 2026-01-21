@@ -3,8 +3,8 @@ title: "訊號與系統基礎、傅立葉轉換、傅立葉級數及取樣基本
 published: 2026-01-03
 description: "訊號與系統核心概念速解，涵蓋訊號分類、LTI系統、傅立葉轉換、傅立葉級數、卷積、理想濾波器、取樣定理等，附詳細公式與速解訣竅！"
 image: "/images/articles/problem3_spectrum.png"
-tags: ["訊號與系統", "傅立葉轉換", "傅立葉級數", "取樣定理", "卷積"]
-category: "課業筆記"
+tags: ["訊號與系統"]
+category: "📚 課業筆記"
 draft: false
 ---
 
