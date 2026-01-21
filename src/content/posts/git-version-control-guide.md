@@ -212,6 +212,85 @@ git merge origin/main
 
 ---
 
+## 🎬 Part 4.5：團隊協作實戰演練
+
+這裡模擬幾個學生做專題時最容易遇到的「崩潰現場」，告訴你怎麼優雅解決。
+
+### 🎭 現場一：「我只想提交一個檔案，不要全部上傳」
+
+**情境**：你改了 `index.html`（新功能完成了），但也順手改了 `App.css`（只是暫時調一下顏色，很亂），這時候如果你 `git add .` 就會把亂七八糟的 code 也傳上去了。
+
+**解法**：**只 Add 你確定要的檔案**。
+
+```bash
+# ❌ 不要用這個 (這會全加)
+# git add .
+
+# ✅ 用這個 (指定檔案)
+git add index.html
+git commit -m "feat: 完成首頁排版"
+git push origin main
+```
+
+> 💡 **為什麼這麼做？** 這叫「原子化提交 (Atomic Commit)」。讓每個 commit 只做一件事，這樣如果 `index.html` 出問題要撤回，才不會連無辜的 `App.css` 一起被撤掉。
+
+### 🎭 現場二：「Push 失敗！說遠端版本比我的新」
+
+**情境**：你開開心心寫完 code，輸入 `git push`，結果出現紅字：
+`error: failed to push some refs to '...'`
+`hint: Updates were rejected because the remote contains work that you do not have locally`
+
+**這代表**：你的隊友（或是另一個電腦的你）在你寫 code 的這段時間，已經先 push 了新版本上去。
+
+**解法**：**先拉再推**。
+
+1. **先拉取 (Pull)**：把遠端的新程式碼抓下來跟你的合併。
+    ```bash
+    git pull origin main
+    ```
+2. **解決合併視窗**：
+    - 如果沒有衝突，Git 會自動跳出一個編輯器要你輸入 commit 訊息。如果不熟悉 Vim，直接打 `:wq` (存檔離開) 即可。
+3. **再推送 (Push)**：
+    ```bash
+    git push origin main
+    ```
+
+### 🎭 現場三：「發生衝突 (Conflict) 了怎麼辦？」
+
+**情境**：承上，當你 `git pull` 的時候，Git 告訴你：
+`CONFLICT (content): Merge conflict in index.html`
+`Automatic merge failed; fix conflicts and then commit the result.`
+
+**這代表**：你跟隊友剛好改了 **同一個檔案的同一行**，Git 不知道要聽誰的。
+
+**解法**：**手動修復**。
+
+1. **打開衝突的檔案** (例如 `index.html`)，你會看到這種標記：
+
+    ```html
+    <<<<<<< HEAD
+    <h1>這是我的標題</h1>
+    =======
+    <h1>這是隊友改的標題</h1>
+    >>>>>>> ab12cd3...
+    ```
+
+2. **決定留誰的**：你可以只留上面、只留下面，或是兩個都留。把 `<<<<`, `====`, `>>>>` 這些標記全部刪掉，改成你想要的樣子：
+
+    ```html
+    <h1>這是我們討論後決定的終極標題</h1>
+    ```
+
+3. **告訴 Git 你修好了**：
+
+    ```bash
+    git add index.html
+    git commit -m "fix: 解決標題合併衝突"
+    git push origin main
+    ```
+
+---
+
 ## 🆘 Part 5：常見問題與解決方案
 
 ### Q1：不小心 commit 錯了，怎麼撤回？
