@@ -220,7 +220,7 @@ git merge origin/main
 
 **情境**：你改了 `index.html`（新功能完成了），但也順手改了 `App.css`（只是暫時調一下顏色，很亂），這時候如果你 `git add .` 就會把亂七八糟的 code 也傳上去了。
 
-**解法**：**只 Add 你確定要的檔案**。
+**解法：只 Add 你確定要的檔案**
 
 ```bash
 # ❌ 不要用這個 (這會全加)
@@ -234,6 +234,8 @@ git push origin main
 
 > 💡 **為什麼這麼做？** 這叫「原子化提交 (Atomic Commit)」。讓每個 commit 只做一件事，這樣如果 `index.html` 出問題要撤回，才不會連無辜的 `App.css` 一起被撤掉。
 
+---
+
 ### 🎭 現場二：「Push 失敗！說遠端版本比我的新」
 
 **情境**：你開開心心寫完 code，輸入 `git push`，結果出現紅字：
@@ -242,18 +244,22 @@ git push origin main
 
 **這代表**：你的隊友（或是另一個電腦的你）在你寫 code 的這段時間，已經先 push 了新版本上去。
 
-**解法**：**先拉再推**。
+**解法：先 Pull 再 Push**
 
 1. **先拉取 (Pull)**：把遠端的新程式碼抓下來跟你的合併。
     ```bash
     git pull origin main
     ```
-2. **解決合併視窗**：
-    - 如果沒有衝突，Git 會自動跳出一個編輯器要你輸入 commit 訊息。如果不熟悉 Vim，直接打 `:wq` (存檔離開) 即可。
+2. **處理合併**：
+    - 如果沒有衝突，Git 會自動跳出一個編輯器（通常是 Vim 或 VS Code）要你輸入 commit 訊息。
+    - **Vim 苦手請注意**：如果看到畫面凍結，試著輸入 `:wq` (存檔離開)。
+    - **建議設定 VS Code**：執行 `git config --global core.editor "code --wait"`，這樣以後編輯訊息會直接開 VS Code，關掉視窗就算存檔完成。
 3. **再推送 (Push)**：
     ```bash
     git push origin main
     ```
+
+---
 
 ### 🎭 現場三：「發生衝突 (Conflict) 了怎麼辦？」
 
@@ -263,23 +269,16 @@ git push origin main
 
 **這代表**：你跟隊友剛好改了 **同一個檔案的同一行**，Git 不知道要聽誰的。
 
-**解法**：**手動修復**。
+**解法：使用 VS Code 手動修復**
 
-1. **打開衝突的檔案** (例如 `index.html`)，你會看到這種標記：
+1. **打開衝突的檔案** (例如 `index.html`)，你會看到 VS Code 貼心地把衝突標出來：
+   - 綠色 `Current Change`：你原本寫的
+   - 藍色 `Incoming Change`：隊友寫的
 
-    ```html
-    <<<<<<< HEAD
-    <h1>這是我的標題</h1>
-    =======
-    <h1>這是隊友改的標題</h1>
-    >>>>>>> ab12cd3...
-    ```
-
-2. **決定留誰的**：你可以只留上面、只留下面，或是兩個都留。把 `<<<<`, `====`, `>>>>` 這些標記全部刪掉，改成你想要的樣子：
-
-    ```html
-    <h1>這是我們討論後決定的終極標題</h1>
-    ```
+2. **決定留誰的**：
+   - 如果你的對，點擊上方小按鈕 **Accept Current Change**
+   - 如果隊友對，點擊 **Accept Incoming Change**
+   - 都要留，點擊 **Accept Both Changes**
 
 3. **告訴 Git 你修好了**：
 
