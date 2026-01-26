@@ -8,15 +8,9 @@ category: "💻 技術實戰"
 draft: false
 ---
 
-# GitHub 入門基礎：Git 版本控制完整指南
+## 🚀 Chapter 1：Git 核心基礎
 
-你有沒有遇過這種情況：專題做到一半，改壞了不知道怎麼回去？或是 「最終版_真的最終版_這次是真的.zip」 堆滿整個資料夾？
-
-**Git** 就是解決這個問題的工具——它能幫你記錄每一次修改，隨時回到過去的版本，還能讓多人同時協作不打架。
-
----
-
-## 🎯 這篇文章適合誰？
+### 🎯 這篇文章適合誰？
 
 - 從沒用過 Git 的完全新手
 - 學過但指令常常搞混的人
@@ -24,22 +18,22 @@ draft: false
 
 ---
 
-## 📦 Part 1：安裝與設定
+### 📦 Part 1：安裝與設定
 
-### Windows 安裝
+#### Windows 安裝
 
 1. 前往 [git-scm.com](https://git-scm.com/download/win) 下載
 2. 一路 Next（預設選項即可）
 3. 安裝完成後，打開 **Git Bash** 或 **PowerShell**
 
-### macOS 安裝
+#### macOS 安裝
 
 ```bash
 # 使用 Homebrew
 brew install git
 ```
 
-### Linux 安裝
+#### Linux 安裝
 
 ```bash
 # Ubuntu/Debian
@@ -49,7 +43,7 @@ sudo apt install git
 sudo dnf install git
 ```
 
-### 初次設定（必做！）
+#### 初次設定（必做！）
 
 安裝完成後，設定你的身份：
 
@@ -62,9 +56,9 @@ git config --global user.email "你的email@example.com"
 
 ---
 
-## 🔧 Part 2：Git 基礎指令
+### 🔧 Part 2：Git 基礎指令
 
-### 核心概念圖
+#### 核心概念圖
 
 ```
 工作目錄 (Working Directory)
@@ -76,7 +70,7 @@ git config --global user.email "你的email@example.com"
 遠端儲存庫 (Remote Repository - GitHub)
 ```
 
-### 建立新專案
+#### 建立新專案
 
 ```bash
 # 方法 1：在現有資料夾初始化
@@ -87,7 +81,7 @@ git init
 git clone https://github.com/使用者/專案名.git
 ```
 
-### 日常三連發：add → commit → push
+#### 日常三連發：add → commit → push
 
 這是你每天會用到的三個指令：
 
@@ -106,7 +100,7 @@ git commit -m "簡短描述這次修改"
 git push origin main
 ```
 
-### 查看歷史紀錄
+#### 查看歷史紀錄
 
 ```bash
 # 查看提交紀錄
@@ -120,11 +114,13 @@ git log --oneline
 
 ---
 
-## 🌿 Part 3：分支 (Branch) 管理
+## 🌿 Chapter 2：進階分支與團隊協作
+
+### 🌿 Part 3：分支 (Branch) 管理
 
 分支是 Git 最強大的功能之一——你可以在不影響主程式的情況下開發新功能。
 
-### 分支基礎操作
+#### 分支基礎操作
 
 ```bash
 # 查看所有分支
@@ -140,7 +136,7 @@ git checkout feature-login
 git checkout -b feature-login
 ```
 
-### 合併分支
+#### 合併分支
 
 開發完成後，把分支合併回主線：
 
@@ -155,7 +151,7 @@ git merge feature-login
 git branch -d feature-login
 ```
 
-### 分支命名建議
+#### 分支命名建議
 
 | 類型 | 命名格式 | 範例 |
 |------|---------|------|
@@ -165,22 +161,20 @@ git branch -d feature-login
 
 ---
 
-## 🤝 Part 4：GitHub 協作流程
+### 🤝 Part 4：GitHub 協作流程
 
-### Fork & Pull Request 流程
+#### Fork & Pull Request 流程
 
 這是開源專案最常見的協作方式：
 
-```
-1. Fork（複製）別人的專案到你的帳號
-2. Clone 到本地開發
+1. **Fork**（複製）別人的專案到你的帳號
+2. **Clone** 到本地開發
 3. 建立新分支，開始修改
-4. Push 到你的 Fork
-5. 發送 Pull Request 請求合併
+4. **Push** 到你的 Fork
+5. 發送 **Pull Request** 請求合併
 6. 原作者審核後合併
-```
 
-### 團隊協作流程
+#### 團隊協作流程
 
 如果你是團隊成員，不需要 Fork：
 
@@ -197,7 +191,7 @@ git push origin feature-你的功能
 # 4. 在 GitHub 上發送 Pull Request
 ```
 
-### 同步遠端更新
+#### 同步遠端更新
 
 團隊協作時，記得經常拉取最新版本：
 
@@ -212,11 +206,11 @@ git merge origin/main
 
 ---
 
-## 🎬 Part 4.5：團隊協作實戰演練
+### 🎬 Part 4.5：團隊協作實戰演練
 
 這裡模擬幾個學生做專題時最容易遇到的「崩潰現場」，告訴你怎麼優雅解決。
 
-### 🎭 現場一：「我只想提交一個檔案，不要全部上傳」
+#### 🎭 現場一：「我只想提交一個檔案，不要全部上傳」
 
 **情境**：你改了 `index.html`（新功能完成了），但也順手改了 `App.css`（只是暫時調一下顏色，很亂），這時候如果你 `git add .` 就會把亂七八糟的 code 也傳上去了。
 
@@ -234,9 +228,7 @@ git push origin main
 
 > 💡 **為什麼這麼做？** 這叫「原子化提交 (Atomic Commit)」。讓每個 commit 只做一件事，這樣如果 `index.html` 出問題要撤回，才不會連無辜的 `App.css` 一起被撤掉。
 
----
-
-### 🎭 現場二：「Push 失敗！說遠端版本比我的新」
+#### 🎭 現場二：「Push 失敗！說遠端版本比我的新」
 
 **情境**：你開開心心寫完 code，輸入 `git push`，結果出現紅字：
 `error: failed to push some refs to '...'`
@@ -259,9 +251,7 @@ git push origin main
     git push origin main
     ```
 
----
-
-### 🎭 現場三：「發生衝突 (Conflict) 了怎麼辦？」
+#### 🎭 現場三：「發生衝突 (Conflict) 了怎麼辦？」
 
 **情境**：承上，當你 `git pull` 的時候，Git 告訴你：
 `CONFLICT (content): Merge conflict in index.html`
@@ -290,9 +280,11 @@ git push origin main
 
 ---
 
-## 🆘 Part 5：常見問題與解決方案
+## 🛠️ Chapter 3：實戰疑難雜症與規範
 
-### Q1：不小心 commit 錯了，怎麼撤回？
+### 🆘 Part 5：常見問題與解決方案
+
+#### Q1：不小心 commit 錯了，怎麼撤回？
 
 ```bash
 # 撤回最後一次 commit，但保留修改
@@ -302,7 +294,7 @@ git reset --soft HEAD~1
 git reset --hard HEAD~1
 ```
 
-### Q2：改到一半想放棄，回到上次 commit 的狀態？
+#### Q2：改到一半想放棄，回到上次 commit 的狀態？
 
 ```bash
 # 放棄單一檔案的修改
@@ -312,7 +304,7 @@ git checkout -- 檔案名稱
 git checkout -- .
 ```
 
-### Q3：Push 被拒絕，說遠端有更新？
+#### Q3：Push 被拒絕，說遠端有更新？
 
 ```bash
 # 先拉取遠端更新
@@ -324,7 +316,7 @@ git commit -m "解決合併衝突"
 git push origin main
 ```
 
-### Q4：合併衝突 (Merge Conflict) 怎麼辦？
+#### Q4：合併衝突 (Merge Conflict) 怎麼辦？
 
 衝突時，Git 會在檔案中標記：
 
@@ -341,7 +333,7 @@ git push origin main
 2. 刪除 `<<<<<<`, `======`, `>>>>>>` 標記
 3. `git add .` → `git commit`
 
-### Q5：想忽略某些檔案（如 node_modules）？
+#### Q5：想忽略某些檔案（如 node_modules）？
 
 建立 `.gitignore` 檔案：
 
@@ -369,11 +361,11 @@ Thumbs.db
 
 ---
 
-## 📋 Part 6：Commit 訊息規範
+### 📋 Part 6：Commit 訊息規範
 
 好的 commit 訊息能讓歷史紀錄更清晰：
 
-### 常用前綴
+#### 常用前綴
 
 | 前綴 | 用途 | 範例 |
 |------|------|------|
@@ -385,7 +377,7 @@ Thumbs.db
 | `test:` | 測試相關 | `test: 新增登入功能單元測試` |
 | `chore:` | 雜項 | `chore: 更新依賴版本` |
 
-### 範例
+#### 範例
 
 ```bash
 # ✅ 好的 commit 訊息
@@ -400,9 +392,9 @@ git commit -m "asdfasdf"
 
 ---
 
-## 🚀 Part 7：進階技巧
+### 🚀 Part 7：進階技巧
 
-### Stash：暫存未完成的修改
+#### Stash：暫存未完成的修改
 
 工作到一半要切換分支？用 stash 暫存：
 
@@ -419,14 +411,14 @@ git checkout feature-login
 git stash pop
 ```
 
-### Rebase：整理 commit 歷史
+#### Rebase：整理 commit 歷史
 
 ```bash
 # 互動式 rebase，整理最近 3 個 commit
 git rebase -i HEAD~3
 ```
 
-### Cherry-pick：摘取特定 commit
+#### Cherry-pick：摘取特定 commit
 
 ```bash
 # 把某個 commit 複製到目前分支
@@ -435,7 +427,9 @@ git cherry-pick a1b2c3d
 
 ---
 
-## 📚 推薦資源
+## 📚 Chapter 4：總結與資源庫
+
+### 📚 推薦資源
 
 | 資源 | 說明 |
 |------|------|
@@ -446,7 +440,7 @@ git cherry-pick a1b2c3d
 
 ---
 
-## 💡 速查表
+### 💡 速查表
 
 ```bash
 # 初始化
