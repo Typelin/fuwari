@@ -121,32 +121,9 @@ const bannerOffset =
 
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-			<!-- 隨機背景圖 API -->
-		<script data-swup-ignore-script is:inline src="https://pic.acofork.com/random.js"></script>
+		<!-- 隨機背景圖 API -->
+		<script data-swup-ignore-script is:inline src="https://pic.typelin.me/random.js"></script>
 
-		<!-- 
-			[備份] 隨機背景圖 (替代方案)
-			當 pic.acofork.com 失效時，可使用以下內聯腳本 (img.072103.xyz)
-		<script data-swup-ignore-script is:inline>
-			function initRandomBg() {
-				const bgBox = document.getElementById('bg-box');
-				if (bgBox) {
-					const randomImgUrl = 'https://img.072103.xyz/h?' + Date.now();
-					bgBox.style.backgroundImage = 'url(' + randomImgUrl + ')';
-					const img = new Image();
-					img.onload = function() {
-						bgBox.classList.add('loaded');
-					};
-					img.src = randomImgUrl;
-				}
-			}
-			if (document.readyState === 'loading') {
-				document.addEventListener('DOMContentLoaded', initRandomBg);
-			} else {
-				initRandomBg();
-			}
-		</script>
-		-->
 
 		
 		

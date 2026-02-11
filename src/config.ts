@@ -42,7 +42,7 @@ export const siteConfig: SiteConfig = {
 	},
 	background: {
 		enable: true, // Enable background image
-		src: "https://eopfapi.acofork.com/pic?img=ua", // 恢復原本的隨機圖片 URL
+		src: "https://pic.typelin.me", // 恢復原本的隨機圖片正式網域
 		position: "center", // Background position: 'top', 'center', 'bottom'
 		size: "cover", // Background size: 'cover', 'contain', 'auto'
 		repeat: "no-repeat", // Background repeat: 'no-repeat', 'repeat', 'repeat-x', 'repeat-y'
