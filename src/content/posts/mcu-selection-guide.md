@@ -3,7 +3,7 @@ title: "學生專題 MCU 選用指南：Arduino、ESP32、STM32、Raspberry Pi P
 published: 2026-01-15
 description: "學生專題開發板選用指南，完整比較 Arduino、ESP32、STM32、Raspberry Pi Pico 的記憶體規格、適用場景、知名開源專案，幫你選對開發板！"
 image: "/images/articles/mcu-comparison.png"
-tags: ["MCU", "Arduino", "ESP32", "STM32", "Raspberry Pi Pico"]
+tags: ["嵌入式系統"]
 category: "💻 技術實戰"
 draft: false
 ---

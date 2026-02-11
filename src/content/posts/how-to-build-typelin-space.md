@@ -3,7 +3,7 @@ title: 從零打造技術部落格：建站與邊緣計算實踐
 published: 2026-01-02
 description: 紀錄本站如何從 Fuwari 模板轉化為兼具極簡美學與 Cloudflare 邊緣技術的過程。
 image: /images/preview.png
-tags: ["Cloudflare", "Astro"]
+tags: ["網頁開發"]
 category: "💻 技術實戰"
 ---
 

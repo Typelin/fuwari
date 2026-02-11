@@ -3,7 +3,7 @@ title: "2026年1月新番推薦：古諾希亞 GNOSIA — 太空狼人殺的時�
 published: 2026-01-04
 description: "喜歡《命運石之門》的時間操弄？《槍彈辯駁》的推理博弈？這部從神作獨立遊戲改編的動畫，絕對值得一追。"
 image: "/images/articles/gnosia-kv.webp"
-tags: ["GNOSIA", "冬番"]
+tags: ["休閒生活"]
 category: "🎮 生活隨筆"
 draft: false
 ---
