@@ -132,13 +132,14 @@ const LUNCH_AFTER_SLOT = 3;
         padding: 0.5rem;
         text-align: center;
         font-size: 0.75rem;
-        background: oklch(0.20 0.02 var(--hue) / 0.6);
+        background: oklch(0.25 0.02 var(--hue)); /* 實心深色底，防止滾動重疊 */
         border-bottom: 1px solid oklch(0.5 0 0 / 0.1);
+        border-right: 1px solid oklch(0.5 0 0 / 0.1);
         white-space: nowrap;
         color: oklch(0.85 0 0);
     }
     :global(.light) .schedule-time {
-        background: oklch(0.92 0.02 var(--hue));
+        background: oklch(0.95 0.02 var(--hue)); /* 實心亮色底 */
         color: oklch(0.3 0 0);
     }
     .schedule-cell {
@@ -162,6 +163,11 @@ const LUNCH_AFTER_SLOT = 3;
         position: sticky;
         left: 0;
         z-index: 2;
+        /* 手機版滾動時的右側邊界陰影感 */
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+    }
+    .schedule-th.sticky-col {
+        z-index: 3; /* 表頭的時間欄必須在最上層 */
     }
     .lunch-cell {
         padding: 0.5rem;
