@@ -101,6 +101,11 @@ export const profileConfig: ProfileConfig = {
 			icon: "fa6-brands:qq",
 			url: "3825383356",
 		},
+		{
+			name: "Contact",
+			icon: "material-symbols:mail-outline",
+			url: "https://typelin.pages.dev/#footer",
+		},
 	],
 };
 

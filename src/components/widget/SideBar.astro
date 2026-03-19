@@ -1,5 +1,6 @@
 ---
 import type { MarkdownHeading } from "astro";
+import { Icon } from "astro-icon/components";
 
 import Profile from "./Profile.astro";
 import Categories from "./Categories.astro";
@@ -16,8 +17,73 @@ const className = Astro.props.class;
     <div class="flex flex-col w-full gap-4 mb-4">
         <Profile></Profile>
     </div>
+
+    <!-- 測試網站入口卡片 -->
+    <a href="https://dev.typelin.me" target="_blank" rel="noopener noreferrer"
+       class="rainbow-card-link block mb-4 onload-animation" style="animation-delay: 100ms">
+        <div class="rainbow-card">
+            <div class="rainbow-card-inner card-base p-4">
+                <div class="flex items-center gap-3">
+                    <div class="rainbow-icon-wrapper">
+                        <Icon name="material-symbols:rocket-launch" class="text-2xl text-white" />
+                    </div>
+                    <div>
+                        <div class="font-bold text-base dark:text-neutral-50 transition">我的測試網站</div>
+                        <div class="text-xs text-neutral-400 transition mt-0.5">Typelin 的 React 個人作品集與實驗場</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+
     <div id="sidebar-sticky" class="transition-all duration-700 flex flex-col w-full gap-4 top-4 sticky top-4">
         <Categories class="onload-animation" style="animation-delay: 150ms"></Categories>
         <Tags class="onload-animation" style="animation-delay: 200ms"></Tags>
     </div>
 </div>
+
+<style>
+    .rainbow-card-link {
+        text-decoration: none;
+    }
+
+    .rainbow-card {
+        position: relative;
+        border-radius: 0.75rem;
+        padding: 2px;
+        background: linear-gradient(135deg,
+            #ff0080, #ff8c00, #40e0d0,
+            #7b68ee, #ff0080, #ff8c00);
+        background-size: 300% 300%;
+        animation: rainbow-shift 6s ease infinite;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .rainbow-card:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(123, 104, 238, 0.3),
+                    0 4px 12px rgba(255, 0, 128, 0.2);
+    }
+
+    .rainbow-card-inner {
+        border-radius: calc(0.75rem - 2px);
+        background: var(--card-bg);
+    }
+
+    .rainbow-icon-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.5rem;
+        background: linear-gradient(135deg, #7b68ee, #ff0080);
+        flex-shrink: 0;
+    }
+
+    @keyframes rainbow-shift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+</style>
