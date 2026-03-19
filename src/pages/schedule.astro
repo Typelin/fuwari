@@ -34,9 +34,15 @@ const LUNCH_AFTER_SLOT = 3;
             </div>
 
             <!-- Current class status -->
-            <div id="schedule-status" class="mb-6 p-4 rounded-xl border border-[var(--primary)]/20 bg-[var(--primary)]/5">
+            <div id="schedule-status" class="mb-4 p-4 rounded-xl border border-[var(--primary)]/20 bg-[var(--primary)]/5">
                 <div id="status-current" class="font-bold text-lg mb-1 dark:text-white/90 text-black/80">✅ 課程狀態載入中</div>
                 <div id="status-next" class="text-sm dark:text-white/60 text-black/50"></div>
+            </div>
+
+            <!-- VIEW TOGGLE -->
+            <div class="flex items-center gap-2 mb-4">
+                <button id="btn-view-today" class="px-4 py-1.5 rounded-lg text-sm font-bold bg-[var(--primary)] text-white transition" onclick="switchView('today')">今日</button>
+                <button id="btn-view-all" class="px-4 py-1.5 rounded-lg text-sm font-bold bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/10 dark:hover:bg-white/10 transition" onclick="switchView('all')">全部</button>
             </div>
 
             <!-- Schedule table -->
@@ -74,7 +80,7 @@ const LUNCH_AFTER_SLOT = 3;
                                         {WEEKDAYS.slice(0, 5).map((_, di) => {
                                             const entry = SCHEDULE[di]?.[si];
                                             if (!entry) {
-                                                return <td class="schedule-cell schedule-empty">—</td>;
+                                                return <td class="schedule-cell schedule-empty" data-day={di}>—</td>;
                                             }
                                             const prevEntry = si > 0 ? SCHEDULE[di]?.[si - 1] : null;
                                             if (prevEntry && prevEntry.name === entry.name && prevEntry.location === entry.location) {
@@ -89,7 +95,7 @@ const LUNCH_AFTER_SLOT = 3;
                                             }
                                             const color = getCourseColor(entry.name);
                                             return (
-                                                <td class="schedule-cell schedule-course" rowspan={span}
+                                                <td class="schedule-cell schedule-course" rowspan={span} data-day={di}
                                                     style={`--course-color: ${color}; border-left: 3px solid ${color};`}>
                                                     <div class="font-bold text-sm leading-tight dark:text-white/90 text-black/80">{entry.name}</div>
                                                     <div class="text-xs mt-1 flex items-center gap-1 dark:text-white/50 text-black/50">
@@ -187,6 +193,14 @@ const LUNCH_AFTER_SLOT = 3;
     :global(.schedule-today) {
         background: oklch(0.5 0.1 var(--hue) / 0.12) !important;
     }
+
+    /* 視角切換: 全域隱藏非今日欄位 */
+    :global(.view-today) [data-day] {
+        display: none !important;
+    }
+    :global(.view-today) [data-day].is-today {
+        display: table-cell !important;
+    }
 </style>
 
 <script is:inline define:vars={{ scheduleData: JSON.stringify(SCHEDULE), timeSlotsData: JSON.stringify(TIME_SLOTS) }}>
@@ -202,17 +216,23 @@ const LUNCH_AFTER_SLOT = 3;
         var dayIndex = rawDay === 0 ? 6 : rawDay - 1;
         var currentMinutes = utc8.getHours() * 60 + utc8.getMinutes();
 
+        // If today is weekend, fallback "Today" view to Monday (dayIndex 0)
+        var viewDayIndex = dayIndex >= 5 ? 0 : dayIndex;
+
         var statusCurrent = document.getElementById("status-current");
         var statusNext = document.getElementById("status-next");
         if (!statusCurrent || !statusNext) return;
 
-        // Highlight today column
-        document.querySelectorAll("[data-day]").forEach(function(th) {
-            var d = parseInt(th.getAttribute("data-day") || "-1");
-            if (d === dayIndex) th.style.background = "oklch(0.5 0.12 var(--hue))";
+        // Highlight and mark today column
+        document.querySelectorAll("[data-day]").forEach(function(el) {
+            var d = parseInt(el.getAttribute("data-day") || "-1");
+            if (d === viewDayIndex) {
+                el.classList.add("is-today");
+                if (el.tagName === 'TH') el.style.background = "oklch(0.5 0.12 var(--hue))";
+            }
         });
 
-        var todaySchedule = SCHEDULE[dayIndex] || [];
+        var todaySchedule = SCHEDULE[viewDayIndex] || [];
 
         function toMin(t) {
             var p = t.split(":");
@@ -286,11 +306,45 @@ const LUNCH_AFTER_SLOT = 3;
         }
     }
 
+    window.switchView = function(mode) {
+        var table = document.querySelector('.schedule-table');
+        var btnToday = document.getElementById('btn-view-today');
+        var btnAll = document.getElementById('btn-view-all');
+        var lunchCell = document.querySelector('.lunch-cell');
+        if (!table) return;
+
+        var aCls = "px-4 py-1.5 rounded-lg text-sm font-bold bg-[var(--primary)] text-white transition";
+        var iCls = "px-4 py-1.5 rounded-lg text-sm font-bold bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/10 dark:hover:bg-white/10 transition";
+
+        if (mode === 'today') {
+            table.classList.add('view-today');
+            table.style.minWidth = '100%';
+            if (btnToday) btnToday.className = aCls;
+            if (btnAll) btnAll.className = iCls;
+            if (lunchCell) lunchCell.setAttribute('colspan', '2');
+        } else {
+            table.classList.remove('view-today');
+            table.style.minWidth = '700px';
+            if (btnToday) btnToday.className = iCls;
+            if (btnAll) btnAll.className = aCls;
+            if (lunchCell) lunchCell.setAttribute('colspan', '6');
+        }
+    };
+
     // Run immediately
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', updateScheduleStatus);
-    } else {
+    function init() {
         updateScheduleStatus();
+        if (window.innerWidth < 768) {
+            window.switchView('today');
+        } else {
+            window.switchView('all');
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
     }
     setInterval(updateScheduleStatus, 30000);
 })();
