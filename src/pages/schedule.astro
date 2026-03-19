@@ -35,7 +35,7 @@ const LUNCH_AFTER_SLOT = 3;
 
             <!-- Current class status -->
             <div id="schedule-status" class="mb-6 p-4 rounded-xl border border-[var(--primary)]/20 bg-[var(--primary)]/5">
-                <div id="status-current" class="font-bold text-lg mb-1 dark:text-white/90 text-black/80">⏳ 正在計算課程狀態...</div>
+                <div id="status-current" class="font-bold text-lg mb-1 dark:text-white/90 text-black/80">✅ 課程狀態載入中</div>
                 <div id="status-next" class="text-sm dark:text-white/60 text-black/50"></div>
             </div>
 
@@ -183,100 +183,109 @@ const LUNCH_AFTER_SLOT = 3;
     }
 </style>
 
-<script>
-import { SCHEDULE, TIME_SLOTS } from "../config/schedule";
+<script is:inline define:vars={{ scheduleData: JSON.stringify(SCHEDULE), timeSlotsData: JSON.stringify(TIME_SLOTS) }}>
+(function() {
+    var SCHEDULE = JSON.parse(scheduleData);
+    var TIME_SLOTS = JSON.parse(timeSlotsData);
 
-function updateScheduleStatus() {
-    const now = new Date();
-    const utc8 = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
-    const dayIndex = utc8.getDay() === 0 ? 6 : utc8.getDay() - 1;
-    const currentMinutes = utc8.getHours() * 60 + utc8.getMinutes();
+    function updateScheduleStatus() {
+        var now = new Date();
+        var parts = now.toLocaleString("en-US", { timeZone: "Asia/Taipei" }).split(/[\/, :]+/);
+        var utc8 = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
+        var rawDay = utc8.getDay();
+        var dayIndex = rawDay === 0 ? 6 : rawDay - 1;
+        var currentMinutes = utc8.getHours() * 60 + utc8.getMinutes();
 
-    const statusCurrent = document.getElementById("status-current");
-    const statusNext = document.getElementById("status-next");
-    if (!statusCurrent || !statusNext) return;
+        var statusCurrent = document.getElementById("status-current");
+        var statusNext = document.getElementById("status-next");
+        if (!statusCurrent || !statusNext) return;
 
-    document.querySelectorAll("[data-day]").forEach(th => {
-        const d = parseInt(th.getAttribute("data-day") || "-1");
-        if (d === dayIndex) th.classList.add("schedule-today");
-    });
+        // Highlight today column
+        document.querySelectorAll("[data-day]").forEach(function(th) {
+            var d = parseInt(th.getAttribute("data-day") || "-1");
+            if (d === dayIndex) th.style.background = "oklch(0.5 0.12 var(--hue))";
+        });
 
-    const todaySchedule = SCHEDULE[dayIndex] || [];
+        var todaySchedule = SCHEDULE[dayIndex] || [];
 
-    function toMin(t: string) {
-        const [h, m] = t.split(":").map(Number);
-        return h * 60 + m;
-    }
+        function toMin(t) {
+            var p = t.split(":");
+            return parseInt(p[0]) * 60 + parseInt(p[1]);
+        }
 
-    let currentClass = null;
-    let currentEnd = 0;
-    for (let i = 0; i < TIME_SLOTS.length; i++) {
-        const slot = TIME_SLOTS[i];
-        const start = toMin(slot.startTime);
-        const end = toMin(slot.endTime);
-        if (currentMinutes >= start && currentMinutes < end && todaySchedule[i]) {
-            currentClass = todaySchedule[i];
-            currentEnd = end;
-            for (let j = i + 1; j < TIME_SLOTS.length; j++) {
-                const next = todaySchedule[j];
-                if (next && next.name === currentClass!.name) {
-                    currentEnd = toMin(TIME_SLOTS[j].endTime);
-                } else break;
+        // Find current class
+        var currentClass = null;
+        var currentEnd = 0;
+        for (var i = 0; i < TIME_SLOTS.length; i++) {
+            var start = toMin(TIME_SLOTS[i].startTime);
+            var end = toMin(TIME_SLOTS[i].endTime);
+            if (currentMinutes >= start && currentMinutes < end && todaySchedule[i]) {
+                currentClass = todaySchedule[i];
+                currentEnd = end;
+                for (var j = i + 1; j < TIME_SLOTS.length; j++) {
+                    var nx = todaySchedule[j];
+                    if (nx && nx.name === currentClass.name) {
+                        currentEnd = toMin(TIME_SLOTS[j].endTime);
+                    } else break;
+                }
+                break;
             }
-            break;
+        }
+
+        var lunchStart = 720; // 12:00
+        var lunchEnd = 770;   // 12:50
+        var isLunch = currentMinutes >= lunchStart && currentMinutes < lunchEnd;
+
+        // Find next class
+        var nextClass = null;
+        var nextStart = 0;
+        for (var i = 0; i < TIME_SLOTS.length; i++) {
+            var s = toMin(TIME_SLOTS[i].startTime);
+            if (s > currentMinutes && todaySchedule[i]) {
+                nextClass = todaySchedule[i];
+                nextStart = s;
+                break;
+            }
+        }
+
+        function fmt(mins) {
+            if (mins <= 0) return "即將開始";
+            var h = Math.floor(mins / 60);
+            var m = mins % 60;
+            return h > 0 ? h + " 小時 " + m + " 分鐘" : m + " 分鐘";
+        }
+
+        if (currentClass) {
+            var rem = currentEnd - currentMinutes;
+            statusCurrent.innerHTML = '📚 當前：<span style="color:var(--primary);font-weight:700">' + currentClass.name + '</span>（' + currentClass.location + '）— 還有 ' + fmt(rem) + ' 下課';
+        } else if (isLunch) {
+            statusCurrent.innerHTML = '🍱 午休中 — 還有 ' + fmt(lunchEnd - currentMinutes);
+        } else if (dayIndex >= 5) {
+            statusCurrent.textContent = '🎉 週末愉快！今天沒有課程。';
+        } else if (!todaySchedule.some(function(x){return !!x;})) {
+            statusCurrent.textContent = '🎉 今天沒有課程！';
+        } else if (nextClass) {
+            statusCurrent.textContent = '⏸️ 目前沒有課程';
+        } else {
+            statusCurrent.textContent = '✅ 今日課程已結束！';
+        }
+
+        if (nextClass) {
+            var rem2 = nextStart - currentMinutes;
+            statusNext.innerHTML = '⏭️ 下一節：<span style="font-weight:600">' + nextClass.name + '</span>（' + nextClass.location + '）— ' + fmt(rem2) + '後';
+        } else if (currentClass) {
+            statusNext.textContent = '這是今天的最後一堂課了！';
+        } else {
+            statusNext.textContent = '';
         }
     }
 
-    // Check if in lunch break
-    const lunchStart = 12 * 60; // 12:00
-    const lunchEnd = 12 * 60 + 50; // 12:50
-    const isLunch = currentMinutes >= lunchStart && currentMinutes < lunchEnd;
-
-    let nextClass = null;
-    let nextStart = 0;
-    for (let i = 0; i < TIME_SLOTS.length; i++) {
-        const slot = TIME_SLOTS[i];
-        const start = toMin(slot.startTime);
-        if (start > currentMinutes && todaySchedule[i]) {
-            nextClass = todaySchedule[i];
-            nextStart = start;
-            break;
-        }
-    }
-
-    function formatRemaining(mins: number) {
-        if (mins <= 0) return "即將開始";
-        const h = Math.floor(mins / 60);
-        const m = mins % 60;
-        return h > 0 ? `${h} 小時 ${m} 分鐘` : `${m} 分鐘`;
-    }
-
-    if (currentClass) {
-        const remaining = currentEnd - currentMinutes;
-        statusCurrent.innerHTML = `📚 當前：<span style="color: var(--primary); font-weight: 700;">${currentClass.name}</span>（${currentClass.location}）— 還有 ${formatRemaining(remaining)} 下課`;
-    } else if (isLunch) {
-        const remaining = lunchEnd - currentMinutes;
-        statusCurrent.innerHTML = `🍱 午休中 — 還有 ${formatRemaining(remaining)}`;
-    } else if (dayIndex >= 5) {
-        statusCurrent.textContent = "🎉 週末愉快！今天沒有課程。";
-    } else if (!todaySchedule.some(Boolean)) {
-        statusCurrent.textContent = "🎉 今天沒有課程！";
-    } else if (nextClass) {
-        statusCurrent.textContent = "⏸️ 目前沒有課程";
+    // Run immediately
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', updateScheduleStatus);
     } else {
-        statusCurrent.textContent = "✅ 今日課程已結束！";
+        updateScheduleStatus();
     }
-
-    if (nextClass) {
-        const remaining = nextStart - currentMinutes;
-        statusNext.innerHTML = `⏭️ 下一節：<span style="font-weight: 600;">${nextClass.name}</span>（${nextClass.location}）— ${formatRemaining(remaining)}後`;
-    } else if (currentClass) {
-        statusNext.textContent = "這是今天的最後一堂課了！";
-    } else {
-        statusNext.textContent = "";
-    }
-}
-
-updateScheduleStatus();
-setInterval(updateScheduleStatus, 30000);
+    setInterval(updateScheduleStatus, 30000);
+})();
 </script>

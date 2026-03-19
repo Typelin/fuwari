@@ -4,6 +4,7 @@
  * Shows current/next class info with a link to the full schedule page
  */
 import { Icon } from "astro-icon/components";
+import { SCHEDULE, TIME_SLOTS } from "../../config/schedule";
 ---
 
 <a href="/schedule/" class="block mb-4 onload-animation schedule-mini-card-link" style="animation-delay: 120ms">
@@ -14,7 +15,7 @@ import { Icon } from "astro-icon/components";
             <Icon name="material-symbols:arrow-outward" class="text-xs ml-auto opacity-40" />
         </div>
         <div id="sidebar-schedule-current" class="text-xs leading-relaxed dark:text-neutral-300 text-neutral-600 truncate">
-            ⏳ 正在同步...
+            ✅ 載入中
         </div>
         <div id="sidebar-schedule-next" class="text-xs leading-relaxed dark:text-neutral-400 text-neutral-500 truncate mt-0.5">
         </div>
@@ -35,88 +36,93 @@ import { Icon } from "astro-icon/components";
     }
 </style>
 
-<script>
-import { SCHEDULE, TIME_SLOTS } from "../../config/schedule";
+<script is:inline define:vars={{ sidebarScheduleData: JSON.stringify(SCHEDULE), sidebarTimeSlotsData: JSON.stringify(TIME_SLOTS) }}>
+(function() {
+    var SCHEDULE = JSON.parse(sidebarScheduleData);
+    var TIME_SLOTS = JSON.parse(sidebarTimeSlotsData);
 
-function updateSidebarSchedule() {
-    const now = new Date();
-    const utc8 = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
-    const dayIndex = utc8.getDay() === 0 ? 6 : utc8.getDay() - 1;
-    const currentMinutes = utc8.getHours() * 60 + utc8.getMinutes();
+    function updateSidebarSchedule() {
+        var now = new Date();
+        var utc8 = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
+        var rawDay = utc8.getDay();
+        var dayIndex = rawDay === 0 ? 6 : rawDay - 1;
+        var currentMinutes = utc8.getHours() * 60 + utc8.getMinutes();
 
-    const elCurrent = document.getElementById("sidebar-schedule-current");
-    const elNext = document.getElementById("sidebar-schedule-next");
-    if (!elCurrent || !elNext) return;
+        var elCurrent = document.getElementById("sidebar-schedule-current");
+        var elNext = document.getElementById("sidebar-schedule-next");
+        if (!elCurrent || !elNext) return;
 
-    const todaySchedule = SCHEDULE[dayIndex] || [];
+        var todaySchedule = SCHEDULE[dayIndex] || [];
 
-    function toMin(t: string) {
-        const [h, m] = t.split(":").map(Number);
-        return h * 60 + m;
-    }
+        function toMin(t) {
+            var p = t.split(":");
+            return parseInt(p[0]) * 60 + parseInt(p[1]);
+        }
 
-    function fmtRemain(mins: number) {
-        if (mins <= 0) return "即將";
-        const h = Math.floor(mins / 60);
-        const m = mins % 60;
-        return h > 0 ? `${h}h${m}m` : `${m}m`;
-    }
+        function fmtRemain(mins) {
+            if (mins <= 0) return "即將";
+            var h = Math.floor(mins / 60);
+            var m = mins % 60;
+            return h > 0 ? h + "h" + m + "m" : m + "m";
+        }
 
-    let currentClass = null;
-    let currentEnd = 0;
-    for (let i = 0; i < TIME_SLOTS.length; i++) {
-        const s = toMin(TIME_SLOTS[i].startTime);
-        const e = toMin(TIME_SLOTS[i].endTime);
-        if (currentMinutes >= s && currentMinutes < e && todaySchedule[i]) {
-            currentClass = todaySchedule[i];
-            currentEnd = e;
-            for (let j = i + 1; j < TIME_SLOTS.length; j++) {
-                const nx = todaySchedule[j];
-                if (nx && nx.name === currentClass!.name) {
-                    currentEnd = toMin(TIME_SLOTS[j].endTime);
-                } else break;
+        var currentClass = null;
+        var currentEnd = 0;
+        for (var i = 0; i < TIME_SLOTS.length; i++) {
+            var s = toMin(TIME_SLOTS[i].startTime);
+            var e = toMin(TIME_SLOTS[i].endTime);
+            if (currentMinutes >= s && currentMinutes < e && todaySchedule[i]) {
+                currentClass = todaySchedule[i];
+                currentEnd = e;
+                for (var j = i + 1; j < TIME_SLOTS.length; j++) {
+                    var nx = todaySchedule[j];
+                    if (nx && nx.name === currentClass.name) {
+                        currentEnd = toMin(TIME_SLOTS[j].endTime);
+                    } else break;
+                }
+                break;
             }
-            break;
+        }
+
+        var isLunch = currentMinutes >= 720 && currentMinutes < 770;
+
+        var nextClass = null;
+        var nextStart = 0;
+        for (var i = 0; i < TIME_SLOTS.length; i++) {
+            var s2 = toMin(TIME_SLOTS[i].startTime);
+            if (s2 > currentMinutes && todaySchedule[i]) {
+                nextClass = todaySchedule[i];
+                nextStart = s2;
+                break;
+            }
+        }
+
+        if (currentClass) {
+            var rem = currentEnd - currentMinutes;
+            elCurrent.innerHTML = '📚 <b>' + currentClass.name + '</b> · ' + currentClass.location + ' · 剩 ' + fmtRemain(rem);
+        } else if (isLunch) {
+            elCurrent.innerHTML = '🍱 午休中 · 剩 ' + fmtRemain(770 - currentMinutes);
+        } else if (dayIndex >= 5 || !todaySchedule.some(function(x){return !!x;})) {
+            elCurrent.textContent = '🎉 今天沒有課程';
+        } else if (nextClass) {
+            elCurrent.textContent = '⏸️ 目前沒有課程';
+        } else {
+            elCurrent.textContent = '✅ 今日課程已結束';
+        }
+
+        if (nextClass) {
+            var rem2 = nextStart - currentMinutes;
+            elNext.innerHTML = '⏭️ ' + nextClass.name + ' · ' + nextClass.location + ' · ' + fmtRemain(rem2) + '後';
+        } else {
+            elNext.textContent = '';
         }
     }
 
-    const lunchStart = 12 * 60;
-    const lunchEnd = 12 * 60 + 50;
-    const isLunch = currentMinutes >= lunchStart && currentMinutes < lunchEnd;
-
-    let nextClass = null;
-    let nextStart = 0;
-    for (let i = 0; i < TIME_SLOTS.length; i++) {
-        const s = toMin(TIME_SLOTS[i].startTime);
-        if (s > currentMinutes && todaySchedule[i]) {
-            nextClass = todaySchedule[i];
-            nextStart = s;
-            break;
-        }
-    }
-
-    if (currentClass) {
-        const rem = currentEnd - currentMinutes;
-        elCurrent.innerHTML = `📚 <b>${currentClass.name}</b> · ${currentClass.location} · 剩 ${fmtRemain(rem)}`;
-    } else if (isLunch) {
-        const rem = lunchEnd - currentMinutes;
-        elCurrent.innerHTML = `🍱 午休中 · 剩 ${fmtRemain(rem)}`;
-    } else if (dayIndex >= 5 || !todaySchedule.some(Boolean)) {
-        elCurrent.textContent = "🎉 今天沒有課程";
-    } else if (nextClass) {
-        elCurrent.textContent = "⏸️ 目前沒有課程";
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', updateSidebarSchedule);
     } else {
-        elCurrent.textContent = "✅ 今日課程已結束";
+        updateSidebarSchedule();
     }
-
-    if (nextClass) {
-        const rem = nextStart - currentMinutes;
-        elNext.innerHTML = `⏭️ ${nextClass.name} · ${nextClass.location} · ${fmtRemain(rem)}後`;
-    } else {
-        elNext.textContent = "";
-    }
-}
-
-updateSidebarSchedule();
-setInterval(updateSidebarSchedule, 30000);
+    setInterval(updateSidebarSchedule, 30000);
+})();
 </script>
