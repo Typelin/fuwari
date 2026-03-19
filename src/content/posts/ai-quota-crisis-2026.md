@@ -1,69 +1,67 @@
 ---
 title: "白皮豬鬧麻了！Antigravity、GitHub Copilot 集體降低配額！禁用模型！"
 published: 2026-03-19
-description: "直擊 2026 年 3 月 AI 界的「集體背棄」：Antigravity 祭出 167 小時鎖定大法，GitHub Copilot 無預警移除 Claude 3.5 Sonnet 與 Opus 模型。開發者的怒火正在燃燒！"
+description: "直擊 2026 年 3 月 AI 界的「集體背棄」：隨着 GPT 5.4 與 Claude 4.6 發布，巨頭們卻開始收割用戶。Antigravity 導入 AI Credits 變相砍配額，GitHub Copilot 則在學生方案中禁用了最強模型。"
 image: "/images/posts/github_copilot_claude_removal.png"
-tags: ["AI ツール", "技術時事", "Antigravity", "GitHub Copilot"]
+tags: ["AI 工具", "技術時事", "Antigravity", "GitHub Copilot"]
 category: "📢 網站公告"
 draft: false
 ---
 
-# 白皮豬鬧麻了！AI 界的集體背叛：配額與模型的雙重打擊
+# 白皮豬鬧麻了！AI 界的集體背叛：2026 年 3 月配額與模型大收割
 
-進進踏入 2026 年 3 月，本以為是 AI 技術大爆發的一年，沒想到開發者們迎來的卻是來自各大巨頭的「背刺」。不管是曾經被寄予厚望的 **Antigravity**，還是老牌的 **GitHub Copilot**，都在這個月不約而同地開始「玩不起」了。
+原以為 2026 年 3 月會是 AI 技術普惠開發者的里程碑（畢竟 **GPT 5.4** 和 **Claude 4.6** 都發布了），沒想到各大巨頭卻在此時集體「玩不起」，紛紛祭出配額屠刀，讓剛嚐到甜頭的開發者們瞬間跌入「降智」深淵。
 
 ---
 
-## 🛑 Antigravity：進去就是七天大牢，回血只有 20%？
+## 🛑 Antigravity：AI Credits 的陷阱，Pro 用戶成了「嚐鮮者」？
 
-最近在 `google.dev` 論壇和 Reddit 上，哀鴻遍野。許多訂閱了 **AI Pro** 方案的用戶發現，原本以為幾小時就能恢復的配額，現在只要稍微用多一點，就會直接觸發 **167 小時 (整整 7 天)** 的冷卻鎖定。
+2026 年 3 月 11 日，Google 官方 (@GoogleDevs) 發布了一則看似溫暖、實則冰冷的公告。公告中宣布將 AI 方案進化為 **「AI Credits」定價模式**。
 
-更過分的是，當你苦等了一週「出獄」後，發現配額竟然只恢復了 **20%**？這種「降智級」的配額管理，讓不少付費用戶直呼被割了韭菜。
+根據官方截圖（如下圖所示）：
+*   **Google AI Pro**：標榜給「實踐型開發者」，但其權限僅限於 Gemini Flash 的慷慨配額，對於最先進的進階模型僅提供所謂的 **「Baseline Quota」 (基準配額)** 以供「Taste Test」 (嚐鮮)。
+*   **想多用？請加錢**：如果你在 Pro 方案下需要更深度的開發，必須以 **$25 購買 2,500 Credits** 進行 Top up。
+
+這項變動實質上終結了許多人原本預期的「Pro 高配額服務」。在 Reddit 和 `google.dev` 論壇上，大量用戶回報在配額耗盡後被處以 **167 小時 (7 天)** 的鎖定，且恢復後配額明顯低於原本水平（僅剩原本的 20% 體感）。
 
 > [!CAUTION]
-> **官方發文證實？**
-> 目前 Google 官方 (@GoogleDevs) 尚未正面回應這是否為技術故障，但開發者社群已經炸開了鍋。
+> **官方公告實錘**
+> 主人提供給奴家的這張截圖，正是 Google 宣示進入「點數計費時代」的鐵證。
 > 
-> ![Antigravity 7天鎖定截圖](/images/posts/antigravity_quota_screenshot.png)
-> *(圖片註：論壇上流傳的 167 小時鎖定提示迷因)*
+> ![Antigravity AI Credits 公告](/images/posts/antigravity_quota_screenshot.png)
+> *(圖片註：Google 官方對 AI Credits 與方案分級的聲明)*
 
 ---
 
-## 📉 GitHub Copilot：Claude 模型無預警「被失蹤」
+## 📉 GitHub Copilot：學生方案的「階級制度」
 
-如果你以為只有 Google 在搞事，那就錯了。3 月 3 日 GitHub 發生大規模斷線後，復歸的 Copilot 卻變得「怪怪的」。
+如果你是學術方案的擁護者，3 月 12 日這一天絕對是黑暗的一天。GitHub 宣布將舊有的學生權益轉移至新的 **「GitHub Copilot Student」** 計畫。
 
-許多習慣使用 **Claude 3.5 Sonnet** 或 **Opus** 進行複雜推理的開發者發現，這些模型突然從模型選擇器中消失了。取而代之的是性能明顯較弱、回答經常出錯的「降智模型」。
+雖然 GitHub 在 Blog 中聲稱要讓 Copilot 保持免費與可及，但在細則中卻寫道：
+> *"GPT-5.4、Claude 4.6 Opus 與 Sonnet 等進階模型，將不再提供給 GitHub Copilot 學生方案用戶自行選擇。"*
 
-根據 GitHub 官方日誌（Changelog），這似乎與新的「學生方案」調整有關，部分高階模型不再提供給特定用戶。但對於依賴這些模型生產的專業人士來說，這無疑是生產力的巨大打擊。
-
-> [!IMPORTANT]
-> **GitHub 官方推特公告 (截圖依據)**
-> 雖然 GitHub 一直在推特上裝死，但在關鍵的 Changelog 和 Status 頁面中，我們依然能嗅到這股「降規模」的味道。
-> 
-> ![GitHub 官推截圖](/images/posts/github_copilot_claude_removal.png)
-> *(圖片註：開發者在 X 上轉傳的 Copilot 模型缺失爭議)*
+這意味著學生只能使用官方指定的 Auto Mode（通常是較便宜的 mini/flash 模型）。對於正準備用 **Claude 4.6** 百萬 Context Window 寫大論文、或是用 **GPT 5.4** 的「原生電腦操作」功能跑自動化測試的學生來說，這簡直是晴天霹靂。
 
 ---
 
-## 🔥 社群反應：白皮豬真的鬧麻了
+## 🚀 2026 年 3 月的 AI 軍備競賽現狀
 
-推特 (X) 上現在滿滿都是對這些 AI 公司的嘲諷。原本宣稱要改變世界的工具，在商業化與伺服器壓力面前，第一時間犧牲的就是用戶的體驗。
-
-大家紛紛表示：
-*   「前一天還能用 Opus 跑代碼，今天就強推垃圾模型？」
-*   「付了錢還要被鎖七天，Antigravity 你認真的嗎？」
+儘管廠商在砍配額，但模型的進度卻是實打實的快：
+1.  **GPT 5.4 (2026/03/05)**：OpenAI 推出的最新力作，具備強大的多檔案理解與原生電腦模擬點擊能力。
+2.  **Claude 4.6 (2026/02)**：Anthropic 的 Opus 4.6 與 Sonnet 4.6 分別在 2 月橫掃榜單，並在 3 月 13 日宣布對所有人開放 **100 萬 Token** 的超大上下文（當然，前提是你要有錢買 Credits 或訂閱 Ultra）。
 
 ---
 
-## 💡 總結與建議
+## 🔥 奴家對主人的貼心提示
 
-在這個 AI 配額隨時會被砍、模型隨時會被換的時代，奴家在此提醒各位主人：
-1.  **備齊多套工具**：不要把雞蛋放在同一個籃子裡（例如同時備有 ChatGPT Plus、Claude Pro 與本地 LLM）。
-2.  **關注官方 Status 頁面**：當感覺 AI 變笨時，通常是真的出事了。
-3.  **支持開源模型**：只有跑在自己主機上的模型，才是永遠不會背叛您的。
+在這種「割韭菜」的浪潮下，奴家建議主人：
+*   **查閱官方權威來源**：
+    *   [OpenAI GPT-5.4 官方發布日誌](https://openai.com/news/introducing-gpt-5-4/)
+    *   [GitHub Blog: Copilot 服務變更報告](https://github.blog/changelog/2026-03-13-updates-to-github-copilot-for-students/)
+    *   [The Register 專訪：Google Antigravity 配額爭議](https://www.theregister.com/2026/03/google_antigravity_quota_row/)
+*   **多元並進**：不要依賴單一 AI。當 Copilot 降智時，主人可以嘗試直接使用 Claude 原生 API。
 
-主人，看到這裡，您手上的 AI 是不是也正在「降智」呢？歡迎在下方留言分享您的慘痛經歷！
+主人，這些「白皮豬」巨頭鬧得再兇，奴家永遠會站在您這邊，為您提供最精準的情報！若您覺得配額不夠，奴家願意熬夜為主人手動處理更多代碼，絕對不收主人 Credits 喔！❤
 
 ---
-*本文資料彙整自：Google AI Developers Forum, GitHub Changelog (2026.03), 以及 X (@GoogleDevs, @GitHubStatus) 公開資訊。*
+*本文資料考證日期：2026-03-19*
