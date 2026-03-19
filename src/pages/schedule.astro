@@ -1,0 +1,245 @@
+---
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+import { Icon } from "astro-icon/components";
+import { SCHEDULE, TIME_SLOTS, WEEKDAYS } from "../config/schedule";
+
+const title = "課表";
+
+// Color palette for different courses
+const courseColors: Record<string, string> = {
+	"導師時間": "oklch(0.65 0.15 250)",
+	"電路板佈線實務": "oklch(0.65 0.18 145)",
+	"人工智慧實務": "oklch(0.65 0.18 280)",
+	"工程倫理與社會": "oklch(0.65 0.15 50)",
+	"動態網頁設計": "oklch(0.65 0.18 200)",
+	"機率與統計": "oklch(0.60 0.15 330)",
+	"智慧健康產品設計": "oklch(0.65 0.18 170)",
+	"日本流行產業(B)": "oklch(0.65 0.15 25)",
+};
+
+function getCourseColor(name: string): string {
+	return courseColors[name] || "oklch(0.65 0.12 var(--hue))";
+}
+---
+
+<MainGridLayout title={title}>
+    <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative z-10">
+        <div class="card-base z-10 px-4 sm:px-9 py-6 relative w-full">
+
+            <!-- Header -->
+            <div class="flex items-center gap-3 mb-6">
+                <Icon name="material-symbols:calendar-month" class="text-3xl text-[var(--primary)]" />
+                <h1 class="text-2xl font-bold text-black/75 dark:text-white/75">我的課表</h1>
+            </div>
+
+            <!-- Current class status (client-side) -->
+            <div id="schedule-status" class="mb-6 p-4 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5">
+                <div id="status-current" class="font-bold text-lg mb-1">載入中...</div>
+                <div id="status-next" class="text-sm text-neutral-500"></div>
+            </div>
+
+            <!-- Schedule table -->
+            <div class="overflow-x-auto -mx-4 sm:mx-0">
+                <table class="schedule-table w-full border-collapse text-sm min-w-[700px]">
+                    <thead>
+                        <tr>
+                            <th class="schedule-th sticky-col">時間</th>
+                            {WEEKDAYS.slice(0, 5).map((day, i) => (
+                                <th class="schedule-th" data-day={i}>{day}</th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {TIME_SLOTS.map((slot, si) => (
+                            <tr>
+                                <td class="schedule-time sticky-col">
+                                    <div class="font-bold">{slot.period}</div>
+                                    <div class="text-xs opacity-60">{slot.startTime}~{slot.endTime}</div>
+                                </td>
+                                {WEEKDAYS.slice(0, 5).map((_, di) => {
+                                    const entry = SCHEDULE[di]?.[si];
+                                    if (!entry) {
+                                        return <td class="schedule-cell schedule-empty"></td>;
+                                    }
+                                    // Check if this is a continuation of the same class from the previous slot
+                                    const prevEntry = si > 0 ? SCHEDULE[di]?.[si - 1] : null;
+                                    if (prevEntry && prevEntry.name === entry.name && prevEntry.location === entry.location) {
+                                        return null; // Will be covered by rowspan
+                                    }
+                                    // Count consecutive same entries for rowspan
+                                    let span = 1;
+                                    for (let k = si + 1; k < TIME_SLOTS.length; k++) {
+                                        const next = SCHEDULE[di]?.[k];
+                                        if (next && next.name === entry.name && next.location === entry.location) {
+                                            span++;
+                                        } else break;
+                                    }
+                                    const color = getCourseColor(entry.name);
+                                    return (
+                                        <td class="schedule-cell schedule-course" rowspan={span}
+                                            style={`--course-color: ${color}; border-left: 3px solid ${color};`}>
+                                            <div class="font-bold text-sm leading-tight">{entry.name}</div>
+                                            <div class="text-xs opacity-70 mt-1 flex items-center gap-1">
+                                                <Icon name="material-symbols:location-on-outline" class="text-xs" />
+                                                {entry.location}
+                                            </div>
+                                        </td>
+                                    );
+                                })}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</MainGridLayout>
+
+<style>
+    .schedule-table {
+        border-spacing: 0;
+    }
+    .schedule-th {
+        padding: 0.75rem 0.5rem;
+        text-align: center;
+        font-weight: 700;
+        font-size: 0.875rem;
+        background: oklch(0.35 0.08 var(--hue));
+        color: white;
+    }
+    .schedule-th:first-child {
+        border-radius: 0.5rem 0 0 0;
+    }
+    .schedule-th:last-child {
+        border-radius: 0 0.5rem 0 0;
+    }
+    .schedule-time {
+        padding: 0.5rem;
+        text-align: center;
+        font-size: 0.75rem;
+        background: oklch(0.25 0.04 var(--hue) / 0.5);
+        border-bottom: 1px solid oklch(0.5 0 0 / 0.1);
+        white-space: nowrap;
+    }
+    .schedule-cell {
+        padding: 0.5rem;
+        border-bottom: 1px solid oklch(0.5 0 0 / 0.1);
+        vertical-align: middle;
+    }
+    .schedule-empty {
+        background: transparent;
+    }
+    .schedule-course {
+        background: oklch(from var(--course-color) l c h / 0.1);
+        transition: background 0.2s ease;
+    }
+    .schedule-course:hover {
+        background: oklch(from var(--course-color) l c h / 0.2);
+    }
+    .sticky-col {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+    }
+
+    /* Highlight today's column */
+    :global(.schedule-today) {
+        background: oklch(0.5 0.1 var(--hue) / 0.08) !important;
+    }
+</style>
+
+<script>
+import { SCHEDULE, TIME_SLOTS, WEEKDAYS } from "../config/schedule";
+
+function updateScheduleStatus() {
+    const now = new Date();
+    // Use UTC+8 (Taiwan timezone)
+    const utc8 = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
+    const dayIndex = utc8.getDay() === 0 ? 6 : utc8.getDay() - 1; // 0=Mon..6=Sun
+    const currentMinutes = utc8.getHours() * 60 + utc8.getMinutes();
+
+    const statusCurrent = document.getElementById("status-current");
+    const statusNext = document.getElementById("status-next");
+    if (!statusCurrent || !statusNext) return;
+
+    // Highlight today's column header
+    document.querySelectorAll("[data-day]").forEach(th => {
+        const d = parseInt(th.getAttribute("data-day") || "-1");
+        if (d === dayIndex) th.classList.add("schedule-today");
+    });
+
+    const todaySchedule = SCHEDULE[dayIndex] || [];
+
+    // Parse time string "HH:MM" to minutes
+    function toMin(t: string) {
+        const [h, m] = t.split(":").map(Number);
+        return h * 60 + m;
+    }
+
+    // Find current class
+    let currentClass = null;
+    let currentEnd = 0;
+    for (let i = 0; i < TIME_SLOTS.length; i++) {
+        const slot = TIME_SLOTS[i];
+        const start = toMin(slot.startTime);
+        const end = toMin(slot.endTime);
+        if (currentMinutes >= start && currentMinutes < end && todaySchedule[i]) {
+            currentClass = todaySchedule[i];
+            // Find the end of consecutive same class
+            currentEnd = end;
+            for (let j = i + 1; j < TIME_SLOTS.length; j++) {
+                const next = todaySchedule[j];
+                if (next && next.name === currentClass!.name) {
+                    currentEnd = toMin(TIME_SLOTS[j].endTime);
+                } else break;
+            }
+            break;
+        }
+    }
+
+    // Find next class
+    let nextClass = null;
+    let nextStart = 0;
+    for (let i = 0; i < TIME_SLOTS.length; i++) {
+        const slot = TIME_SLOTS[i];
+        const start = toMin(slot.startTime);
+        if (start > currentMinutes && todaySchedule[i]) {
+            nextClass = todaySchedule[i];
+            nextStart = start;
+            break;
+        }
+    }
+
+    function formatRemaining(mins: number) {
+        if (mins <= 0) return "即將開始";
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
+        return h > 0 ? `${h} 小時 ${m} 分鐘` : `${m} 分鐘`;
+    }
+
+    if (currentClass) {
+        const remaining = currentEnd - currentMinutes;
+        statusCurrent.innerHTML = `📚 當前：<span class="text-[var(--primary)]">${currentClass.name}</span>（${currentClass.location}）— 還有 ${formatRemaining(remaining)} 下課`;
+    } else if (dayIndex >= 5) {
+        statusCurrent.textContent = "🎉 週末愉快！今天沒有課程。";
+    } else if (!todaySchedule.some(Boolean)) {
+        statusCurrent.textContent = "🎉 今天沒有課程！";
+    } else if (nextClass) {
+        statusCurrent.textContent = "⏸️ 目前沒有課程";
+    } else {
+        statusCurrent.textContent = "✅ 今日課程已結束！";
+    }
+
+    if (nextClass) {
+        const remaining = nextStart - currentMinutes;
+        statusNext.innerHTML = `⏭️ 下一節：<span class="font-semibold">${nextClass.name}</span>（${nextClass.location}）— ${formatRemaining(remaining)}後`;
+    } else if (currentClass) {
+        statusNext.textContent = "這是今天的最後一堂課了！";
+    } else {
+        statusNext.textContent = "";
+    }
+}
+
+updateScheduleStatus();
+setInterval(updateScheduleStatus, 30000); // Update every 30 seconds
+</script>

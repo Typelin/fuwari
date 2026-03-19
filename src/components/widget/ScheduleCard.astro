@@ -1,0 +1,115 @@
+---
+/**
+ * Sidebar schedule mini-card
+ * Shows current/next class info with a link to the full schedule page
+ */
+import { Icon } from "astro-icon/components";
+---
+
+<a href="/schedule/" class="block mb-4 onload-animation schedule-mini-card-link" style="animation-delay: 120ms">
+    <div class="card-base p-3 border border-black/10 dark:border-white/10 schedule-mini-card">
+        <div class="flex items-center gap-2 mb-2">
+            <Icon name="material-symbols:calendar-month" class="text-lg text-[var(--primary)]" />
+            <span class="font-bold text-sm dark:text-neutral-50 transition">課程狀態</span>
+            <Icon name="material-symbols:arrow-outward" class="text-xs ml-auto opacity-40" />
+        </div>
+        <div id="sidebar-schedule-current" class="text-xs leading-relaxed text-neutral-600 dark:text-neutral-400 truncate">
+            載入中...
+        </div>
+        <div id="sidebar-schedule-next" class="text-xs leading-relaxed text-neutral-500 dark:text-neutral-500 truncate mt-0.5">
+        </div>
+    </div>
+</a>
+
+<style>
+    .schedule-mini-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+    }
+    .schedule-mini-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px oklch(0.5 0.1 var(--hue) / 0.15);
+    }
+    .schedule-mini-card-link {
+        text-decoration: none;
+    }
+</style>
+
+<script>
+import { SCHEDULE, TIME_SLOTS } from "../../config/schedule";
+
+function updateSidebarSchedule() {
+    const now = new Date();
+    const utc8 = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
+    const dayIndex = utc8.getDay() === 0 ? 6 : utc8.getDay() - 1;
+    const currentMinutes = utc8.getHours() * 60 + utc8.getMinutes();
+
+    const elCurrent = document.getElementById("sidebar-schedule-current");
+    const elNext = document.getElementById("sidebar-schedule-next");
+    if (!elCurrent || !elNext) return;
+
+    const todaySchedule = SCHEDULE[dayIndex] || [];
+
+    function toMin(t: string) {
+        const [h, m] = t.split(":").map(Number);
+        return h * 60 + m;
+    }
+
+    function fmtRemain(mins: number) {
+        if (mins <= 0) return "即將";
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
+        return h > 0 ? `${h}h${m}m` : `${m}m`;
+    }
+
+    let currentClass = null;
+    let currentEnd = 0;
+    for (let i = 0; i < TIME_SLOTS.length; i++) {
+        const s = toMin(TIME_SLOTS[i].startTime);
+        const e = toMin(TIME_SLOTS[i].endTime);
+        if (currentMinutes >= s && currentMinutes < e && todaySchedule[i]) {
+            currentClass = todaySchedule[i];
+            currentEnd = e;
+            for (let j = i + 1; j < TIME_SLOTS.length; j++) {
+                const nx = todaySchedule[j];
+                if (nx && nx.name === currentClass!.name) {
+                    currentEnd = toMin(TIME_SLOTS[j].endTime);
+                } else break;
+            }
+            break;
+        }
+    }
+
+    let nextClass = null;
+    let nextStart = 0;
+    for (let i = 0; i < TIME_SLOTS.length; i++) {
+        const s = toMin(TIME_SLOTS[i].startTime);
+        if (s > currentMinutes && todaySchedule[i]) {
+            nextClass = todaySchedule[i];
+            nextStart = s;
+            break;
+        }
+    }
+
+    if (currentClass) {
+        const rem = currentEnd - currentMinutes;
+        elCurrent.innerHTML = `📚 <b>${currentClass.name}</b> · ${currentClass.location} · 剩 ${fmtRemain(rem)}`;
+    } else if (dayIndex >= 5 || !todaySchedule.some(Boolean)) {
+        elCurrent.textContent = "🎉 今天沒有課程";
+    } else if (nextClass) {
+        elCurrent.textContent = "⏸️ 目前沒有課程";
+    } else {
+        elCurrent.textContent = "✅ 今日課程已結束";
+    }
+
+    if (nextClass) {
+        const rem = nextStart - currentMinutes;
+        elNext.innerHTML = `⏭️ ${nextClass.name} · ${nextClass.location} · ${fmtRemain(rem)}後`;
+    } else {
+        elNext.textContent = "";
+    }
+}
+
+updateSidebarSchedule();
+setInterval(updateSidebarSchedule, 30000);
+</script>

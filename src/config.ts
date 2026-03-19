@@ -73,6 +73,11 @@ export const navBarConfig: NavBarConfig = {
 			url: "/about/",
 			external: false,
 		},
+		{
+			name: "課表",
+			url: "/schedule/",
+			external: false,
+		},
 	],
 };
 
