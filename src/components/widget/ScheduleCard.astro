@@ -10,13 +10,13 @@ import { Icon } from "astro-icon/components";
     <div class="card-base p-3 border border-black/10 dark:border-white/10 schedule-mini-card">
         <div class="flex items-center gap-2 mb-2">
             <Icon name="material-symbols:calendar-month" class="text-lg text-[var(--primary)]" />
-            <span class="font-bold text-sm dark:text-neutral-50 transition">課程狀態</span>
+            <span class="font-bold text-sm dark:text-neutral-50 text-neutral-800 transition">課程狀態</span>
             <Icon name="material-symbols:arrow-outward" class="text-xs ml-auto opacity-40" />
         </div>
-        <div id="sidebar-schedule-current" class="text-xs leading-relaxed text-neutral-600 dark:text-neutral-400 truncate">
-            載入中...
+        <div id="sidebar-schedule-current" class="text-xs leading-relaxed dark:text-neutral-300 text-neutral-600 truncate">
+            ⏳ 正在同步...
         </div>
-        <div id="sidebar-schedule-next" class="text-xs leading-relaxed text-neutral-500 dark:text-neutral-500 truncate mt-0.5">
+        <div id="sidebar-schedule-next" class="text-xs leading-relaxed dark:text-neutral-400 text-neutral-500 truncate mt-0.5">
         </div>
     </div>
 </a>
@@ -80,6 +80,10 @@ function updateSidebarSchedule() {
         }
     }
 
+    const lunchStart = 12 * 60;
+    const lunchEnd = 12 * 60 + 50;
+    const isLunch = currentMinutes >= lunchStart && currentMinutes < lunchEnd;
+
     let nextClass = null;
     let nextStart = 0;
     for (let i = 0; i < TIME_SLOTS.length; i++) {
@@ -94,6 +98,9 @@ function updateSidebarSchedule() {
     if (currentClass) {
         const rem = currentEnd - currentMinutes;
         elCurrent.innerHTML = `📚 <b>${currentClass.name}</b> · ${currentClass.location} · 剩 ${fmtRemain(rem)}`;
+    } else if (isLunch) {
+        const rem = lunchEnd - currentMinutes;
+        elCurrent.innerHTML = `🍱 午休中 · 剩 ${fmtRemain(rem)}`;
     } else if (dayIndex >= 5 || !todaySchedule.some(Boolean)) {
         elCurrent.textContent = "🎉 今天沒有課程";
     } else if (nextClass) {
