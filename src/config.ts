@@ -13,7 +13,7 @@ import { LinkPreset } from "./types/config";
 export const siteConfig: SiteConfig = {
 	title: "Typelin Blog",
 	subtitle: "技術分享",
-	description: "這是 Typelin 的個人部落格，記錄著各種有趣的探索與心得。",
+	description: "Typelin 的技術空間：記錄靈感與科技探索。",
 
 	keywords: [
 		"Typelin",
@@ -69,7 +69,7 @@ export const navBarConfig: NavBarConfig = {
 		LinkPreset.Home,
 		LinkPreset.Archive,
 		{
-			name: "關於我",
+			name: "關於",
 			url: "/about/",
 			external: false,
 		},

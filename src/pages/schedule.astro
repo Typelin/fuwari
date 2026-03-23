@@ -30,7 +30,7 @@ const LUNCH_AFTER_SLOT = 3;
 
             <div class="flex items-center gap-3 mb-6">
                 <Icon name="material-symbols:calendar-month" class="text-3xl text-[var(--primary)]" />
-                <h1 class="text-2xl font-bold dark:text-white/90 text-black/80">我的課表</h1>
+                <h1 class="text-2xl font-bold dark:text-white/90 text-black/80">課程時刻表</h1>
             </div>
 
             <!-- Current class status -->
@@ -341,11 +341,17 @@ const LUNCH_AFTER_SLOT = 3;
         }
     }
 
+    // Initialize on direct load
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
     }
+
+    // Swup support: Re-initialize when Swup replaces content
+    document.addEventListener('swup:page:view', init);
+    
+    // Safety interval for time updates
     setInterval(updateScheduleStatus, 30000);
 })();
 </script>
