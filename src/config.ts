@@ -56,7 +56,7 @@ export const siteConfig: SiteConfig = {
 	favicon: [
 		// Leave this array empty to use the default favicon
 		{
-			src: "/circle_v3.png", // 使用 V3 Logo 作為分頁圖示
+			src: "/avatar_v1.jpg", // 更新頭像作為分頁圖示
 			//   theme: 'light',              // (Optional) Either 'light' or 'dark', set only if you have different favicons for light and dark mode
 			//   sizes: '32x32',              // (Optional) Size of the favicon, set only if you have favicons of different sizes
 		},
@@ -82,7 +82,7 @@ export const navBarConfig: NavBarConfig = {
 };
 
 export const profileConfig: ProfileConfig = {
-	avatar: "/circle_v3.png", // V3 Logo
+	avatar: "/avatar_v1.jpg", // 更新後的頭像
 	name: "Typelin",
 	bio: "吾心吾行澄如明鏡，所作所為皆為正義",
 	links: [
