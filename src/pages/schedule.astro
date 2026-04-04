@@ -41,8 +41,8 @@ const LUNCH_AFTER_SLOT = 3;
 
             <!-- VIEW TOGGLE -->
             <div class="flex items-center gap-2 mb-4">
-                <button id="btn-view-today" class="px-4 py-1.5 rounded-lg text-sm font-bold bg-[var(--primary)] text-white transition">今日</button>
-                <button id="btn-view-all" class="px-4 py-1.5 rounded-lg text-sm font-bold bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/10 dark:hover:bg-white/10 transition">全部</button>
+                <button id="btn-view-today" class="schedule-view-btn" data-active="true">今日</button>
+                <button id="btn-view-all" class="schedule-view-btn" data-active="false">全部</button>
             </div>
 
             <!-- Schedule table -->
@@ -194,12 +194,41 @@ const LUNCH_AFTER_SLOT = 3;
         background: oklch(0.5 0.1 var(--hue) / 0.12) !important;
     }
 
-    /* 視角切換: 全域隱藏非今日欄位 */
+    /* Today view: hide non-today columns */
     :global(.view-today) [data-day] {
         display: none !important;
     }
     :global(.view-today) [data-day].is-today {
         display: table-cell !important;
+    }
+
+    /* Button styles managed via data attributes for reliability */
+    .schedule-view-btn {
+        padding: 0.375rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 700;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+    .schedule-view-btn[data-active="true"] {
+        background: var(--primary);
+        color: white;
+    }
+    .schedule-view-btn[data-active="false"] {
+        background: oklch(0.5 0 0 / 0.08);
+        color: oklch(0.6 0 0);
+    }
+    :global(.dark) .schedule-view-btn[data-active="false"] {
+        background: oklch(0.5 0 0 / 0.12);
+        color: oklch(0.7 0 0);
+    }
+    .schedule-view-btn[data-active="false"]:hover {
+        background: oklch(0.5 0 0 / 0.15);
+    }
+    :global(.dark) .schedule-view-btn[data-active="false"]:hover {
+        background: oklch(0.5 0 0 / 0.2);
     }
 </style>
 
@@ -208,31 +237,72 @@ const LUNCH_AFTER_SLOT = 3;
     var SCHEDULE = JSON.parse(scheduleData);
     var TIME_SLOTS = JSON.parse(timeSlotsData);
 
-    function updateScheduleStatus() {
+    // Guard: prevent duplicate intervals on Swup re-entry
+    if (window.__scheduleIntervalId) {
+        clearInterval(window.__scheduleIntervalId);
+        window.__scheduleIntervalId = null;
+    }
+
+    function getUTC8Info() {
         var now = new Date();
-        var parts = now.toLocaleString("en-US", { timeZone: "Asia/Taipei" }).split(/[\/, :]+/);
         var utc8 = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
         var rawDay = utc8.getDay();
         var dayIndex = rawDay === 0 ? 6 : rawDay - 1;
-        var currentMinutes = utc8.getHours() * 60 + utc8.getMinutes();
+        var isWeekend = rawDay === 0 || rawDay === 6;
 
-        // If today is weekend, fallback "Today" view to Monday (dayIndex 0)
-        var viewDayIndex = dayIndex >= 5 ? 0 : dayIndex;
+        // On weekends, find next weekday with classes for "today" view fallback
+        var todayViewDay = dayIndex;
+        if (isWeekend) {
+            // Start from Monday (0), find first day with classes
+            todayViewDay = 0; // default Monday
+            for (var d = 0; d < 5; d++) {
+                if (SCHEDULE[d] && SCHEDULE[d].some(function(x){return !!x;})) {
+                    todayViewDay = d;
+                    break;
+                }
+            }
+        }
+
+        return {
+            dayIndex: dayIndex,
+            currentMinutes: utc8.getHours() * 60 + utc8.getMinutes(),
+            isWeekend: isWeekend,
+            todayViewDay: todayViewDay
+        };
+    }
+
+    function updateScheduleStatus() {
+        var info = getUTC8Info();
+        var dayIndex = info.dayIndex;
+        var currentMinutes = info.currentMinutes;
+        var isWeekend = info.isWeekend;
+
+        // For column highlighting: on weekends fallback to next class day
+        var todayViewDay = info.todayViewDay;
+        var viewDayIndex = todayViewDay;
 
         var statusCurrent = document.getElementById("status-current");
         var statusNext = document.getElementById("status-next");
         if (!statusCurrent || !statusNext) return;
 
-        // Highlight and mark today column
-        document.querySelectorAll("[data-day]").forEach(function(el) {
-            var d = parseInt(el.getAttribute("data-day") || "-1");
-            if (d === viewDayIndex) {
-                el.classList.add("is-today");
-                if (el.tagName === 'TH') el.style.background = "oklch(0.5 0.12 var(--hue))";
-            }
+        // Clear old is-today markers first
+        document.querySelectorAll("[data-day].is-today").forEach(function(el) {
+            el.classList.remove("is-today");
+            if (el.tagName === 'TH') el.style.background = "";
         });
 
-        var todaySchedule = SCHEDULE[viewDayIndex] || [];
+        // Mark today column (only on weekdays)
+        if (viewDayIndex >= 0 && viewDayIndex < 5) {
+            document.querySelectorAll("[data-day]").forEach(function(el) {
+                var d = parseInt(el.getAttribute("data-day") || "-1");
+                if (d === viewDayIndex) {
+                    el.classList.add("is-today");
+                    if (el.tagName === 'TH') el.style.background = "oklch(0.5 0.12 var(--hue))";
+                }
+            });
+        }
+
+        var todaySchedule = isWeekend ? [] : (SCHEDULE[dayIndex] || []);
 
         function toMin(t) {
             var p = t.split(":");
@@ -258,9 +328,9 @@ const LUNCH_AFTER_SLOT = 3;
             }
         }
 
-        var lunchStart = 720; // 12:00
-        var lunchEnd = 770;   // 12:50
-        var isLunch = currentMinutes >= lunchStart && currentMinutes < lunchEnd;
+        var lunchStart = 720;
+        var lunchEnd = 770;
+        var isLunch = !isWeekend && currentMinutes >= lunchStart && currentMinutes < lunchEnd;
 
         // Find next class
         var nextClass = null;
@@ -286,7 +356,7 @@ const LUNCH_AFTER_SLOT = 3;
             statusCurrent.innerHTML = '📚 當前：<span style="color:var(--primary);font-weight:700">' + currentClass.name + '</span>（' + currentClass.location + '）— 還有 ' + fmt(rem) + ' 下課';
         } else if (isLunch) {
             statusCurrent.innerHTML = '🍱 午休中 — 還有 ' + fmt(lunchEnd - currentMinutes);
-        } else if (dayIndex >= 5) {
+        } else if (isWeekend) {
             statusCurrent.textContent = '🎉 週末愉快！今天沒有課程。';
         } else if (!todaySchedule.some(function(x){return !!x;})) {
             statusCurrent.textContent = '🎉 今天沒有課程！';
@@ -306,45 +376,56 @@ const LUNCH_AFTER_SLOT = 3;
         }
     }
 
-    window.switchView = function(mode) {
+    function switchView(mode) {
         var table = document.querySelector('.schedule-table');
         var btnToday = document.getElementById('btn-view-today');
         var btnAll = document.getElementById('btn-view-all');
         var lunchCell = document.querySelector('.lunch-cell');
         if (!table) return;
 
-        var aCls = "px-4 py-1.5 rounded-lg text-sm font-bold bg-[var(--primary)] text-white transition";
-        var iCls = "px-4 py-1.5 rounded-lg text-sm font-bold bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/10 dark:hover:bg-white/10 transition";
-
         if (mode === 'today') {
             table.classList.add('view-today');
             table.style.minWidth = '100%';
-            if (btnToday) btnToday.className = aCls;
-            if (btnAll) btnAll.className = iCls;
+            if (btnToday) btnToday.setAttribute('data-active', 'true');
+            if (btnAll) btnAll.setAttribute('data-active', 'false');
             if (lunchCell) lunchCell.setAttribute('colspan', '2');
         } else {
             table.classList.remove('view-today');
             table.style.minWidth = '700px';
-            if (btnToday) btnToday.className = iCls;
-            if (btnAll) btnAll.className = aCls;
+            if (btnToday) btnToday.setAttribute('data-active', 'false');
+            if (btnAll) btnAll.setAttribute('data-active', 'true');
             if (lunchCell) lunchCell.setAttribute('colspan', '6');
         }
-    };
 
-    // Run immediately
+        // Store preference
+        window.__scheduleViewMode = mode;
+    }
+
+    // Expose for external use
+    window.switchView = switchView;
+
     function init() {
         updateScheduleStatus();
-        
-        // Setup event listeners instead of onclick
+
         var btnToday = document.getElementById('btn-view-today');
         var btnAll = document.getElementById('btn-view-all');
-        if (btnToday) btnToday.onclick = function() { window.switchView('today'); };
-        if (btnAll) btnAll.onclick = function() { window.switchView('all'); };
+        if (btnToday) btnToday.onclick = function() { switchView('today'); };
+        if (btnAll) btnAll.onclick = function() { switchView('all'); };
 
+        var info = getUTC8Info();
+
+        // On weekends: default to "all" view, but user can still switch to "today"
+        // which will show the next weekday with classes
+        if (info.isWeekend) {
+            switchView('all');
+            return;
+        }
+
+        // On weekdays: mobile defaults to "today", desktop defaults to "all"
         if (window.innerWidth < 768) {
-            window.switchView('today');
+            switchView('today');
         } else {
-            window.switchView('all');
+            switchView('all');
         }
     }
 
@@ -355,10 +436,16 @@ const LUNCH_AFTER_SLOT = 3;
         init();
     }
 
-    // Swup support
-    document.addEventListener('swup:page:view', init);
-    
-    // Safety interval
-    setInterval(updateScheduleStatus, 30000);
+    // Swup support — use a named handler to avoid duplicates
+    if (!window.__scheduleSwupBound) {
+        document.addEventListener('swup:page:view', function() {
+            // Small delay to ensure DOM is ready after Swup swap
+            setTimeout(init, 50);
+        });
+        window.__scheduleSwupBound = true;
+    }
+
+    // Safety interval (guarded)
+    window.__scheduleIntervalId = setInterval(updateScheduleStatus, 30000);
 })();
 </script>
