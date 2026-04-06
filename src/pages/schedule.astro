@@ -39,8 +39,8 @@ const LUNCH_AFTER_SLOT = 3;
                 <div id="status-next" class="text-sm dark:text-white/60 text-black/50"></div>
             </div>
 
-            <!-- VIEW TOGGLE -->
-            <div class="flex items-center gap-2 mb-4">
+            <!-- VIEW TOGGLE (mobile only) -->
+            <div id="schedule-toggle" class="flex items-center gap-2 mb-4">
                 <button id="btn-view-today" class="schedule-view-btn" data-active="true">今日</button>
                 <button id="btn-view-all" class="schedule-view-btn" data-active="false">全部</button>
             </div>
@@ -194,12 +194,28 @@ const LUNCH_AFTER_SLOT = 3;
         background: oklch(0.5 0.1 var(--hue) / 0.12) !important;
     }
 
-    /* Today view: hide non-today columns */
+    /* Toggle buttons: show on mobile only, hide on desktop */
+    #schedule-toggle {
+        display: flex;
+    }
+    @media (min-width: 768px) {
+        #schedule-toggle {
+            display: none !important;
+        }
+    }
+
+    /* Today view: hide non-today columns (only effective on mobile) */
     :global(.view-today) [data-day] {
         display: none !important;
     }
     :global(.view-today) [data-day].is-today {
         display: table-cell !important;
+    }
+    /* Desktop always shows all columns regardless of view-today class */
+    @media (min-width: 768px) {
+        :global(.view-today) [data-day] {
+            display: table-cell !important;
+        }
     }
 
     /* Button styles managed via data attributes for reliability */
@@ -412,20 +428,12 @@ const LUNCH_AFTER_SLOT = 3;
         if (btnToday) btnToday.onclick = function() { switchView('today'); };
         if (btnAll) btnAll.onclick = function() { switchView('all'); };
 
-        var info = getUTC8Info();
-
-        // On weekends: default to "all" view, but user can still switch to "today"
-        // which will show the next weekday with classes
-        if (info.isWeekend) {
+        // Desktop: always show all (toggle is hidden via CSS anyway)
+        // Mobile: always default to "today" view
+        if (window.innerWidth >= 768) {
             switchView('all');
-            return;
-        }
-
-        // On weekdays: mobile defaults to "today", desktop defaults to "all"
-        if (window.innerWidth < 768) {
-            switchView('today');
         } else {
-            switchView('all');
+            switchView('today');
         }
     }
 

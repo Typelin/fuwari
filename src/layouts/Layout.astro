@@ -1,5 +1,4 @@
 ---
-import Analytics from "@vercel/analytics/astro";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
@@ -373,7 +372,15 @@ var _hmt = _hmt || [];
 				checkDomain();
 			}
 		</script>
-<Analytics />
+<!-- Vercel Analytics (Swup-safe: guard against duplicate customElements.define) -->
+<script data-swup-ignore-script is:inline>
+if (typeof customElements !== 'undefined' && !customElements.get('vercel-analytics')) {
+  var s = document.createElement('script');
+  s.defer = true;
+  s.src = '/_vercel/insights/script.js';
+  document.head.appendChild(s);
+}
+</script>
 	</body>
 </html>
 
