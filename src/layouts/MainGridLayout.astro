@@ -103,14 +103,20 @@ const mainPanelTop = siteConfig.banner.enable
 </div>
 
 <!-- The things that should be under the banner, only the TOC for now -->
-<div class="absolute w-full z-0 hidden 2xl:block">
+<div class="absolute w-full z-0 hidden 2xl:block" style=`top: ${mainPanelTop}`>
     <div class="relative max-w-[var(--page-width)] mx-auto">
         <!-- #toc needs to exist for Swup to work normally -->
-        {siteConfig.toc.enable && <div id="toc" class="absolute top-[5.5rem] right-0 translate-x-[calc(100%+.5rem)]">
+        {siteConfig.toc.enable && <div id="toc" class="absolute top-0 right-0 translate-x-[calc(100%+.5rem)]">
              <div class="sticky top-[5.5rem]">
                 <TOC headings={headings}></TOC>
              </div>
         </div>}
+        <!-- Right Panel (desktop only, when no TOC) -->
+        <div id="right-panel-wrapper" class="absolute top-0 right-0 translate-x-[calc(100%+.5rem)]">
+            <div class="sticky top-[5.5rem]">
+                <slot name="right-panel"></slot>
+            </div>
+        </div>
     </div>
 </div>
 </Layout>

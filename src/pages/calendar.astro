@@ -1,0 +1,389 @@
+---
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+import { Icon } from "astro-icon/components";
+
+const title = "行事曆";
+---
+
+<MainGridLayout title={title}>
+    <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative z-10">
+        <div class="card-base z-10 px-4 sm:px-9 py-6 relative w-full">
+
+            <div class="flex items-center gap-3 mb-6">
+                <Icon name="material-symbols:calendar-month" class="text-3xl text-[var(--primary)]" />
+                <h1 class="text-2xl font-bold dark:text-white/90 text-black/80">行事曆</h1>
+            </div>
+
+            <!-- Month Navigation -->
+            <div class="flex items-center justify-between mb-4">
+                <button id="cal-prev" class="cal-nav-btn" aria-label="上個月">
+                    <Icon name="material-symbols:chevron-left" class="text-xl" />
+                </button>
+                <div id="cal-title" class="text-xl font-bold dark:text-white/80 text-black/70">
+                    --
+                </div>
+                <button id="cal-today-btn" class="cal-today-shortcut">
+                    今天
+                </button>
+                <button id="cal-next" class="cal-nav-btn" aria-label="下個月">
+                    <Icon name="material-symbols:chevron-right" class="text-xl" />
+                </button>
+            </div>
+
+            <!-- Calendar Grid -->
+            <div class="cal-grid-container">
+                <div class="grid grid-cols-7 gap-1 text-center mb-1">
+                    <div class="cal-header text-red-400/80">日</div>
+                    <div class="cal-header">一</div>
+                    <div class="cal-header">二</div>
+                    <div class="cal-header">三</div>
+                    <div class="cal-header">四</div>
+                    <div class="cal-header">五</div>
+                    <div class="cal-header text-blue-400/80">六</div>
+                </div>
+                <div id="cal-days" class="grid grid-cols-7 gap-1 text-center">
+                </div>
+            </div>
+
+            <!-- Note Editor (shown when a date is selected) -->
+            <div id="cal-editor" class="mt-6 hidden">
+                <div class="h-px bg-black/5 dark:bg-white/10 mb-4"></div>
+                <div class="flex items-center gap-2 mb-3">
+                    <Icon name="material-symbols:edit-note" class="text-lg text-[var(--primary)]" />
+                    <span id="cal-editor-title" class="font-bold text-sm dark:text-neutral-50 text-neutral-800">
+                        --
+                    </span>
+                    <button id="cal-editor-close" class="ml-auto text-xs dark:text-white/40 text-black/40 hover:text-[var(--primary)] transition">
+                        ✕ 關閉
+                    </button>
+                </div>
+                <textarea id="cal-editor-text"
+                    class="w-full h-32 p-3 rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-sm dark:text-white/80 text-black/70 resize-none focus:outline-none focus:border-[var(--primary)] transition"
+                    placeholder="在這裡寫下備忘..."></textarea>
+                <div class="flex items-center justify-between mt-2">
+                    <span id="cal-editor-status" class="text-xs dark:text-white/30 text-black/30">
+                    </span>
+                    <button id="cal-editor-delete" class="text-xs text-red-400 hover:text-red-500 transition">
+                        🗑️ 刪除此備忘
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</MainGridLayout>
+
+<style>
+    .cal-nav-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+        background: oklch(0.5 0 0 / 0.08);
+        color: inherit;
+        transition: all 0.15s ease;
+    }
+    .cal-nav-btn:hover {
+        background: oklch(0.5 0 0 / 0.15);
+    }
+    .cal-today-shortcut {
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.375rem;
+        border: 1px solid oklch(0.5 0 0 / 0.15);
+        background: none;
+        color: inherit;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+    .cal-today-shortcut:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+    .cal-header {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.5rem 0;
+        opacity: 0.5;
+    }
+
+    :global(.cal-day) {
+        position: relative;
+        font-size: 0.875rem;
+        padding: 0.625rem 0;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        color: oklch(0.5 0 0 / 0.3);
+    }
+    :global(.cal-day.is-current-month) {
+        color: oklch(0.3 0 0);
+    }
+    :global(.dark) :global(.cal-day.is-current-month) {
+        color: oklch(0.8 0 0);
+    }
+    :global(.cal-day:hover) {
+        background: oklch(0.5 0 0 / 0.08);
+    }
+    :global(.cal-day.is-today) {
+        background: var(--primary);
+        color: white !important;
+        font-weight: 700;
+    }
+    :global(.cal-day.is-today:hover) {
+        background: oklch(from var(--primary) calc(l + 0.05) c h);
+    }
+    :global(.cal-day.is-selected) {
+        outline: 2px solid var(--primary);
+        outline-offset: -2px;
+    }
+    :global(.cal-day.has-note::after) {
+        content: '';
+        position: absolute;
+        bottom: 3px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--primary);
+    }
+    :global(.cal-day.is-today.has-note::after) {
+        background: white;
+    }
+    :global(.cal-day.is-sunday) {
+        color: oklch(0.7 0.12 25 / 0.7);
+    }
+    :global(.cal-day.is-saturday) {
+        color: oklch(0.7 0.12 250 / 0.7);
+    }
+    :global(.dark) :global(.cal-day.is-sunday) {
+        color: oklch(0.7 0.15 25 / 0.8);
+    }
+    :global(.dark) :global(.cal-day.is-saturday) {
+        color: oklch(0.7 0.15 250 / 0.8);
+    }
+
+    .cal-grid-container {
+        max-width: 32rem;
+        margin: 0 auto;
+    }
+</style>
+
+<script is:inline>
+(function() {
+    var viewYear, viewMonth;
+    var selectedDate = null;
+    var saveTimer = null;
+
+    function getUTC8Now() {
+        return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
+    }
+
+    function getNotes() {
+        try { return JSON.parse(localStorage.getItem('calendar-notes') || '{}'); }
+        catch(e) { return {}; }
+    }
+
+    function saveNotes(notes) {
+        try { localStorage.setItem('calendar-notes', JSON.stringify(notes)); }
+        catch(e) {}
+    }
+
+    function noteKey(y, m, d) {
+        return y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    }
+
+    function renderCalendar() {
+        var container = document.getElementById('cal-days');
+        var titleEl = document.getElementById('cal-title');
+        if (!container || !titleEl) return;
+
+        var now = getUTC8Now();
+        var todayY = now.getFullYear();
+        var todayM = now.getMonth();
+        var todayD = now.getDate();
+
+        titleEl.textContent = viewYear + ' 年 ' + (viewMonth + 1) + ' 月';
+
+        var firstDay = new Date(viewYear, viewMonth, 1).getDay();
+        var daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+        var daysInPrevMonth = new Date(viewYear, viewMonth, 0).getDate();
+        var notes = getNotes();
+
+        var html = '';
+
+        // Previous month padding
+        for (var i = firstDay - 1; i >= 0; i--) {
+            var pd = daysInPrevMonth - i;
+            html += '<div class="cal-day">' + pd + '</div>';
+        }
+
+        // Current month
+        for (var d = 1; d <= daysInMonth; d++) {
+            var isToday = (viewYear === todayY && viewMonth === todayM && d === todayD);
+            var key = noteKey(viewYear, viewMonth, d);
+            var hasNote = notes[key] && notes[key].trim();
+            var dayOfWeek = new Date(viewYear, viewMonth, d).getDay();
+
+            var cls = 'cal-day is-current-month';
+            if (isToday) cls += ' is-today';
+            if (hasNote) cls += ' has-note';
+            if (selectedDate === key) cls += ' is-selected';
+            if (dayOfWeek === 0) cls += ' is-sunday';
+            if (dayOfWeek === 6) cls += ' is-saturday';
+
+            html += '<div class="' + cls + '" data-date="' + key + '" data-day="' + d + '">' + d + '</div>';
+        }
+
+        // Next month padding
+        var totalCells = firstDay + daysInMonth;
+        var remaining = (7 - totalCells % 7) % 7;
+        for (var i = 1; i <= remaining; i++) {
+            html += '<div class="cal-day">' + i + '</div>';
+        }
+
+        container.innerHTML = html;
+
+        // Click handlers
+        container.querySelectorAll('.cal-day.is-current-month').forEach(function(el) {
+            el.addEventListener('click', function() {
+                var date = el.getAttribute('data-date');
+                openEditor(date);
+            });
+        });
+    }
+
+    function openEditor(dateKey) {
+        selectedDate = dateKey;
+        renderCalendar(); // re-render to show selection
+
+        var editor = document.getElementById('cal-editor');
+        var titleEl = document.getElementById('cal-editor-title');
+        var textEl = document.getElementById('cal-editor-text');
+        var statusEl = document.getElementById('cal-editor-status');
+        if (!editor || !titleEl || !textEl) return;
+
+        // Parse date for display
+        var parts = dateKey.split('-');
+        var displayDate = parts[0] + ' 年 ' + parseInt(parts[1]) + ' 月 ' + parseInt(parts[2]) + ' 日';
+        var dayOfWeek = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2])).getDay();
+        var weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+        titleEl.textContent = '📝 ' + displayDate + ' (週' + weekdays[dayOfWeek] + ')';
+
+        var notes = getNotes();
+        textEl.value = notes[dateKey] || '';
+        if (statusEl) statusEl.textContent = '';
+
+        editor.classList.remove('hidden');
+        textEl.focus();
+    }
+
+    function closeEditor() {
+        var editor = document.getElementById('cal-editor');
+        if (editor) editor.classList.add('hidden');
+        selectedDate = null;
+        renderCalendar();
+    }
+
+    function autoSave() {
+        if (!selectedDate) return;
+        var textEl = document.getElementById('cal-editor-text');
+        var statusEl = document.getElementById('cal-editor-status');
+        if (!textEl) return;
+
+        var notes = getNotes();
+        var val = textEl.value.trim();
+        if (val) {
+            notes[selectedDate] = val;
+        } else {
+            delete notes[selectedDate];
+        }
+        saveNotes(notes);
+        renderCalendar();
+        if (statusEl) statusEl.textContent = '✅ 已自動儲存';
+        setTimeout(function() {
+            if (statusEl) statusEl.textContent = '';
+        }, 2000);
+    }
+
+    function init() {
+        var now = getUTC8Now();
+        viewYear = now.getFullYear();
+        viewMonth = now.getMonth();
+
+        // Check URL params for pre-selected date
+        var params = new URLSearchParams(window.location.search);
+        var dateParam = params.get('date');
+        if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
+            var pp = dateParam.split('-');
+            viewYear = parseInt(pp[0]);
+            viewMonth = parseInt(pp[1]) - 1;
+            selectedDate = dateParam;
+        }
+
+        renderCalendar();
+
+        // If date was pre-selected, open editor
+        if (selectedDate) {
+            openEditor(selectedDate);
+        }
+
+        // Navigation
+        var prevBtn = document.getElementById('cal-prev');
+        var nextBtn = document.getElementById('cal-next');
+        var todayBtn = document.getElementById('cal-today-btn');
+        var closeBtn = document.getElementById('cal-editor-close');
+        var deleteBtn = document.getElementById('cal-editor-delete');
+        var textEl = document.getElementById('cal-editor-text');
+
+        if (prevBtn) prevBtn.onclick = function() {
+            viewMonth--;
+            if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+            renderCalendar();
+        };
+        if (nextBtn) nextBtn.onclick = function() {
+            viewMonth++;
+            if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+            renderCalendar();
+        };
+        if (todayBtn) todayBtn.onclick = function() {
+            var now = getUTC8Now();
+            viewYear = now.getFullYear();
+            viewMonth = now.getMonth();
+            renderCalendar();
+        };
+        if (closeBtn) closeBtn.onclick = closeEditor;
+        if (deleteBtn) deleteBtn.onclick = function() {
+            if (!selectedDate) return;
+            var notes = getNotes();
+            delete notes[selectedDate];
+            saveNotes(notes);
+            if (textEl) textEl.value = '';
+            renderCalendar();
+            var statusEl = document.getElementById('cal-editor-status');
+            if (statusEl) statusEl.textContent = '🗑️ 已刪除';
+            setTimeout(function() { if (statusEl) statusEl.textContent = ''; }, 2000);
+        };
+
+        // Auto-save on input with debounce
+        if (textEl) {
+            textEl.addEventListener('input', function() {
+                if (saveTimer) clearTimeout(saveTimer);
+                saveTimer = setTimeout(autoSave, 800);
+            });
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>

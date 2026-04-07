@@ -78,6 +78,11 @@ export const navBarConfig: NavBarConfig = {
 			url: "/schedule/",
 			external: false,
 		},
+		{
+			name: "日曆",
+			url: "/calendar/",
+			external: false,
+		},
 	],
 };
 

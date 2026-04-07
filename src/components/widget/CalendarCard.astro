@@ -1,0 +1,236 @@
+---
+/**
+ * Mini Calendar Card (Desktop Right Panel)
+ * - Read-only month grid on homepage
+ * - Shows dots for dates with notes
+ * - Click any date → navigates to /calendar/ page
+ */
+import { Icon } from "astro-icon/components";
+---
+
+<div class="card-base p-4 right-panel-card">
+    <div class="flex items-center gap-2 mb-3">
+        <Icon name="material-symbols:calendar-today" class="text-lg text-[var(--primary)]" />
+        <span class="font-bold text-sm dark:text-neutral-50 text-neutral-800">行事曆</span>
+        <a href="/calendar/" class="ml-auto text-xs dark:text-white/40 text-black/40 hover:text-[var(--primary)] transition flex items-center gap-1">
+            編輯
+            <Icon name="material-symbols:arrow-outward" class="text-xs" />
+        </a>
+    </div>
+
+    <!-- Month Navigation -->
+    <div class="flex items-center justify-between mb-2">
+        <button id="rp-cal-prev" class="rp-cal-nav" aria-label="上個月">
+            <Icon name="material-symbols:chevron-left" class="text-base" />
+        </button>
+        <div id="rp-cal-title" class="text-sm font-bold dark:text-white/80 text-black/70">
+            --
+        </div>
+        <button id="rp-cal-next" class="rp-cal-nav" aria-label="下個月">
+            <Icon name="material-symbols:chevron-right" class="text-base" />
+        </button>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div id="rp-cal-grid" class="grid grid-cols-7 gap-0.5 text-center">
+        <!-- Header -->
+        <div class="rp-cal-header">日</div>
+        <div class="rp-cal-header">一</div>
+        <div class="rp-cal-header">二</div>
+        <div class="rp-cal-header">三</div>
+        <div class="rp-cal-header">四</div>
+        <div class="rp-cal-header">五</div>
+        <div class="rp-cal-header">六</div>
+    </div>
+
+    <!-- Days will be rendered by JS -->
+    <div id="rp-cal-days" class="grid grid-cols-7 gap-0.5 text-center mt-0.5">
+    </div>
+
+    <!-- Note preview for today -->
+    <div id="rp-cal-today-note" class="mt-3 text-sm font-medium px-3 py-2 rounded-md bg-neutral-800 text-neutral-100 dark:bg-neutral-200 dark:text-neutral-900 truncate shadow-sm hidden">
+    </div>
+</div>
+
+<style>
+    .rp-cal-nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 0.25rem;
+        border: none;
+        cursor: pointer;
+        background: none;
+        color: inherit;
+        transition: background 0.15s ease;
+    }
+    .rp-cal-nav:hover {
+        background: oklch(0.5 0 0 / 0.1);
+    }
+    .rp-cal-header {
+        font-size: 0.625rem;
+        font-weight: 600;
+        padding: 0.125rem 0;
+        opacity: 0.4;
+    }
+    :global(.rp-cal-day) {
+        position: relative;
+        font-size: 0.6875rem;
+        padding: 0.2rem 0;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: background 0.15s ease;
+        color: oklch(0.7 0 0);
+    }
+    :global(.dark) :global(.rp-cal-day) {
+        color: oklch(0.65 0 0);
+    }
+    :global(.rp-cal-day:hover) {
+        background: oklch(0.5 0 0 / 0.1);
+    }
+    :global(.rp-cal-day.is-current-month) {
+        color: oklch(0.85 0 0);
+    }
+    :global(.light) :global(.rp-cal-day.is-current-month) {
+        color: oklch(0.3 0 0);
+    }
+    :global(.rp-cal-day.is-today) {
+        background: var(--primary);
+        color: white !important;
+        font-weight: 700;
+        border-radius: 50%;
+    }
+    :global(.rp-cal-day.is-today:hover) {
+        background: oklch(from var(--primary) calc(l + 0.05) c h);
+    }
+    :global(.rp-cal-day.has-note::after) {
+        content: '';
+        position: absolute;
+        bottom: 1px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        background: var(--primary);
+    }
+    :global(.rp-cal-day.is-today.has-note::after) {
+        background: white;
+    }
+</style>
+
+<script is:inline>
+(function() {
+    var viewYear, viewMonth; // 0-indexed month
+
+    function getUTC8Now() {
+        return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
+    }
+
+    function getNotes() {
+        try {
+            return JSON.parse(localStorage.getItem('calendar-notes') || '{}');
+        } catch(e) { return {}; }
+    }
+
+    function noteKey(y, m, d) {
+        return y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    }
+
+    function renderCalendar() {
+        var container = document.getElementById('rp-cal-days');
+        var titleEl = document.getElementById('rp-cal-title');
+        if (!container || !titleEl) return;
+
+        var now = getUTC8Now();
+        var todayY = now.getFullYear();
+        var todayM = now.getMonth();
+        var todayD = now.getDate();
+
+        titleEl.textContent = viewYear + ' 年 ' + (viewMonth + 1) + ' 月';
+
+        var firstDay = new Date(viewYear, viewMonth, 1).getDay(); // 0=Sun
+        var daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+        var daysInPrevMonth = new Date(viewYear, viewMonth, 0).getDate();
+
+        var notes = getNotes();
+        var html = '';
+
+        // Previous month padding
+        for (var i = firstDay - 1; i >= 0; i--) {
+            var pd = daysInPrevMonth - i;
+            html += '<div class="rp-cal-day">' + pd + '</div>';
+        }
+
+        // Current month
+        for (var d = 1; d <= daysInMonth; d++) {
+            var isToday = (viewYear === todayY && viewMonth === todayM && d === todayD);
+            var key = noteKey(viewYear, viewMonth, d);
+            var hasNote = notes[key] && notes[key].trim();
+            var cls = 'rp-cal-day is-current-month';
+            if (isToday) cls += ' is-today';
+            if (hasNote) cls += ' has-note';
+            html += '<div class="' + cls + '" data-date="' + key + '"';
+            if (hasNote) html += ' title="' + notes[key].replace(/"/g, '&quot;') + '"';
+            html += '>' + d + '</div>';
+        }
+
+        // Next month padding
+        var totalCells = firstDay + daysInMonth;
+        var remaining = (7 - totalCells % 7) % 7;
+        for (var i = 1; i <= remaining; i++) {
+            html += '<div class="rp-cal-day">' + i + '</div>';
+        }
+
+        container.innerHTML = html;
+
+        // Click → navigate to calendar page
+        container.querySelectorAll('.rp-cal-day.is-current-month').forEach(function(el) {
+            el.addEventListener('click', function() {
+                var date = el.getAttribute('data-date');
+                window.location.href = '/calendar/?date=' + date;
+            });
+        });
+
+        // Show today's note preview
+        var todayNote = notes[noteKey(todayY, todayM, todayD)];
+        var notePreview = document.getElementById('rp-cal-today-note');
+        if (notePreview) {
+            if (todayNote && todayNote.trim()) {
+                notePreview.textContent = '📝 今日：' + todayNote;
+                notePreview.classList.remove('hidden');
+            } else {
+                notePreview.classList.add('hidden');
+            }
+        }
+    }
+
+    function init() {
+        var now = getUTC8Now();
+        viewYear = now.getFullYear();
+        viewMonth = now.getMonth();
+        renderCalendar();
+
+        var prevBtn = document.getElementById('rp-cal-prev');
+        var nextBtn = document.getElementById('rp-cal-next');
+        if (prevBtn) prevBtn.onclick = function() {
+            viewMonth--;
+            if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+            renderCalendar();
+        };
+        if (nextBtn) nextBtn.onclick = function() {
+            viewMonth++;
+            if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+            renderCalendar();
+        };
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>

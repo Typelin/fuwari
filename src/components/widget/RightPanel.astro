@@ -1,0 +1,14 @@
+---
+/**
+ * Right Panel Container
+ * Desktop only (2xl breakpoint) - positioned to the right of main content
+ * Contains: TimeWeatherCard + CalendarCard
+ */
+import TimeWeatherCard from "./TimeWeatherCard.astro";
+import CalendarCard from "./CalendarCard.astro";
+---
+
+<div class="flex flex-col gap-4 w-[14rem]">
+    <TimeWeatherCard />
+    <CalendarCard />
+</div>

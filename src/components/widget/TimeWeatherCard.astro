@@ -1,0 +1,298 @@
+---
+/**
+ * Time & Weather Card (Desktop Right Panel)
+ * - Live UTC+8 clock
+ * - IP-based geolocation weather (fallback: Istanbul)
+ * - Uses wttr.in API (no API key required)
+ */
+import { Icon } from "astro-icon/components";
+---
+
+<div class="card-base p-4 right-panel-card">
+    <!-- Time Section -->
+    <div class="flex items-center gap-2 mb-3">
+        <Icon name="material-symbols:schedule" class="text-lg text-[var(--primary)]" />
+        <span class="font-bold text-sm dark:text-neutral-50 text-neutral-800">時間與天氣</span>
+    </div>
+
+    <div id="rp-clock" class="text-center mb-4 mt-2">
+        <div id="rp-time" class="text-4xl font-extrabold tracking-wider dark:text-white/95 text-black/90 font-mono">
+            --:--:--
+        </div>
+        <div id="rp-date" class="text-sm mt-1 sm:mt-2 font-medium dark:text-white/70 text-black/60">
+            載入中...
+        </div>
+    </div>
+
+    <div class="h-px bg-black/5 dark:bg-white/10 my-3"></div>
+
+    <!-- Weather Section -->
+    <div id="rp-weather">
+        <div id="rp-weather-location" class="text-sm font-medium dark:text-white/70 text-black/60 mb-3">
+            📍 定位中...
+        </div>
+        <div class="flex items-center gap-3 mb-2">
+            <div class="relative w-12 h-12 flex items-center justify-center rounded-lg overflow-hidden bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5">
+                <div id="rp-weather-fx" class="absolute inset-0 pointer-events-none"></div>
+                <div id="rp-weather-icon" class="text-3xl leading-none relative z-10 drop-shadow-md">⏳</div>
+            </div>
+            <div id="rp-weather-temp" class="text-3xl font-bold dark:text-white/95 text-black/90">
+                --°C
+            </div>
+        </div>
+        <div id="rp-weather-desc" class="text-sm font-medium dark:text-white/70 text-black/60 mb-3">
+            --
+        </div>
+        <div class="flex items-center gap-4 text-sm font-medium dark:text-white/60 text-black/50">
+            <span id="rp-weather-rain" class="flex items-center gap-1"><Icon name="material-symbols:water-drop-outline" class="text-lg"/> --%</span>
+            <span id="rp-weather-humidity" class="flex items-center gap-1"><Icon name="material-symbols:humidity-percentage" class="text-lg"/> --%</span>
+        </div>
+    </div>
+</div>
+
+<style>
+    .right-panel-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .right-panel-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px oklch(0.5 0.1 var(--hue) / 0.12);
+    }
+    #rp-time {
+        text-shadow: 0 0 20px oklch(0.6 0.15 var(--hue) / 0.3);
+    }
+    
+    /* --- Pixel Art Weather FX --- */
+    /* Sun */
+    :global(.weather-fx-sun) {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 150%; height: 150%;
+        background: radial-gradient(circle, rgba(255,180,0,0.4) 0%, rgba(255,180,0,0) 60%);
+        animation: pixelSunPulse 1.5s steps(3, end) infinite;
+    }
+    @keyframes pixelSunPulse {
+        0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.8; }
+        50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.5; }
+        100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.8; }
+    }
+    
+    /* Cloud (Dark Grey) */
+    :global(.weather-fx-cloud) {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent, rgba(50,50,50,0.25));
+        animation: pixelCloudMove 3s steps(4, end) infinite alternate;
+    }
+    :global(.dark) :global(.weather-fx-cloud) {
+        background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.5));
+    }
+    @keyframes pixelCloudMove {
+        0% { transform: translateX(-2px); }
+        100% { transform: translateX(2px); }
+    }
+    
+    /* Rain (Diagonal falling) */
+    :global(.weather-fx-rain) {
+        position: absolute;
+        inset: -20px;
+        overflow: hidden;
+    }
+    :global(.weather-fx-drop) {
+        position: absolute;
+        width: 2px;
+        height: 6px;
+        background: #60a5fa;
+        transform: rotate(20deg);
+        box-shadow: 2px 2px 0 rgba(255,255,255,0.2);
+    }
+    :global(.weather-fx-drop:nth-child(1)) { top: -10px; left: 30%; animation: pixelRain 0.6s steps(6, end) infinite; }
+    :global(.weather-fx-drop:nth-child(2)) { top: -10px; left: 60%; animation: pixelRain 0.7s steps(6, end) infinite 0.2s; }
+    :global(.weather-fx-drop:nth-child(3)) { top: -10px; left: 80%; animation: pixelRain 0.5s steps(6, end) infinite 0.4s; }
+    
+    @keyframes pixelRain {
+        0% { transform: translate(0, 0) rotate(20deg); opacity: 1; }
+        100% { transform: translate(-6px, 30px) rotate(20deg); opacity: 0; }
+    }
+    
+    /* Moon */
+    :global(.weather-fx-moon) {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 2rem; height: 2rem;
+        background: radial-gradient(circle, rgba(150,200,255,0.2) 0%, transparent 60%);
+        animation: pixelMoonPulse 2s steps(2, end) infinite alternate;
+    }
+    @keyframes pixelMoonPulse {
+        0% { transform: translate(-50%, -50%) scale(0.9); }
+        100% { transform: translate(-50%, -50%) scale(1.1); }
+    }
+</style>
+
+<script is:inline>
+(function() {
+    // --- Clock ---
+    function updateClock() {
+        var now = new Date();
+        var utc8 = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
+        var h = String(utc8.getHours()).padStart(2, '0');
+        var m = String(utc8.getMinutes()).padStart(2, '0');
+        var s = String(utc8.getSeconds()).padStart(2, '0');
+
+        var timeEl = document.getElementById('rp-time');
+        var dateEl = document.getElementById('rp-date');
+        if (timeEl) timeEl.textContent = h + ':' + m + ':' + s;
+
+        if (dateEl) {
+            var weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+            var y = utc8.getFullYear();
+            var mo = String(utc8.getMonth() + 1).padStart(2, '0');
+            var d = String(utc8.getDate()).padStart(2, '0');
+            dateEl.textContent = y + '/' + mo + '/' + d + ' 週' + weekdays[utc8.getDay()];
+        }
+    }
+
+    function getWeatherInfo(desc) {
+        var d = (desc || '').toLowerCase();
+        
+        // Priority checks
+        if (d.indexOf('thunder') !== -1) {
+            return { icon: '⛈️', fx: '<div class="weather-fx-rain"><div class="weather-fx-drop"></div><div class="weather-fx-drop"></div><div class="weather-fx-drop"></div></div>' };
+        }
+        if (d.indexOf('rain') !== -1 || d.indexOf('shower') !== -1 || d.indexOf('drizzle') !== -1 || d.indexOf('precipitation') !== -1) {
+            return { icon: '🌧️', fx: '<div class="weather-fx-rain"><div class="weather-fx-drop"></div><div class="weather-fx-drop"></div><div class="weather-fx-drop"></div></div>' };
+        }
+        if (d.indexOf('snow') !== -1 || d.indexOf('ice') !== -1 || d.indexOf('blizzard') !== -1) {
+            return { icon: '🌨️', fx: '<div class="weather-fx-cloud"></div>' };
+        }
+        if (d.indexOf('cloud') !== -1 || d.indexOf('overcast') !== -1) {
+            return { icon: '☁️', fx: '<div class="weather-fx-cloud"></div>' };
+        }
+        if (d.indexOf('mist') !== -1 || d.indexOf('fog') !== -1) {
+            return { icon: '🌫️', fx: '<div class="weather-fx-cloud"></div>' };
+        }
+        
+        // Default based on time of day
+        var hour = new Date().getHours();
+        var isDay = (hour >= 6 && hour < 18);
+        return isDay 
+            ? { icon: '☀️', fx: '<div class="weather-fx-sun"></div>' }
+            : { icon: '🌙', fx: '<div class="weather-fx-moon"></div>' };
+    }
+
+    function fetchWeather(city, customDisplayLocation) {
+        var url = 'https://wttr.in/' + encodeURIComponent(city) + '?format=j1';
+        fetch(url)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var current = data.current_condition && data.current_condition[0];
+                if (!current) return;
+
+                var temp = current.temp_C;
+                var desc = current.weatherDesc && current.weatherDesc[0] && current.weatherDesc[0].value;
+                var humidity = current.humidity;
+                var chanceOfRain = '0';
+
+                // Get rain chance from hourly forecast
+                var hourly = data.weather && data.weather[0] && data.weather[0].hourly;
+                if (hourly) {
+                    var now = new Date();
+                    var currentHour = now.getHours();
+                    for (var i = 0; i < hourly.length; i++) {
+                        var h = parseInt(hourly[i].time) / 100;
+                        if (h >= currentHour) {
+                            chanceOfRain = hourly[i].chanceofrain;
+                            break;
+                        }
+                    }
+                }
+
+                var locationName = customDisplayLocation || decodeURIComponent(city);
+                // Optionally remove redundant country code if present but not needed if we provide a custom display location
+                if (!customDisplayLocation && locationName.indexOf(',') !== -1) {
+                    locationName = locationName.split(',')[0].trim();
+                }
+
+                // Update DOM
+                var weatherInfo = getWeatherInfo(desc);
+                var iconEl = document.getElementById('rp-weather-icon');
+                var fxEl = document.getElementById('rp-weather-fx');
+                var locEl = document.getElementById('rp-weather-location');
+                var tempEl = document.getElementById('rp-weather-temp');
+                var descEl = document.getElementById('rp-weather-desc');
+                var rainEl = document.getElementById('rp-weather-rain');
+                var humEl = document.getElementById('rp-weather-humidity');
+
+                if (iconEl) iconEl.textContent = weatherInfo.icon;
+                if (fxEl) fxEl.innerHTML = weatherInfo.fx;
+                if (locEl) locEl.textContent = '📍 ' + locationName;
+                if (tempEl) tempEl.innerHTML = temp + '<span class="text-xl ml-1">°C</span>';
+                if (descEl) descEl.textContent = desc || '--';
+                if (rainEl) rainEl.innerHTML = '<svg class="w-4 h-4 mr-1 inline-block" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C12 2 5 10.08 5 14.5C5 18.09 7.91 21 11.5 21C15.09 21 18 18.09 18 14.5C18 10.08 12 2 12 2Z"/></svg>' + chanceOfRain + '%';
+                if (humEl) humEl.innerHTML = '<svg class="w-4 h-4 mr-1 inline-block" viewBox="0 0 24 24"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,10V16H13V10H11Z"/></svg>' + humidity + '%';
+
+                // Cache
+                try {
+                    localStorage.setItem('rp-weather-cache', JSON.stringify({
+                        ts: Date.now(), city: city,
+                        temp: temp, desc: desc, humidity: humidity,
+                        rain: chanceOfRain, location: locationName,
+                        icon: weatherInfo.icon, fx: weatherInfo.fx
+                    }));
+                } catch(e) {}
+            })
+            .catch(function() {
+                // If fetch fails and city wasn't already Istanbul, try Istanbul
+                if (city !== 'Istanbul') {
+                    fetchWeather('Istanbul');
+                }
+            });
+    }
+
+    function loadWeather() {
+        // Check cache (30 min TTL)
+        try {
+            var cache = JSON.parse(localStorage.getItem('rp-weather-cache') || '{}');
+            if (cache.ts && Date.now() - cache.ts < 30 * 60 * 1000) {
+                var iconEl = document.getElementById('rp-weather-icon');
+                var fxEl = document.getElementById('rp-weather-fx');
+                var locEl = document.getElementById('rp-weather-location');
+                var tempEl = document.getElementById('rp-weather-temp');
+                var descEl = document.getElementById('rp-weather-desc');
+                var rainEl = document.getElementById('rp-weather-rain');
+                var humEl = document.getElementById('rp-weather-humidity');
+
+                if (iconEl) iconEl.textContent = cache.icon;
+                if (fxEl) fxEl.innerHTML = cache.fx || '';
+                if (locEl) locEl.textContent = '📍 ' + cache.location;
+                if (tempEl) tempEl.innerHTML = cache.temp + '<span class="text-xl ml-1">°C</span>';
+                if (descEl) descEl.textContent = cache.desc;
+                if (rainEl) rainEl.innerHTML = '<svg class="w-4 h-4 mr-1 inline-block" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C12 2 5 10.08 5 14.5C5 18.09 7.91 21 11.5 21C15.09 21 18 18.09 18 14.5C18 10.08 12 2 12 2Z"/></svg>' + cache.rain + '%';
+                if (humEl) humEl.innerHTML = '<svg class="w-4 h-4 mr-1 inline-block" viewBox="0 0 24 24"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,10V16H13V10H11Z"/></svg>' + cache.humidity + '%';
+                return;
+            }
+        } catch(e) {}
+
+        // IP geolocation → city name
+        fetch('https://ipapi.co/json/')
+            .then(function(r) { return r.json(); })
+            .then(function(geo) {
+                var city = (geo && geo.city) || 'Istanbul';
+                var displayLoc = geo ? ((geo.region || geo.city || 'Istanbul') + ', ' + (geo.country_name || 'Turkey')) : 'Istanbul, Turkey';
+                fetchWeather(city, displayLoc);
+            })
+            .catch(function() {
+                fetchWeather('Istanbul', 'Istanbul, Turkey');
+            });
+    }
+
+    // Init
+    updateClock();
+    setInterval(updateClock, 1000);
+    loadWeather();
+    // Refresh weather every 30 min
+    setInterval(loadWeather, 30 * 60 * 1000);
+})();
+</script>
