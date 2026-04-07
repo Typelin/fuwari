@@ -114,7 +114,6 @@ const LUNCH_AFTER_SLOT = 3;
             </div>
         </div>
     </div>
-</MainGridLayout>
 
 <style>
     .schedule-table {
@@ -444,16 +443,8 @@ const LUNCH_AFTER_SLOT = 3;
         init();
     }
 
-    // Swup support — use a named handler to avoid duplicates
-    if (!window.__scheduleSwupBound) {
-        document.addEventListener('swup:page:view', function() {
-            // Small delay to ensure DOM is ready after Swup swap
-            setTimeout(init, 50);
-        });
-        window.__scheduleSwupBound = true;
-    }
-
     // Safety interval (guarded)
     window.__scheduleIntervalId = setInterval(updateScheduleStatus, 30000);
 })();
 </script>
+</MainGridLayout>
