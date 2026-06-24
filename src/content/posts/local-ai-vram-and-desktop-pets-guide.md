@@ -3,7 +3,7 @@ title: "本地 AI 崛起與顯存（VRAM）之戰：從大語言模型、二次�
 published: 2026-06-09
 description: "深入探討在本地端執行 AI（Local AI）的重大意義，剖析為什麼顯示卡顯存（VRAM）是決定體驗的黃金指標。並盤點 GitHub 上最熱門的本地 AI 項目，包括大語言模型（LLM）、二次元互動桌寵（Desktop Pets）與 Stable Diffusion 本地繪圖，帶您發揮硬體極限！"
 image: "/images/posts/local_ai_vram_guide.png"
-tags: ["本地 AI", "VRAM 顯存", "Stable Diffusion", "二次元桌寵", "開源項目"]
+tags: ["本地 AI", "VRAM 顯存", "Stable Diffusion", "二次元桌寵", "開源專案"]
 category: "💻 技術實戰"
 draft: false
 ---
@@ -78,7 +78,7 @@ draft: false
     *   **簡介**：目前開源界最完善的本地語音互動 Live2D AI 伴侶項目。
     *   **玩法**：您的二次元桌寵擁有獨立的記憶庫（透過本地向量資料庫），她能聽懂您的語音輸入，並透過 GPT-SoVITS 語音庫以極為自然、帶有情感的日語或中文聲線回答您，同時做出眨眼、微笑等動態反饋，甚至還能透過鏡頭「看見」您。這一切，**全部在本地端顯卡上運作**。
 *   **[GPT-SoVITS](https://github.com/RVC-Boss/GPT-SoVITS) (GitHub Stars: 35k+)**
-    *   **簡介**：最強大的少樣本語音克隆工具。只需提供某個角色（如動漫女僕或特定聲優）的一分鐘語音樣本，就能在本地訓練出專屬的語音合成模型，為您的本地桌寵注入靈魂。
+    *   **簡介**：最強大的少樣本語音克隆工具。只需提供某個角色（如經典動漫角色或特定聲優）的一分鐘語音樣本，就能在本地訓練出專屬的語音合成模型，為您的本地桌寵注入靈魂。
 
 ![AI Anime Desktop Pet Interaction](/images/posts/local_ai_desktop_pet.png)
 *圖：結合本地語音與大語言模型的二次元互動桌寵示意圖*

@@ -3,7 +3,7 @@ title: 歡迎來到 Typelin 的技術空間
 published: 2026-01-02
 description: 這是部落格的第一篇文章，介紹本站的定位與未來方向。
 image: "/banner.png"
-tags: []
+tags: ["日常隨筆", "網站公告"]
 category: "📢 網站公告"
 draft: false
 ---
