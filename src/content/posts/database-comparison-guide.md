@@ -3,7 +3,7 @@ title: "2026 資料庫大比較：雲端託管 vs 本地架設，學生專案該
 published: 2026-01-03
 description: "深入比較 Firebase、MongoDB、MySQL、PostgreSQL 等熱門資料庫，分析雲端託管與本地架設的優缺點，並推薦最適合學生專案與初學者練習的免費方案！"
 image: "/images/articles/database-cover.png"
-tags: ["資料庫"]
+tags: ["資料庫", "後端開發", "技術選型"]
 category: "💻 技術實戰"
 draft: false
 ---

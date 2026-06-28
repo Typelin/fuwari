@@ -1,0 +1,59 @@
+---
+import { getTagList } from "../../utils/content-utils";
+import { getTagUrl } from "../../utils/url-utils";
+
+const tags = await getTagList();
+// Sort by count descending so most popular tags are first
+const sortedTags = [...tags].sort((a, b) => b.count - a.count);
+
+interface Props {
+    activeTag?: string;
+}
+const { activeTag } = Astro.props;
+---
+
+<div class="onload-animation mb-4 card-base px-4 py-3 flex items-center gap-3 overflow-hidden select-none">
+    <div class="text-xs font-bold text-neutral-400 dark:text-neutral-500 whitespace-nowrap flex items-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-[var(--primary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
+        <span>分類標籤</span>
+    </div>
+    
+    <div class="flex-1 overflow-x-auto no-scrollbar scroll-smooth flex gap-2 py-0.5 items-center">
+        <!-- "全部" Tag -->
+        <a href="/" class:list={[
+            "px-3 py-1 text-xs rounded-full border transition-all duration-200 whitespace-nowrap",
+            !activeTag 
+                ? "bg-[var(--primary)] text-white border-transparent font-medium shadow-sm shadow-[var(--primary)]/20" 
+                : "border-black/5 dark:border-white/10 dark:text-neutral-300 text-neutral-600 dark:hover:bg-white/5 hover:bg-black/5"
+        ]}>
+            全部
+        </a>
+
+        {sortedTags.map(t => (
+            <a href={getTagUrl(t.name)} class:list={[
+                "px-3 py-1 text-xs rounded-full border transition-all duration-200 whitespace-nowrap flex items-center gap-1.5",
+                activeTag === t.name
+                    ? "bg-[var(--primary)] text-white border-transparent font-medium shadow-sm shadow-[var(--primary)]/20"
+                    : "border-black/5 dark:border-white/10 dark:text-neutral-300 text-neutral-600 dark:hover:bg-white/5 hover:bg-black/5"
+            ]}>
+                <span># {t.name}</span>
+                <span class:list={[
+                    "text-[10px] px-1.5 py-0.2 rounded-full",
+                    activeTag === t.name ? "bg-white/20 text-white" : "bg-black/5 dark:bg-white/10"
+                ]}>
+                    {t.count}
+                </span>
+            </a>
+        ))}
+    </div>
+</div>
+
+<style>
+    .no-scrollbar::-webkit-scrollbar {
+        display: none; /* Safari and Chrome */
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+</style>

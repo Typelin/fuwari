@@ -3,7 +3,7 @@ title: "GitHub 入門基礎：Git 版本控制完整指南，從零開始到團�
 published: 2026-01-21
 description: "Git 版本控制完整教學，從安裝、基礎指令、分支管理到 GitHub 協作流程，附實戰範例與常見問題解決方案，學生專題必備技能！"
 image: "/images/articles/git-guide.png"
-tags: ["技術工具"]
+tags: ["Git", "版本控制", "開發工具"]
 category: "💻 技術實戰"
 draft: false
 ---

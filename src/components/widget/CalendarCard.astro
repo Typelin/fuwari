@@ -75,20 +75,29 @@ import { Icon } from "astro-icon/components";
         padding: 0.125rem 0;
         opacity: 0.4;
     }
+    .rp-cal-header:first-child {
+        color: oklch(0.65 0.18 20 / 0.8); /* soft rose for Sun header */
+    }
+    .rp-cal-header:last-child {
+        color: oklch(0.65 0.15 220 / 0.8); /* soft sky for Sat header */
+    }
     :global(.rp-cal-day) {
         position: relative;
         font-size: 0.6875rem;
-        padding: 0.2rem 0;
-        border-radius: 0.25rem;
+        aspect-ratio: 1 / 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
         cursor: pointer;
-        transition: background 0.15s ease;
-        color: oklch(0.7 0 0);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        color: oklch(0.5 0 0 / 0.3);
     }
     :global(.dark) :global(.rp-cal-day) {
-        color: oklch(0.65 0 0);
+        color: oklch(0.5 0 0 / 0.4);
     }
     :global(.rp-cal-day:hover) {
-        background: oklch(0.5 0 0 / 0.1);
+        background: oklch(0.5 0 0 / 0.08);
     }
     :global(.rp-cal-day.is-current-month) {
         color: oklch(0.85 0 0);
@@ -96,11 +105,22 @@ import { Icon } from "astro-icon/components";
     :global(.light) :global(.rp-cal-day.is-current-month) {
         color: oklch(0.3 0 0);
     }
+    :global(.rp-cal-day.is-sunday) {
+        color: oklch(0.65 0.18 20 / 0.6) !important;
+    }
+    :global(.rp-cal-day.is-saturday) {
+        color: oklch(0.65 0.15 220 / 0.6) !important;
+    }
+    :global(.dark) :global(.rp-cal-day.is-sunday) {
+        color: oklch(0.7 0.18 20 / 0.8) !important;
+    }
+    :global(.dark) :global(.rp-cal-day.is-saturday) {
+        color: oklch(0.7 0.15 220 / 0.8) !important;
+    }
     :global(.rp-cal-day.is-today) {
         background: var(--primary);
         color: white !important;
         font-weight: 700;
-        border-radius: 50%;
     }
     :global(.rp-cal-day.is-today:hover) {
         background: oklch(from var(--primary) calc(l + 0.05) c h);
@@ -108,7 +128,7 @@ import { Icon } from "astro-icon/components";
     :global(.rp-cal-day.has-note::after) {
         content: '';
         position: absolute;
-        bottom: 1px;
+        bottom: 2px;
         left: 50%;
         transform: translateX(-50%);
         width: 3px;
@@ -169,9 +189,14 @@ import { Icon } from "astro-icon/components";
             var isToday = (viewYear === todayY && viewMonth === todayM && d === todayD);
             var key = noteKey(viewYear, viewMonth, d);
             var hasNote = notes[key] && notes[key].trim();
+            var dayOfWeek = new Date(viewYear, viewMonth, d).getDay();
+            
             var cls = 'rp-cal-day is-current-month';
             if (isToday) cls += ' is-today';
             if (hasNote) cls += ' has-note';
+            if (dayOfWeek === 0) cls += ' is-sunday';
+            if (dayOfWeek === 6) cls += ' is-saturday';
+            
             html += '<div class="' + cls + '" data-date="' + key + '"';
             if (hasNote) html += ' title="' + notes[key].replace(/"/g, '&quot;') + '"';
             html += '>' + d + '</div>';

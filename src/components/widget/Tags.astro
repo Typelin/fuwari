@@ -25,32 +25,116 @@ const style = Astro.props.style;
         />
     </div>
 
-    <div id="tag-list" class="flex gap-2 flex-wrap">
+    <!-- Set inline max-height directly to ensure it is collapsed by default on load -->
+    <div id="tag-list" class="flex gap-2 flex-wrap overflow-hidden" style="max-height: 8.5rem;">
         {tags.map(t => (
             <ButtonTag href={getTagUrl(t.name)} label={`查看所有帶有 ${t.name.trim()} 標籤的文章`}>
                 {t.name.trim()}
             </ButtonTag>
         ))}
     </div>
+
+    <button id="show-more-tags" class="w-full text-center text-xs text-[var(--primary)] mt-3 hover:underline focus:outline-none flex items-center justify-center gap-1">
+        <span>顯示更多</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
 </WidgetLayout>
 
+<style>
+    #tag-list {
+        transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+</style>
+
 <script>
-    const searchInput = document.getElementById('tag-search');
-    const tagList = document.getElementById('tag-list');
-    
-    if (searchInput && tagList) {
-        searchInput.addEventListener('input', (e) => {
-            const query = (e.target as HTMLInputElement).value.toLowerCase();
-            const items = tagList.querySelectorAll('a');
+    let isExpanded = false;
+
+    function initTags() {
+        const searchInput = document.getElementById('tag-search');
+        const tagList = document.getElementById('tag-list');
+        const showMoreBtn = document.getElementById('show-more-tags');
+        
+        if (!tagList || !showMoreBtn) return;
+        
+        const tagCount = tagList.querySelectorAll('a').length;
+        
+        // Reset state on load/re-load
+        isExpanded = false;
+        const arrow = showMoreBtn.querySelector('svg');
+        const text = showMoreBtn.querySelector('span');
+        if (text) text.textContent = '顯示更多';
+        if (arrow) arrow.style.transform = '';
+
+        if (tagCount <= 12) {
+            tagList.style.maxHeight = 'none';
+            showMoreBtn.style.display = 'none';
+        } else {
+            tagList.style.maxHeight = '8.5rem';
+            showMoreBtn.style.display = '';
             
-            items.forEach(item => {
-                const text = item.textContent?.toLowerCase() || '';
-                if (text.includes(query)) {
-                    item.style.display = '';
+            // Remove old listener if any and add new one
+            showMoreBtn.onclick = () => {
+                isExpanded = !isExpanded;
+                const arrow = showMoreBtn.querySelector('svg');
+                const text = showMoreBtn.querySelector('span');
+                
+                if (isExpanded) {
+                    tagList.style.maxHeight = '50rem'; // enough height to show all
+                    if (text) text.textContent = '顯示更少';
+                    if (arrow) arrow.style.transform = 'rotate(180deg)';
                 } else {
-                    item.style.display = 'none';
+                    tagList.style.maxHeight = '8.5rem';
+                    if (text) text.textContent = '顯示更多';
+                    if (arrow) arrow.style.transform = '';
+                    tagList.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
-            });
-        });
+            };
+        }
+        
+        if (searchInput) {
+            searchInput.oninput = (e) => {
+                const query = (e.target as HTMLInputElement).value.toLowerCase();
+                const items = tagList.querySelectorAll('a');
+                
+                if (query) {
+                    tagList.style.maxHeight = 'none';
+                    showMoreBtn.style.display = 'none';
+                } else {
+                    if (tagCount > 12) {
+                        tagList.style.maxHeight = isExpanded ? '50rem' : '8.5rem';
+                        showMoreBtn.style.display = '';
+                    } else {
+                        tagList.style.maxHeight = 'none';
+                        showMoreBtn.style.display = 'none';
+                    }
+                }
+                
+                items.forEach(item => {
+                    const text = item.textContent?.toLowerCase() || '';
+                    if (text.includes(query)) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            };
+        }
+    }
+
+    // Run on initial load
+    initTags();
+
+    // Bind to Swup hooks for page transitions
+    function setupSwupTags() {
+        if (window.swup && window.swup.hooks) {
+            window.swup.hooks.on('content:replace', initTags);
+            console.log('Tags Widget: Registered with Swup hooks.');
+        }
+    }
+
+    if (window.swup) {
+        setupSwupTags();
+    } else {
+        document.addEventListener('swup:enable', setupSwupTags);
     }
 </script>

@@ -9,374 +9,763 @@ const title = "行事曆";
     <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative z-10">
         <div class="card-base z-10 px-4 sm:px-9 py-6 relative w-full">
 
+            <!-- Header -->
             <div class="flex items-center gap-3 mb-6">
                 <Icon name="material-symbols:calendar-month" class="text-3xl text-[var(--primary)]" />
                 <h1 class="text-2xl font-bold dark:text-white/90 text-black/80">行事曆</h1>
+                <span id="cal-note-count" class="cal-count-badge hidden ml-auto"></span>
             </div>
 
             <!-- Month Navigation -->
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2 mb-6">
                 <button id="cal-prev" class="cal-nav-btn" aria-label="上個月">
                     <Icon name="material-symbols:chevron-left" class="text-xl" />
-                </button>
-                <div id="cal-title" class="text-xl font-bold dark:text-white/80 text-black/70">
-                    --
-                </div>
-                <button id="cal-today-btn" class="cal-today-shortcut">
-                    今天
                 </button>
                 <button id="cal-next" class="cal-nav-btn" aria-label="下個月">
                     <Icon name="material-symbols:chevron-right" class="text-xl" />
                 </button>
+                <div id="cal-title" class="text-xl sm:text-2xl font-bold dark:text-white/95 text-black/90 ml-2 select-none">--</div>
+                <button id="cal-today-btn" class="cal-today-shortcut ml-auto">今天</button>
             </div>
 
-            <!-- Calendar Grid -->
-            <div class="cal-grid-container">
-                <div class="grid grid-cols-7 gap-1 text-center mb-1">
-                    <div class="cal-header text-red-400/80">日</div>
-                    <div class="cal-header">一</div>
-                    <div class="cal-header">二</div>
-                    <div class="cal-header">三</div>
-                    <div class="cal-header">四</div>
-                    <div class="cal-header">五</div>
-                    <div class="cal-header text-blue-400/80">六</div>
+            <!-- Main: Calendar + Sidebar -->
+            <div class="cal-main-layout">
+
+                <!-- Calendar Grid -->
+                <div class="flex-1">
+                    <div class="grid grid-cols-7 gap-2 mb-2">
+                        <div class="cal-weekday" data-type="sun">日</div>
+                        <div class="cal-weekday">一</div>
+                        <div class="cal-weekday">二</div>
+                        <div class="cal-weekday">三</div>
+                        <div class="cal-weekday">四</div>
+                        <div class="cal-weekday">五</div>
+                        <div class="cal-weekday" data-type="sat">六</div>
+                    </div>
+                    <div id="cal-days" class="grid grid-cols-7 gap-2"></div>
                 </div>
-                <div id="cal-days" class="grid grid-cols-7 gap-1 text-center">
+
+                <!-- Sidebar -->
+                <aside class="cal-sidebar">
+                    <div class="cal-sidebar-hd">
+                        <Icon name="material-symbols:sticky-note-2-outline" class="text-base" />
+                        <span id="cal-sidebar-label">本月備忘</span>
+                    </div>
+                    <div id="cal-sidebar-list" class="cal-sidebar-body"></div>
+                </aside>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="cal-overlay" class="cal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-hidden="true">
+        <div id="cal-modal" class="cal-modal" role="document">
+
+            <!-- Modal Header -->
+            <div class="cal-modal-hd">
+                <div>
+                    <div id="cal-modal-date" class="font-bold text-lg dark:text-white text-black/90"></div>
+                    <div id="cal-modal-weekday" class="text-sm mt-0.5 dark:text-white/50 text-black/50"></div>
                 </div>
+                <button id="cal-modal-x" class="cal-close-btn" aria-label="關閉">
+                    <Icon name="material-symbols:close" class="text-base" />
+                </button>
             </div>
 
-            <!-- Note Editor (shown when a date is selected) -->
-            <div id="cal-editor" class="mt-6 hidden">
-                <div class="h-px bg-black/5 dark:bg-white/10 mb-4"></div>
-                <div class="flex items-center gap-2 mb-3">
-                    <Icon name="material-symbols:edit-note" class="text-lg text-[var(--primary)]" />
-                    <span id="cal-editor-title" class="font-bold text-sm dark:text-neutral-50 text-neutral-800">
-                        --
-                    </span>
-                    <button id="cal-editor-close" class="ml-auto text-xs dark:text-white/40 text-black/40 hover:text-[var(--primary)] transition">
-                        ✕ 關閉
-                    </button>
-                </div>
-                <textarea id="cal-editor-text"
-                    class="w-full h-32 p-3 rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-sm dark:text-white/80 text-black/70 resize-none focus:outline-none focus:border-[var(--primary)] transition"
-                    placeholder="在這裡寫下備忘..."></textarea>
-                <div class="flex items-center justify-between mt-2">
-                    <span id="cal-editor-status" class="text-xs dark:text-white/30 text-black/30">
-                    </span>
-                    <button id="cal-editor-delete" class="text-xs text-red-400 hover:text-red-500 transition">
-                        🗑️ 刪除此備忘
-                    </button>
-                </div>
+            <!-- Color Picker -->
+            <div class="cal-color-row">
+                <span class="text-xs dark:text-white/60 text-black/60 mr-3 whitespace-nowrap">顏色標籤</span>
+                <div id="cal-color-opts" class="cal-color-opts"></div>
+            </div>
+
+            <!-- Textarea -->
+            <textarea id="cal-textarea" class="cal-textarea" placeholder="寫下備忘...&#10;自動儲存 ✦ Esc 關閉 ✦ Ctrl+S 立即儲存"></textarea>
+
+            <!-- Footer -->
+            <div class="cal-modal-ft">
+                <span id="cal-modal-status" class="text-xs dark:text-white/50 text-black/50"></span>
+                <button id="cal-modal-del" class="cal-del-btn">🗑️ 刪除備忘</button>
             </div>
 
         </div>
     </div>
 
+</MainGridLayout>
+
 <style>
+    /* 元件專屬區域變數：適應深淺色模式以確保文字高對比度 */
+    .card-base {
+        --text-normal: rgba(0, 0, 0, 0.85);
+        --text-muted: rgba(0, 0, 0, 0.5);
+    }
+    :global(.dark) .card-base {
+        --text-normal: rgba(255, 255, 255, 0.9);
+        --text-muted: rgba(255, 255, 255, 0.55);
+    }
+
+    /* ===== Nav ===== */
     .cal-nav-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 0.5rem;
-        border: none;
-        cursor: pointer;
-        background: oklch(0.5 0 0 / 0.08);
-        color: inherit;
+        display: flex; align-items: center; justify-content: center;
+        width: 2.5rem; height: 2.5rem; border-radius: 0.6rem;
+        border: none; cursor: pointer;
+        background: var(--btn-regular-bg, oklch(0.5 0 0 / 0.08)); 
+        color: var(--text-normal, inherit);
         transition: all 0.15s ease;
     }
-    .cal-nav-btn:hover {
-        background: oklch(0.5 0 0 / 0.15);
+    .cal-nav-btn:hover { 
+        background: var(--btn-regular-bg-hover, oklch(0.5 0 0 / 0.15)); 
+        transform: scale(1.05); 
     }
+
     .cal-today-shortcut {
-        padding: 0.25rem 0.75rem;
-        border-radius: 0.375rem;
-        border: 1px solid oklch(0.5 0 0 / 0.15);
-        background: none;
-        color: inherit;
-        font-size: 0.75rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.15s ease;
+        padding: 0.35rem 1.1rem; border-radius: 2rem;
+        border: 1.5px solid var(--border-in-card, oklch(0.5 0 0 / 0.15));
+        background: none; 
+        color: var(--text-normal, inherit);
+        font-size: 0.8rem; font-weight: 700; cursor: pointer;
+        transition: all 0.15s ease; letter-spacing: 0.03em;
     }
-    .cal-today-shortcut:hover {
-        border-color: var(--primary);
+    .cal-today-shortcut:hover { 
+        border-color: var(--primary); 
+        color: var(--primary); 
+    }
+
+    /* ===== Count Badge ===== */
+    .cal-count-badge {
+        font-size: 0.8rem; font-weight: 700;
+        padding: 0.25rem 0.8rem; border-radius: 2rem;
+        background: oklch(from var(--primary) l c h / 0.15);
         color: var(--primary);
     }
-    .cal-header {
-        font-size: 0.75rem;
-        font-weight: 700;
-        padding: 0.5rem 0;
-        opacity: 0.5;
+
+    /* ===== Layout ===== */
+    .cal-main-layout {
+        display: grid;
+        grid-template-columns: 1fr 240px;
+        gap: 1.5rem;
+        align-items: start;
+    }
+    @media (max-width: 768px) {
+        .cal-main-layout { grid-template-columns: 1fr; }
     }
 
+    /* ===== Weekday Headers ===== */
+    .cal-weekday {
+        font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em;
+        text-align: center; padding: 0.5rem 0; 
+        color: var(--text-muted, oklch(0.5 0 0 / 0.6));
+    }
+    .cal-weekday[data-type="sun"] { color: oklch(0.6 0.22 20); }
+    .cal-weekday[data-type="sat"] { color: oklch(0.55 0.18 240); }
+
+    /* ===== Day Cells (dynamic, use :global) ===== */
     :global(.cal-day) {
-        position: relative;
-        font-size: 0.875rem;
-        padding: 0.625rem 0;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        color: oklch(0.5 0 0 / 0.3);
+        position: relative; overflow: hidden;
+        min-height: 72px; padding: 8px 8px 6px;
+        border-radius: 12px; cursor: pointer;
+        display: flex; flex-direction: column; gap: 4px;
+        border: 1.5px solid transparent;
+        background: rgba(0, 0, 0, 0.03);
+        transition: background 0.15s ease, border-color 0.15s ease,
+                    transform 0.15s ease, box-shadow 0.15s ease;
     }
-    :global(.cal-day.is-current-month) {
-        color: oklch(0.3 0 0);
-    }
-    :global(.dark) :global(.cal-day.is-current-month) {
-        color: oklch(0.8 0 0);
+    :global(.dark) :global(.cal-day) {
+        background: rgba(255, 255, 255, 0.05);
     }
     :global(.cal-day:hover) {
-        background: oklch(0.5 0 0 / 0.08);
+        background: rgba(0, 0, 0, 0.06);
+        border-color: rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
     }
-    :global(.cal-day.is-today) {
-        background: var(--primary);
-        color: white !important;
-        font-weight: 700;
+    :global(.dark) :global(.cal-day:hover) {
+        background: rgba(255, 255, 255, 0.09);
+        border-color: rgba(255, 255, 255, 0.15);
     }
-    :global(.cal-day.is-today:hover) {
-        background: oklch(from var(--primary) calc(l + 0.05) c h);
+    
+    :global(.cal-day-num) {
+        font-size: 1.05rem; font-weight: 700; line-height: 1;
+        color: var(--text-muted, oklch(0.5 0 0 / 0.4));
     }
-    :global(.cal-day.is-selected) {
-        outline: 2px solid var(--primary);
-        outline-offset: -2px;
+    /* Current month number color */
+    :global(.cal-day.cur .cal-day-num) { 
+        color: var(--text-normal, oklch(0.2 0 0)); 
     }
-    :global(.cal-day.has-note::after) {
-        content: '';
-        position: absolute;
-        bottom: 3px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 4px;
-        height: 4px;
-        border-radius: 50%;
-        background: var(--primary);
+    /* Weekend colors */
+    :global(.cal-day.sun.cur .cal-day-num) { color: oklch(0.6 0.22 20) !important; }
+    :global(.cal-day.sat.cur .cal-day-num) { color: oklch(0.55 0.18 240) !important; }
+
+    /* Today cell */
+    :global(.cal-day.today) {
+        background: var(--primary) !important;
+        border-color: transparent !important;
+        box-shadow: 0 4px 18px oklch(from var(--primary) l c h / 0.45);
     }
-    :global(.cal-day.is-today.has-note::after) {
-        background: white;
+    :global(.cal-day.today:hover) {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px oklch(from var(--primary) l c h / 0.55);
     }
-    :global(.cal-day.is-sunday) {
-        color: oklch(0.7 0.12 25 / 0.7);
-    }
-    :global(.cal-day.is-saturday) {
-        color: oklch(0.7 0.12 250 / 0.7);
-    }
-    :global(.dark) :global(.cal-day.is-sunday) {
-        color: oklch(0.7 0.15 25 / 0.8);
-    }
-    :global(.dark) :global(.cal-day.is-saturday) {
-        color: oklch(0.7 0.15 250 / 0.8);
+    /* Today cell number - FORCE white and high visibility, even on weekends */
+    :global(.cal-day.today .cal-day-num),
+    :global(.cal-day.today.cur.sat .cal-day-num),
+    :global(.cal-day.today.cur.sun .cal-day-num) {
+        color: #ffffff !important; 
+        font-weight: 900;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
     }
 
-    .cal-grid-container {
-        max-width: 32rem;
-        margin: 0 auto;
+    /* Selected Day */
+    :global(.cal-day.selected:not(.today)) {
+        border-color: var(--primary) !important;
+        background: oklch(from var(--primary) l c h / 0.1);
+    }
+
+    /* Note chip inside grid cell */
+    :global(.cal-chip) {
+        font-size: 0.72rem; line-height: 1.4;
+        font-weight: 600;
+        padding: 2px 6px; border-radius: 4px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        max-width: 100%;
+        margin-top: auto;
+    }
+    /* Color chip variants - Light Mode */
+    :global(.cal-chip.c-default) { background: oklch(from var(--primary) l c h / 0.18); color: var(--primary); }
+    :global(.cal-chip.c-red)     { background: oklch(0.65 0.2 20 / 0.18);   color: oklch(0.55 0.2 20);   }
+    :global(.cal-chip.c-orange)  { background: oklch(0.72 0.18 60 / 0.18);  color: oklch(0.55 0.18 60);  }
+    :global(.cal-chip.c-green)   { background: oklch(0.65 0.17 145 / 0.18); color: oklch(0.45 0.18 145); }
+    :global(.cal-chip.c-blue)    { background: oklch(0.65 0.17 240 / 0.18); color: oklch(0.45 0.18 240); }
+    :global(.cal-chip.c-purple)  { background: oklch(0.65 0.17 300 / 0.18); color: oklch(0.45 0.17 300); }
+    
+    /* Color chip variants - Dark Mode */
+    :global(.dark) :global(.cal-chip.c-default) { background: oklch(from var(--primary) l c h / 0.28); color: oklch(from var(--primary) calc(l + 0.15) c h); }
+    :global(.dark) :global(.cal-chip.c-red)     { background: oklch(0.65 0.2 20 / 0.25);   color: oklch(0.85 0.2 20);   }
+    :global(.dark) :global(.cal-chip.c-orange)  { background: oklch(0.72 0.18 60 / 0.25);  color: oklch(0.9 0.18 60);   }
+    :global(.dark) :global(.cal-chip.c-green)   { background: oklch(0.65 0.17 145 / 0.25); color: oklch(0.82 0.17 145); }
+    :global(.dark) :global(.cal-chip.c-blue)    { background: oklch(0.65 0.17 240 / 0.25); color: oklch(0.82 0.17 240); }
+    :global(.dark) :global(.cal-chip.c-purple)  { background: oklch(0.65 0.17 300 / 0.25); color: oklch(0.82 0.17 300); }
+
+    /* Mobile view */
+    @media (max-width: 480px) {
+        :global(.cal-day) { min-height: 52px; padding: 4px 6px; }
+        :global(.cal-chip) { display: none; }
+    }
+
+    /* ===== Sidebar ===== */
+    .cal-sidebar {
+        border-radius: 12px;
+        border: 1.5px solid var(--border-in-card, oklch(0.5 0 0 / 0.1));
+        background: var(--card-bg, rgba(0, 0, 0, 0.02));
+        overflow: hidden;
+    }
+    .cal-sidebar-hd {
+        display: flex; align-items: center; gap: 8px;
+        padding: 12px 14px;
+        font-size: 0.85rem; font-weight: 700;
+        letter-spacing: 0.04em;
+        color: var(--text-normal);
+        background: rgba(0, 0, 0, 0.04);
+        border-bottom: 1.5px solid var(--border-in-card, oklch(0.5 0 0 / 0.1));
+    }
+    :global(.dark) .cal-sidebar-hd {
+        background: rgba(255, 255, 255, 0.03);
+    }
+    .cal-sidebar-body {
+        padding: 8px; max-height: 380px; overflow-y: auto;
+        display: flex; flex-direction: column; gap: 4px;
+    }
+    
+    /* Sidebar Item styles */
+    :global(.sb-empty) {
+        padding: 30px 10px; text-align: center;
+        font-size: 0.8rem; 
+        color: var(--text-muted);
+    }
+    :global(.sb-item) {
+        display: flex; align-items: flex-start; gap: 10px;
+        padding: 10px 12px; border-radius: 8px; cursor: pointer;
+        border: none; width: 100%; text-align: left;
+        background: none; 
+        color: var(--text-normal); 
+        font-family: inherit;
+        transition: background 0.15s;
+    }
+    :global(.sb-item:hover) { 
+        background: rgba(0, 0, 0, 0.05); 
+    }
+    :global(.dark) :global(.sb-item:hover) { 
+        background: rgba(255, 255, 255, 0.05); 
+    }
+    :global(.sb-dot) {
+        width: 8px; height: 8px; border-radius: 50%;
+        flex-shrink: 0; margin-top: 5px;
+    }
+    :global(.sb-info) { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    :global(.sb-date) { 
+        font-size: 0.75rem; font-weight: 700; 
+        color: var(--text-muted);
+    }
+    :global(.sb-text) {
+        font-size: 0.8rem; 
+        color: var(--text-normal);
+        opacity: 0.9;
+        line-height: 1.4;
+        overflow: hidden; display: -webkit-box;
+        -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    }
+
+    /* ===== Modal Overlay ===== */
+    .cal-overlay {
+        position: fixed; inset: 0; z-index: 9999;
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(0, 0, 0, 0.35);
+        padding: 1rem;
+        opacity: 0;
+        transition: opacity 0.22s ease;
+    }
+    :global(.dark) .cal-overlay {
+        background: rgba(0, 0, 0, 0.55);
+    }
+    .cal-overlay.open { opacity: 1; }
+
+    /* ===== Modal Box ===== */
+    .cal-modal {
+        background: #ffffff;
+        border-radius: 16px;
+        width: 100%; max-width: 420px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        display: flex; flex-direction: column; overflow: hidden;
+        transform: scale(0.95) translateY(10px);
+        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    :global(.dark) .cal-modal {
+        background: #1e1e24;
+        border-color: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+    }
+    .cal-overlay.open .cal-modal { transform: scale(1) translateY(0); }
+
+    .cal-modal-hd {
+        display: flex; align-items: flex-start; justify-content: space-between;
+        padding: 18px 20px 14px;
+        border-bottom: 1px solid var(--border-in-card, oklch(0.5 0 0 / 0.08));
+    }
+    .cal-close-btn {
+        display: flex; align-items: center; justify-content: center;
+        width: 30px; height: 30px; border-radius: 50%;
+        border: none; cursor: pointer;
+        background: rgba(0, 0, 0, 0.06); 
+        color: var(--text-normal);
+        flex-shrink: 0;
+        transition: all 0.15s;
+    }
+    :global(.dark) .cal-close-btn {
+        background: rgba(255, 255, 255, 0.08);
+    }
+    .cal-close-btn:hover { 
+        background: rgba(0, 0, 0, 0.12); 
+        transform: scale(1.05); 
+    }
+    :global(.dark) .cal-close-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .cal-color-row {
+        display: flex; align-items: center;
+        padding: 12px 20px;
+        border-bottom: 1px solid var(--border-in-card, oklch(0.5 0 0 / 0.08));
+    }
+    .cal-color-opts { display: flex; gap: 10px; align-items: center; }
+
+    /* Color Dots */
+    :global(.c-dot) {
+        width: 20px; height: 20px; border-radius: 50%;
+        border: 2.5px solid transparent; cursor: pointer;
+        outline: none; flex-shrink: 0;
+        transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    }
+    :global(.c-dot:hover) { transform: scale(1.2); }
+    :global(.c-dot.active) {
+        border-color: rgba(0, 0, 0, 0.3);
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+        transform: scale(1.15);
+    }
+    :global(.dark) :global(.c-dot.active) {
+        border-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
+    }
+
+    .cal-textarea {
+        width: 100%; height: 160px;
+        padding: 16px 20px;
+        border: none; outline: none; resize: none;
+        background: transparent; 
+        color: var(--text-normal);
+        font-size: 0.95rem; line-height: 1.6; font-family: inherit;
+    }
+
+    .cal-modal-ft {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 10px 20px 16px;
+        border-top: 1px solid var(--border-in-card, oklch(0.5 0 0 / 0.08));
+    }
+    .cal-del-btn {
+        font-size: 0.78rem; padding: 5px 12px; border-radius: 6px;
+        border: 1px solid oklch(0.6 0.2 20 / 0.3);
+        background: none; color: oklch(0.6 0.2 20); cursor: pointer;
+        font-family: inherit; font-weight: 600;
+        transition: all 0.15s;
+    }
+    .cal-del-btn:hover { 
+        background: oklch(0.6 0.2 20 / 0.1); 
+        border-color: oklch(0.6 0.2 20 / 0.6); 
     }
 </style>
 
 <script is:inline>
-(function() {
-    var viewYear, viewMonth;
-    var selectedDate = null;
+(function () {
+    var Y, M;                   // viewYear, viewMonth
+    var selDate  = null;        // selected date key (YYYY-MM-DD)
+    var selColor = 'default';   // currently active color label
     var saveTimer = null;
 
-    function getUTC8Now() {
-        return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Taipei" }));
+    // Color palette map: key → CSS color value
+    var COLORS = {
+        default: 'var(--primary)',
+        red:    'oklch(0.65 0.2 20)',
+        orange: 'oklch(0.72 0.18 60)',
+        green:  'oklch(0.65 0.17 145)',
+        blue:   'oklch(0.65 0.17 240)',
+        purple: 'oklch(0.65 0.17 300)',
+    };
+    var COLOR_LABELS = {
+        default: '預設', red: '紅色', orange: '橙色',
+        green: '綠色', blue: '藍色', purple: '紫色'
+    };
+    var WD = ['日','一','二','三','四','五','六'];
+
+    // ── Utilities ──────────────────────────────────────────
+
+    function now8() {
+        return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Taipei' }));
     }
 
+    /** Get notes from localStorage */
     function getNotes() {
-        try { return JSON.parse(localStorage.getItem('calendar-notes') || '{}'); }
-        catch(e) { return {}; }
+        try {
+            var raw = JSON.parse(localStorage.getItem('calendar-notes') || '{}');
+            var out = {};
+            Object.keys(raw).forEach(function (k) {
+                var v = raw[k];
+                out[k] = (typeof v === 'string')
+                    ? { text: v, color: 'default' }
+                    : v;
+            });
+            return out;
+        } catch (e) { return {}; }
     }
 
-    function saveNotes(notes) {
-        try { localStorage.setItem('calendar-notes', JSON.stringify(notes)); }
-        catch(e) {}
+    function saveNotes(n) {
+        try { localStorage.setItem('calendar-notes', JSON.stringify(n)); }
+        catch (e) {}
     }
 
-    function noteKey(y, m, d) {
+    /** Format date key: YYYY-MM-DD */
+    function dateKey(y, m, d) {
         return y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
     }
 
-    function renderCalendar() {
+    function escHtml(s) {
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── Render Calendar Grid ────────────────────────────────
+
+    function render() {
         var container = document.getElementById('cal-days');
-        var titleEl = document.getElementById('cal-title');
+        var titleEl   = document.getElementById('cal-title');
+        var countEl   = document.getElementById('cal-note-count');
         if (!container || !titleEl) return;
 
-        var now = getUTC8Now();
-        var todayY = now.getFullYear();
-        var todayM = now.getMonth();
-        var todayD = now.getDate();
+        var t = now8();
+        var tY = t.getFullYear(), tM = t.getMonth(), tD = t.getDate();
 
-        titleEl.textContent = viewYear + ' 年 ' + (viewMonth + 1) + ' 月';
+        titleEl.textContent = Y + ' 年 ' + (M + 1) + ' 月';
 
-        var firstDay = new Date(viewYear, viewMonth, 1).getDay();
-        var daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
-        var daysInPrevMonth = new Date(viewYear, viewMonth, 0).getDate();
-        var notes = getNotes();
+        var firstDow  = new Date(Y, M, 1).getDay();
+        var daysInMon = new Date(Y, M + 1, 0).getDate();
+        var daysInPrv = new Date(Y, M, 0).getDate();
+        var notes     = getNotes();
+
+        // Count notes for this month
+        var prefix   = Y + '-' + String(M + 1).padStart(2, '0');
+        var noteCount = 0;
+        Object.keys(notes).forEach(function (k) {
+            if (k.startsWith(prefix) && notes[k] && notes[k].text && notes[k].text.trim()) noteCount++;
+        });
+        if (countEl) {
+            countEl.textContent = noteCount + ' 則備忘';
+            countEl.classList.toggle('hidden', noteCount === 0);
+        }
 
         var html = '';
 
         // Previous month padding
-        for (var i = firstDay - 1; i >= 0; i--) {
-            var pd = daysInPrevMonth - i;
-            html += '<div class="cal-day">' + pd + '</div>';
+        for (var i = firstDow - 1; i >= 0; i--) {
+            html += '<div class="cal-day opacity-30"><span class="cal-day-num">'
+                 + (daysInPrv - i) + '</span></div>';
         }
 
-        // Current month
-        for (var d = 1; d <= daysInMonth; d++) {
-            var isToday = (viewYear === todayY && viewMonth === todayM && d === todayD);
-            var key = noteKey(viewYear, viewMonth, d);
-            var hasNote = notes[key] && notes[key].trim();
-            var dayOfWeek = new Date(viewYear, viewMonth, d).getDay();
+        // Current month days
+        for (var d = 1; d <= daysInMon; d++) {
+            var k   = dateKey(Y, M, d);
+            var note = notes[k];
+            var dow  = new Date(Y, M, d).getDay();
+            var isT  = (Y === tY && M === tM && d === tD);
+            var isSel = (selDate === k);
 
-            var cls = 'cal-day is-current-month';
-            if (isToday) cls += ' is-today';
-            if (hasNote) cls += ' has-note';
-            if (selectedDate === key) cls += ' is-selected';
-            if (dayOfWeek === 0) cls += ' is-sunday';
-            if (dayOfWeek === 6) cls += ' is-saturday';
+            var cls = 'cal-day cur';
+            if (isT)  cls += ' today';
+            if (isSel) cls += ' selected';
+            if (dow === 0) cls += ' sun';
+            if (dow === 6) cls += ' sat';
 
-            html += '<div class="' + cls + '" data-date="' + key + '" data-day="' + d + '">' + d + '</div>';
+            var chip = '';
+            if (note && note.text && note.text.trim()) {
+                var c    = note.color || 'default';
+                var snip = escHtml(note.text.trim().split('\n')[0].substring(0, 16));
+                chip = '<span class="cal-chip c-' + c + '">' + snip + '</span>';
+            }
+
+            html += '<div class="' + cls + '" data-k="' + k + '">'
+                 + '<span class="cal-day-num">' + d + '</span>'
+                 + chip
+                 + '</div>';
         }
 
         // Next month padding
-        var totalCells = firstDay + daysInMonth;
-        var remaining = (7 - totalCells % 7) % 7;
-        for (var i = 1; i <= remaining; i++) {
-            html += '<div class="cal-day">' + i + '</div>';
+        var total = firstDow + daysInMon;
+        var rem   = (7 - total % 7) % 7;
+        for (var j = 1; j <= rem; j++) {
+            html += '<div class="cal-day opacity-30"><span class="cal-day-num">' + j + '</span></div>';
         }
 
         container.innerHTML = html;
 
-        // Click handlers
-        container.querySelectorAll('.cal-day.is-current-month').forEach(function(el) {
-            el.addEventListener('click', function() {
-                var date = el.getAttribute('data-date');
-                openEditor(date);
+        // Attach click handlers to current-month cells
+        container.querySelectorAll('.cal-day.cur').forEach(function (el) {
+            el.addEventListener('click', function () { openModal(el.dataset.k); });
+        });
+
+        renderSidebar(notes, prefix);
+    }
+
+    // ── Render Sidebar ──────────────────────────────────────
+
+    function renderSidebar(notes, prefix) {
+        var list  = document.getElementById('cal-sidebar-list');
+        var label = document.getElementById('cal-sidebar-label');
+        if (!list) return;
+        if (label) label.textContent = (M + 1) + ' 月備忘';
+
+        var items = Object.keys(notes).filter(function (k) {
+            return k.startsWith(prefix) && notes[k] && notes[k].text && notes[k].text.trim();
+        }).sort();
+
+        if (!items.length) {
+            list.innerHTML = '<div class="sb-empty">本月無備忘 ✨</div>';
+            return;
+        }
+
+        var html = '';
+        items.forEach(function (k) {
+            var n     = notes[k];
+            var parts = k.split('-');
+            var day   = parseInt(parts[2]);
+            var dow   = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, day).getDay();
+            var bgCol = COLORS[n.color] || COLORS.default;
+            html += '<button class="sb-item" data-k="' + k + '">'
+                 + '<span class="sb-dot" style="background:' + bgCol + '"></span>'
+                 + '<span class="sb-info">'
+                 + '<span class="sb-date">' + day + ' 日（週' + WD[dow] + '）</span>'
+                 + '<span class="sb-text">' + escHtml(n.text.trim()) + '</span>'
+                 + '</span></button>';
+        });
+        list.innerHTML = html;
+
+        list.querySelectorAll('.sb-item').forEach(function (el) {
+            el.addEventListener('click', function () {
+                var k = el.dataset.k;
+                var p = k.split('-');
+                Y = parseInt(p[0]); M = parseInt(p[1]) - 1;
+                render();
+                openModal(k);
             });
         });
     }
 
-    function openEditor(dateKey) {
-        selectedDate = dateKey;
-        renderCalendar(); // re-render to show selection
+    // ── Modal ───────────────────────────────────────────────
 
-        var editor = document.getElementById('cal-editor');
-        var titleEl = document.getElementById('cal-editor-title');
-        var textEl = document.getElementById('cal-editor-text');
-        var statusEl = document.getElementById('cal-editor-status');
-        if (!editor || !titleEl || !textEl) return;
+    function openModal(key) {
+        selDate = key;
+        render(); // re-render to highlight selected cell
 
-        // Parse date for display
-        var parts = dateKey.split('-');
-        var displayDate = parts[0] + ' 年 ' + parseInt(parts[1]) + ' 月 ' + parseInt(parts[2]) + ' 日';
-        var dayOfWeek = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2])).getDay();
-        var weekdays = ['日', '一', '二', '三', '四', '五', '六'];
-        titleEl.textContent = '📝 ' + displayDate + ' (週' + weekdays[dayOfWeek] + ')';
+        var overlay  = document.getElementById('cal-overlay');
+        var dateEl   = document.getElementById('cal-modal-date');
+        var wdEl     = document.getElementById('cal-modal-weekday');
+        var textEl   = document.getElementById('cal-textarea');
+        var statusEl = document.getElementById('cal-modal-status');
+        if (!overlay || !textEl) return;
+
+        var p   = key.split('-');
+        var y   = parseInt(p[0]), m = parseInt(p[1]) - 1, d = parseInt(p[2]);
+        var dow = new Date(y, m, d).getDay();
+
+        if (dateEl) dateEl.textContent = y + ' 年 ' + (m + 1) + ' 月 ' + d + ' 日';
+        if (wdEl)   wdEl.textContent   = '星期' + WD[dow];
 
         var notes = getNotes();
-        textEl.value = notes[dateKey] || '';
+        var note  = notes[key] || { text: '', color: 'default' };
+        textEl.value = note.text || '';
+        selColor     = note.color || 'default';
         if (statusEl) statusEl.textContent = '';
 
-        editor.classList.remove('hidden');
-        textEl.focus();
+        updateDots();
+
+        overlay.style.display = 'flex';
+        overlay.setAttribute('aria-hidden', 'false');
+        requestAnimationFrame(function () {
+            overlay.classList.add('open');
+            setTimeout(function () { textEl.focus(); }, 50);
+        });
     }
 
-    function closeEditor() {
-        var editor = document.getElementById('cal-editor');
-        if (editor) editor.classList.add('hidden');
-        selectedDate = null;
-        renderCalendar();
+    // ... Rest of the script is exactly the same as previous (closeModal, doSave, init) ...
+    function closeModal() {
+        var overlay = document.getElementById('cal-overlay');
+        if (!overlay) return;
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
+        setTimeout(function () { overlay.style.display = 'none'; }, 230);
+        selDate = null;
+        render();
     }
 
-    function autoSave() {
-        if (!selectedDate) return;
-        var textEl = document.getElementById('cal-editor-text');
-        var statusEl = document.getElementById('cal-editor-status');
+    function updateDots() {
+        document.querySelectorAll('.c-dot').forEach(function (el) {
+            el.classList.toggle('active', el.dataset.c === selColor);
+        });
+    }
+
+    function initColorDots() {
+        var opts = document.getElementById('cal-color-opts');
+        if (!opts) return;
+        Object.keys(COLORS).forEach(function (c) {
+            var btn = document.createElement('button');
+            btn.className       = 'c-dot';
+            btn.dataset.c       = c;
+            btn.style.background = COLORS[c];
+            btn.title           = COLOR_LABELS[c] || c;
+            btn.type            = 'button';
+            btn.addEventListener('click', function () {
+                selColor = c;
+                updateDots();
+                doSave();
+            });
+            opts.appendChild(btn);
+        });
+    }
+
+    function doSave() {
+        if (!selDate) return;
+        var textEl   = document.getElementById('cal-textarea');
+        var statusEl = document.getElementById('cal-modal-status');
         if (!textEl) return;
 
         var notes = getNotes();
-        var val = textEl.value.trim();
+        var val   = textEl.value.trim();
         if (val) {
-            notes[selectedDate] = val;
+            notes[selDate] = { text: textEl.value, color: selColor };
         } else {
-            delete notes[selectedDate];
+            delete notes[selDate];
         }
         saveNotes(notes);
-        renderCalendar();
-        if (statusEl) statusEl.textContent = '✅ 已自動儲存';
-        setTimeout(function() {
-            if (statusEl) statusEl.textContent = '';
-        }, 2000);
+        render();
+
+        if (statusEl) {
+            statusEl.textContent = '✓ 已儲存';
+            clearTimeout(statusEl._clr);
+            statusEl._clr = setTimeout(function () { statusEl.textContent = ''; }, 1800);
+        }
     }
 
     function init() {
-        var now = getUTC8Now();
-        viewYear = now.getFullYear();
-        viewMonth = now.getMonth();
+        var t = now8();
+        Y = t.getFullYear(); M = t.getMonth();
 
-        // Check URL params for pre-selected date
         var params = new URLSearchParams(window.location.search);
-        var dateParam = params.get('date');
-        if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
-            var pp = dateParam.split('-');
-            viewYear = parseInt(pp[0]);
-            viewMonth = parseInt(pp[1]) - 1;
-            selectedDate = dateParam;
+        var dp     = params.get('date');
+        if (dp && /^\d{4}-\d{2}-\d{2}$/.test(dp)) {
+            var pp = dp.split('-');
+            Y = parseInt(pp[0]); M = parseInt(pp[1]) - 1;
+            selDate = dp;
         }
 
-        renderCalendar();
+        initColorDots();
+        render();
+        if (selDate) openModal(selDate);
 
-        // If date was pre-selected, open editor
-        if (selectedDate) {
-            openEditor(selectedDate);
-        }
+        var $ = function (id) { return document.getElementById(id); };
 
-        // Navigation
-        var prevBtn = document.getElementById('cal-prev');
-        var nextBtn = document.getElementById('cal-next');
-        var todayBtn = document.getElementById('cal-today-btn');
-        var closeBtn = document.getElementById('cal-editor-close');
-        var deleteBtn = document.getElementById('cal-editor-delete');
-        var textEl = document.getElementById('cal-editor-text');
+        $('cal-prev').onclick = function () {
+            M--; if (M < 0) { M = 11; Y--; } render();
+        };
+        $('cal-next').onclick = function () {
+            M++; if (M > 11) { M = 0; Y++; } render();
+        };
+        $('cal-today-btn').onclick = function () {
+            var t2 = now8(); Y = t2.getFullYear(); M = t2.getMonth(); render();
+        };
+        $('cal-modal-x').onclick = closeModal;
 
-        if (prevBtn) prevBtn.onclick = function() {
-            viewMonth--;
-            if (viewMonth < 0) { viewMonth = 11; viewYear--; }
-            renderCalendar();
-        };
-        if (nextBtn) nextBtn.onclick = function() {
-            viewMonth++;
-            if (viewMonth > 11) { viewMonth = 0; viewYear++; }
-            renderCalendar();
-        };
-        if (todayBtn) todayBtn.onclick = function() {
-            var now = getUTC8Now();
-            viewYear = now.getFullYear();
-            viewMonth = now.getMonth();
-            renderCalendar();
-        };
-        if (closeBtn) closeBtn.onclick = closeEditor;
-        if (deleteBtn) deleteBtn.onclick = function() {
-            if (!selectedDate) return;
+        $('cal-overlay').addEventListener('click', function (e) {
+            if (e.target === this) closeModal();
+        });
+
+        $('cal-modal-del').onclick = function () {
+            if (!selDate) return;
             var notes = getNotes();
-            delete notes[selectedDate];
+            delete notes[selDate];
             saveNotes(notes);
-            if (textEl) textEl.value = '';
-            renderCalendar();
-            var statusEl = document.getElementById('cal-editor-status');
-            if (statusEl) statusEl.textContent = '🗑️ 已刪除';
-            setTimeout(function() { if (statusEl) statusEl.textContent = ''; }, 2000);
+            var tx = $('cal-textarea'); if (tx) tx.value = '';
+            var st = $('cal-modal-status');
+            if (st) st.textContent = '🗑️ 已刪除';
+            render();
+            setTimeout(closeModal, 650);
         };
 
-        // Auto-save on input with debounce
-        if (textEl) {
-            textEl.addEventListener('input', function() {
-                if (saveTimer) clearTimeout(saveTimer);
-                saveTimer = setTimeout(autoSave, 800);
-            });
-        }
+        $('cal-textarea').addEventListener('input', function () {
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(doSave, 600);
+        });
+
+        document.addEventListener('keydown', function (e) {
+            var ov = $('cal-overlay');
+            var modalOpen = ov && ov.classList.contains('open');
+
+            if (modalOpen) {
+                if (e.key === 'Escape') { closeModal(); return; }
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault(); doSave(); return;
+                }
+            } else {
+                if (document.activeElement && document.activeElement.tagName === 'TEXTAREA') return;
+                if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+                if (e.key === 'ArrowLeft')  { M--; if (M < 0)  { M = 11; Y--; } render(); }
+                if (e.key === 'ArrowRight') { M++; if (M > 11) { M = 0;  Y++; } render(); }
+            }
+        });
     }
 
     if (document.readyState === 'loading') {
@@ -386,4 +775,3 @@ const title = "行事曆";
     }
 })();
 </script>
-</MainGridLayout>

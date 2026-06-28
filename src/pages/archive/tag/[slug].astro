@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import PostCard from "@components/PostCard.astro";
+import TagNavigation from "@components/control/TagNavigation.astro";
 import { getPostUrlBySlug } from "@utils/url-utils";
 
 export async function getStaticPaths() {
@@ -43,8 +44,9 @@ const interval = 50;
 ---
 
 <MainGridLayout title={`標籤: ${tag}`}>
+    <TagNavigation activeTag={tag} />
     <div class="flex flex-col gap-4">
-        <div class="card-base p-4 mb-4">
+        <div class="card-base p-4">
             <h1 class="text-2xl font-bold text-90">
                 <span class="text-[var(--primary)]">#</span> {tag}
             </h1>
