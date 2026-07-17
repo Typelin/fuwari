@@ -741,11 +741,11 @@ $$P_{DC} = |c_0|^2 = \left(\frac{1}{2}\right)^2 = \boxed{\frac{1}{4}}$$
 
 方波包含無限多諧波（1st, 3rd, 5th, ...），理論上：
 
-$$\boxed{B_{絕對} = \infty}$$
+$$\boxed{B_{\text{絕對}} = \infty}$$
 
 **考慮到第 5 諧波的頻寬：**
 
-$$\boxed{B_{5次} = 5f_0}$$
+$$\boxed{B_{5\text{次}} = 5f_0}$$
 
 ### 📝 考試答題模板
 
@@ -955,13 +955,13 @@ $$x(t) = 2\cos(500\pi t) + 4\cos(1000\pi t) - 8\cos(2000\pi t)$$
 
 直接套訣竅二：
 
-$$X(f) = \underbrace{\delta(f \pm 250)}_{A=2 \to 1} + \underbrace{2\delta(f \pm 500)}_{A=4 \to 2} \underbrace{- 4\delta(f \pm 1000)}_{A=8 \to 4, 負號}$$
+$$X(f) = \underbrace{\delta(f \pm 250)}_{A=2 \to 1} + \underbrace{2\delta(f \pm 500)}_{A=4 \to 2} \underbrace{- 4\delta(f \pm 1000)}_{A=8 \to 4, \text{負號}}$$
 
 ### 傅立葉級數（指數形式）
 
 直接套訣竅一：
 
-$$x(t) = \underbrace{1 \cdot e^{\pm j500\pi t}}_{A=2 \to 1} + \underbrace{2 \cdot e^{\pm j1000\pi t}}_{A=4 \to 2} + \underbrace{(-4) \cdot e^{\pm j2000\pi t}}_{A=8 \to 4, 負號}$$
+$$x(t) = \underbrace{1 \cdot e^{\pm j500\pi t}}_{A=2 \to 1} + \underbrace{2 \cdot e^{\pm j1000\pi t}}_{A=4 \to 2} + \underbrace{(-4) \cdot e^{\pm j2000\pi t}}_{A=8 \to 4, \text{負號}}$$
 
 ### 頻譜圖
 

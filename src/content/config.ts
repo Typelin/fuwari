@@ -21,15 +21,6 @@ const postsCollection = defineCollection({
 	}),
 });
 
-const assetsCollection = defineCollection({
-	type: "data",
-	schema: z.object({
-		title: z.string().optional(),
-		description: z.string().optional(),
-	}),
-});
-
 export const collections = {
 	posts: postsCollection,
-	assets: assetsCollection,
 };

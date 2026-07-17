@@ -54,11 +54,11 @@ try {
 </div>
 
 <script>
-    function updateServerInfo(server) {
+    function updateServerInfo(server: string | null) {
         const wrappers = document.querySelectorAll('.server-info-wrapper');
         wrappers.forEach(wrapper => {
-            const serverInfo = wrapper.querySelector('.server-info');
-            const serverIcon = wrapper.querySelector('.server-icon');
+            const serverInfo = wrapper.querySelector<HTMLElement>('.server-info');
+            const serverIcon = wrapper.querySelector<HTMLImageElement>('.server-icon');
             if (serverInfo) {
                 if (server) {
                     serverInfo.innerText = `訪問節點：${server}`;

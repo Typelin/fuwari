@@ -1,0 +1,97 @@
+---
+const ADSENSE_CLIENT = "ca-pub-1683686345039700";
+const BAIDU_ID = "b219eaad631b87d273cfe72148b2138b";
+const CLARITY_ID = "t8f0gmcwtx";
+const GA_ID = "G-9Z4LT4H8KH";
+---
+
+<meta name="google-adsense-account" content={ADSENSE_CLIENT} />
+
+<!-- Cloudflare Web Analytics stays deferred so page-view coverage is complete. -->
+<script
+	is:inline
+	defer
+	src="https://static.cloudflareinsights.com/beacon.min.js"
+	data-cf-beacon='{"token":"15fe148e91b34f10a15652e1a74ab26c"}'
+	data-swup-ignore-script
+></script>
+
+<!--
+	Non-critical analytics and ads wait for an idle window. This preserves the
+	dashboards while keeping them out of the critical rendering path.
+-->
+<script
+	is:inline
+	data-swup-ignore-script
+	define:vars={{ ADSENSE_CLIENT, BAIDU_ID, CLARITY_ID, GA_ID }}
+>
+	(function () {
+		if (document.documentElement.dataset.typelinAnalyticsScheduled === "1") return;
+		document.documentElement.dataset.typelinAnalyticsScheduled = "1";
+
+		function loadScript(src, attributes) {
+			if (document.querySelector('script[src="' + src + '"]')) return;
+			var script = document.createElement("script");
+			script.src = src;
+			script.async = true;
+			Object.keys(attributes || {}).forEach(function (key) {
+				script.setAttribute(key, attributes[key]);
+			});
+			document.head.appendChild(script);
+		}
+
+		function trackPageView() {
+			var path = window.location.pathname + window.location.search;
+			if (typeof window.gtag === "function") {
+				window.gtag("event", "page_view", {
+					page_location: window.location.href,
+					page_path: path,
+					page_title: document.title,
+				});
+			}
+			if (Array.isArray(window._hmt)) {
+				window._hmt.push(["_trackPageview", path]);
+			}
+		}
+
+		function bindSwupTracking() {
+			if (!window.swup || !window.swup.hooks || window.__typelinAnalyticsSwupBound) return;
+			window.__typelinAnalyticsSwupBound = true;
+			window.swup.hooks.on("page:view", trackPageView);
+		}
+
+		function startDeferredServices() {
+			window.dataLayer = window.dataLayer || [];
+			window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+			window.gtag("js", new Date());
+			window.gtag("config", GA_ID, { send_page_view: false });
+			loadScript("https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(GA_ID));
+
+			window._hmt = window._hmt || [];
+			loadScript("https://hm.baidu.com/hm.js?" + BAIDU_ID);
+
+			window.clarity = window.clarity || function () {
+				(window.clarity.q = window.clarity.q || []).push(arguments);
+			};
+			loadScript("https://www.clarity.ms/tag/" + CLARITY_ID);
+
+			loadScript(
+				"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" +
+					encodeURIComponent(ADSENSE_CLIENT),
+				{ crossorigin: "anonymous" },
+			);
+
+			trackPageView();
+			bindSwupTracking();
+			if (!window.swup) {
+				document.addEventListener("swup:enable", bindSwupTracking, { once: true });
+			}
+		}
+
+		if ("requestIdleCallback" in window) {
+			window.requestIdleCallback(startDeferredServices, { timeout: 2500 });
+		} else {
+			window.setTimeout(startDeferredServices, 1800);
+		}
+	})();
+</script>

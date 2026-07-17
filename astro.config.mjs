@@ -3,7 +3,7 @@ import svelte from "@astrojs/svelte";
 import tailwind from "@astrojs/tailwind";
 import swup from "@swup/astro";
 import icon from "astro-icon";
-import { defineConfig } from "astro/config";
+import { defineConfig, passthroughImageService } from "astro/config";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeComponents from "rehype-components";/* Render the custom directive content */
 import rehypeKatex from "rehype-katex";
@@ -27,7 +27,6 @@ import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import { expressiveCodeConfig } from "./src/config.ts";
 // import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge.ts";
 import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
-import { defineConfig, passthroughImageService } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
@@ -45,7 +44,7 @@ export default defineConfig({
       "/long": "https://iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii.iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii.in/",
       "/mly": "https://muleyun.com/aff/GOTRJLPN",
       "/tg": "https://t.me/+_07DERp7k1ljYTc1",
-      "/tit": "/posts/pin/",
+      "/tit": "https://t.me/+_07DERp7k1ljYTc1",
       "/tly": "https://tianlicloud.cn/aff/HNNCFKGP",
       "/wly": "https://wl.awcmam.com/#/register?code=FNQwOQBM",
       "/yyb": "https://www.rainyun.com/acofork_?s=bilibili",

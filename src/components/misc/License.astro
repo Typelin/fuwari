@@ -15,7 +15,6 @@ const { title, pubDate } = Astro.props;
 const className = Astro.props.class;
 const profileConf = profileConfig;
 const licenseConf = licenseConfig;
-const postUrl = decodeURIComponent(Astro.url.toString());
 ---
 <div class=`relative transition overflow-hidden bg-[var(--license-block-bg)] py-5 px-6 ${className}`>
     <div class="transition font-bold text-black/75 dark:text-white/75">
@@ -25,7 +24,7 @@ const postUrl = decodeURIComponent(Astro.url.toString());
     <a id="current-link" style="display:none;" class="link text-[var(--primary)]"></a>
 
     <script>
-    const currentLink = document.getElementById('current-link');
+    const currentLink = document.querySelector<HTMLAnchorElement>('#current-link');
 
     if (currentLink) {
         console.log(`[license] old url: ${window.location.href}`);

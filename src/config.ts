@@ -92,7 +92,7 @@ export const profileConfig: ProfileConfig = {
 	bio: "吾心吾行澄如明鏡，所作所為皆為正義",
 	links: [
 		{
-			name: "Bilibli",
+			name: "Bilibili",
 			icon: "fa6-brands:bilibili",
 			url: "https://space.bilibili.com/383913921",
 		},
@@ -114,7 +114,7 @@ export const profileConfig: ProfileConfig = {
 		{
 			name: "Contact",
 			icon: "material-symbols:mail-outline",
-			url: "https://typelin.pages.dev/#footer",
+			url: "/about/",
 		},
 	],
 };

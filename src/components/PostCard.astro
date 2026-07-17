@@ -3,8 +3,6 @@ import path from "node:path";
 import type { CollectionEntry } from "astro:content";
 import { Icon } from "astro-icon/components";
 
-import { umamiConfig } from "../config";
-import { formatDateToYYYYMMDD } from "../utils/date-utils";
 import { getDir } from "../utils/url-utils";
 import PostMetadata from "./PostMeta.astro";
 import ImageWrapper from "./misc/ImageWrapper.astro";
@@ -36,7 +34,6 @@ const {
 	style,
 } = Astro.props;
 
-const isPinned = entry.data.pinned === true;
 const className = Astro.props.class;
 
 const hasCover = image !== undefined && image !== null && image !== "";

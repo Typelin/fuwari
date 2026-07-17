@@ -11,6 +11,7 @@ import {
 } from "@/config";
 import ReadingProgress from "@components/control/ReadingProgress.astro";
 import CFCounter from "@components/control/CFCounter.astro";
+import DeferredAnalytics from "@components/control/DeferredAnalytics.astro";
 import ConfigCarrier from "@components/ConfigCarrier.astro";
 import {
 	AUTO_MODE,
@@ -121,13 +122,7 @@ const bannerOffset =
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<!-- 隨機背景圖 API -->
-		<script data-swup-ignore-script is:inline src="https://pic.typelin.me/random.js"></script>
-
-
-		
-		
-		{/* <!-- Content Security Policy -->
-		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://giscus.app https://hpic.072103.xyz https://umami.acofork.com https://hm.baidu.com https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://static.cloudflareinsights.com https://*.adtrafficquality.google; style-src 'self' 'unsafe-inline' https://giscus.app https://fonts.googleapis.com https://api.iconify.design; font-src 'self' https://fonts.gstatic.com https://api.iconify.design; img-src 'self' data: https: http:; connect-src 'self' https://umami.acofork.com https://hm.baidu.com https://www.google-analytics.com https://analytics.google.com https://api.iconify.design https://static.cloudflareinsights.com https://pic.2x.nz https://q2.qlogo.cn https://ep1.adtrafficquality.google https://googleads.g.doubleclick.net; frame-src 'self' https://giscus.app *.bilibili.com https://www.google.com https://googleads.g.doubleclick.net https://support.nodeget.com https://*.adtrafficquality.google; object-src 'none'; base-uri 'self'; form-action 'self';"> */}
+		<script is:inline defer data-swup-ignore-script src="https://pic.typelin.me/random.js"></script>
 		{favicons.map(favicon => (
 			<link rel="icon"
 				  href={favicon.src.startsWith('/') ? url(favicon.src) : favicon.src}
@@ -251,42 +246,7 @@ const bannerOffset =
 
 
 		<link rel="alternate" type="application/rss+xml" title={profileConfig.name} href={`${Astro.site}rss.xml`}/>
-		<!-- Umami 自建端點已下線；保留其他可用的分析服務，避免每頁產生 DNS 錯誤。 -->
-		<!-- 百度统计 -->
-<script data-swup-ignore-script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?b219eaad631b87d273cfe72148b2138b";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
-</script>
-
-<!-- clarity 分析 -->
-<script type="text/javascript" data-swup-ignore-script>
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "t8f0gmcwtx");
-</script>
-<!-- gad -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1683686345039700"
-     crossorigin="anonymous" data-swup-ignore-script></script>
-<meta name="google-adsense-account" content="ca-pub-1683686345039700">
-
-		<!-- 谷歌分析 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-9Z4LT4H8KH" data-swup-ignore-script></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-9Z4LT4H8KH');
-</script>
-
-<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "15fe148e91b34f10a15652e1a74ab26c"}' data-swup-ignore-script></script><!-- End Cloudflare Web Analytics -->
+		<DeferredAnalytics />
 	</head>
 	<body class=" min-h-screen transition " class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
 		  data-overlayscrollbars-initialize
@@ -310,9 +270,7 @@ var _hmt = _hmt || [];
 				}
 				
 				try {
-					// 获取当前访问的完整URL
-					const currentUrl = window.location.href;
-					// 获取当前域名
+							// 获取当前域名
 					const currentDomain = window.location.hostname;
 					
 					// 获取所有官方域名
@@ -367,15 +325,6 @@ var _hmt = _hmt || [];
 				checkDomain();
 			}
 		</script>
-<!-- Vercel Analytics (Swup-safe: guard against duplicate customElements.define) -->
-<script data-swup-ignore-script is:inline>
-if (typeof customElements !== 'undefined' && !customElements.get('vercel-analytics')) {
-  var s = document.createElement('script');
-  s.defer = true;
-  s.src = '/_vercel/insights/script.js';
-  document.head.appendChild(s);
-}
-</script>
 	</body>
 </html>
 
@@ -709,39 +658,20 @@ window.onresize = () => {
 import { Fancybox } from "@fancyapps/ui"
 import "@fancyapps/ui/dist/fancybox/fancybox.css"
 
+const fancyboxOptions = {
+	wheel: "slide" as const,
+	backdropClick: "close" as const,
+}
+
+const bindFancybox = () => {
+	Fancybox.bind(".custom-md img, #post-cover img", fancyboxOptions)
+}
+
 const setup = () => {
-	Fancybox.bind(".custom-md img, #post-cover img", {
-		wheel: 'zoom',
-		clickContent: 'close',
-		dblclickContent: 'zoom',
-		click: 'close',
-		dblclick: 'zoom',
-		Panels: {
-			display: ['counter', 'zoom']
-		},
-		Images: {
-			panning: true,
-			zoom: true,
-			protect: false
-		}
-	})
+	bindFancybox()
 
 	window.swup.hooks.on("page:view", () => {
-		Fancybox.bind(".custom-md img, #post-cover img", {
-			wheel: 'zoom',
-			clickContent: 'close',
-			dblclickContent: 'zoom',
-			click: 'close',
-			dblclick: 'zoom',
-			Panels: {
-				display: ['counter', 'zoom']
-			},
-			Images: {
-				panning: true,
-				zoom: true,
-				protect: false
-			}
-		})
+		bindFancybox()
 	})
 
 	window.swup.hooks.on(

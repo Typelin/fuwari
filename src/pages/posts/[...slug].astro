@@ -7,7 +7,7 @@ import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getSortedPosts } from "@utils/content-utils";
 import { getDir, getPostUrlBySlug } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
-import { gitHubEditConfig, licenseConfig } from "src/config";
+import { licenseConfig } from "src/config";
 import PostMetadata from "../../components/PostMeta.astro";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import { profileConfig, siteConfig } from "../../config";
@@ -162,7 +162,7 @@ const jsonLd = {
     }
 </style>
 
-<script define:vars={{ siteConfig }}>
+<script is:inline define:vars={{ siteConfig }}>
     // 图片加载动画处理
     function setupImageLoading() {
         const markdownContent = document.querySelector('.markdown-content');

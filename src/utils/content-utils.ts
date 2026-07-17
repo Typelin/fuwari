@@ -1,4 +1,4 @@
-import { type CollectionEntry, getCollection } from "astro:content";
+import { getCollection } from "astro:content";
 import { getCategoryUrl } from "@utils/url-utils.ts";
 
 export async function getSortedPosts() {

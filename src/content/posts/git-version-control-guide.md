@@ -337,7 +337,7 @@ git push origin main
 
 建立 `.gitignore` 檔案：
 
-```gitignore
+```text
 # 依賴目錄
 node_modules/
 vendor/
