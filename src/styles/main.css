@@ -148,7 +148,20 @@
 }
 
 .custom-md img, #post-cover img {
-    @apply cursor-zoom-in
+    @apply cursor-zoom-in;
+    /* 評測圖表：保留清晰縮放，避免糊成一片 */
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    image-rendering: auto;
+    -ms-interpolation-mode: bicubic;
+    backface-visibility: hidden;
+}
+
+/* 文章內 AA 圖表可點 Fancybox 看原解析 */
+.custom-md img[src*="/images/posts/aa-"] {
+    border: 1px solid color-mix(in oklab, var(--line-color, #888) 35%, transparent);
+    background: color-mix(in oklab, var(--card-bg, #111) 80%, transparent);
 }
 
 ::selection {

@@ -83,7 +83,7 @@ import { Icon } from "astro-icon/components";
     }
     :global(.rp-cal-day) {
         position: relative;
-        font-size: 0.6875rem;
+        font-size: 0.75rem;
         aspect-ratio: 1 / 1;
         display: flex;
         align-items: center;
@@ -91,10 +91,12 @@ import { Icon } from "astro-icon/components";
         border-radius: 50%;
         cursor: pointer;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        color: oklch(0.5 0 0 / 0.3);
+        /* 提高可讀性：避免灰到像壞掉 */
+        color: oklch(0.35 0 0 / 0.55);
+        touch-action: manipulation;
     }
     :global(.dark) :global(.rp-cal-day) {
-        color: oklch(0.5 0 0 / 0.4);
+        color: oklch(0.92 0 0 / 0.55);
     }
     :global(.rp-cal-day:hover) {
         background: oklch(0.5 0 0 / 0.08);

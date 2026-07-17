@@ -10,30 +10,31 @@ const title = "行事曆";
         <div class="card-base z-10 px-4 sm:px-9 py-6 relative w-full">
 
             <!-- Header -->
-            <div class="flex items-center gap-3 mb-6">
+            <div class="flex flex-wrap items-center gap-3 mb-3">
                 <Icon name="material-symbols:calendar-month" class="text-3xl text-[var(--primary)]" />
                 <h1 class="text-2xl font-bold dark:text-white/90 text-black/80">行事曆</h1>
-                <span id="cal-note-count" class="cal-count-badge hidden ml-auto"></span>
+                <span id="cal-note-count" class="cal-count-badge hidden sm:inline-flex ml-auto"></span>
             </div>
+            <p class="cal-hint mb-5">點日期寫備忘 · 自動存本機 · 色點＝有內容。資料只在瀏覽器，清站台資料會消失。</p>
 
             <!-- Month Navigation -->
-            <div class="flex items-center gap-2 mb-6">
+            <div class="flex items-center gap-2 mb-5 flex-wrap">
                 <button id="cal-prev" class="cal-nav-btn" aria-label="上個月">
                     <Icon name="material-symbols:chevron-left" class="text-xl" />
                 </button>
                 <button id="cal-next" class="cal-nav-btn" aria-label="下個月">
                     <Icon name="material-symbols:chevron-right" class="text-xl" />
                 </button>
-                <div id="cal-title" class="text-xl sm:text-2xl font-bold dark:text-white/95 text-black/90 ml-2 select-none">--</div>
+                <div id="cal-title" class="text-xl sm:text-2xl font-bold dark:text-white/95 text-black/90 ml-1 select-none">--</div>
                 <button id="cal-today-btn" class="cal-today-shortcut ml-auto">今天</button>
             </div>
 
-            <!-- Main: Calendar + Sidebar -->
+            <!-- Main: mobile 備忘先；桌面 月曆 | 側欄 -->
             <div class="cal-main-layout">
 
                 <!-- Calendar Grid -->
-                <div class="flex-1">
-                    <div class="grid grid-cols-7 gap-2 mb-2">
+                <div class="flex-1 min-w-0 order-2 md:order-1">
+                    <div class="grid grid-cols-7 gap-1.5 sm:gap-2 mb-2">
                         <div class="cal-weekday" data-type="sun">日</div>
                         <div class="cal-weekday">一</div>
                         <div class="cal-weekday">二</div>
@@ -42,14 +43,15 @@ const title = "行事曆";
                         <div class="cal-weekday">五</div>
                         <div class="cal-weekday" data-type="sat">六</div>
                     </div>
-                    <div id="cal-days" class="grid grid-cols-7 gap-2"></div>
+                    <div id="cal-days" class="grid grid-cols-7 gap-1.5 sm:gap-2"></div>
                 </div>
 
                 <!-- Sidebar -->
-                <aside class="cal-sidebar">
+                <aside class="cal-sidebar order-1 md:order-2">
                     <div class="cal-sidebar-hd">
                         <Icon name="material-symbols:sticky-note-2-outline" class="text-base" />
                         <span id="cal-sidebar-label">本月備忘</span>
+                        <span id="cal-note-count-mobile" class="cal-count-badge ml-auto md:hidden hidden"></span>
                     </div>
                     <div id="cal-sidebar-list" class="cal-sidebar-body"></div>
                 </aside>
@@ -139,15 +141,24 @@ const title = "行事曆";
         color: var(--primary);
     }
 
+    .cal-hint {
+        font-size: 0.85rem;
+        line-height: 1.55;
+        color: var(--text-muted);
+    }
+
     /* ===== Layout ===== */
     .cal-main-layout {
         display: grid;
-        grid-template-columns: 1fr 240px;
+        grid-template-columns: 1fr 260px;
         gap: 1.5rem;
         align-items: start;
     }
     @media (max-width: 768px) {
-        .cal-main-layout { grid-template-columns: 1fr; }
+        .cal-main-layout {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
     }
 
     /* ===== Weekday Headers ===== */
@@ -245,10 +256,37 @@ const title = "行事曆";
     :global(.dark) :global(.cal-chip.c-blue)    { background: oklch(0.65 0.17 240 / 0.25); color: oklch(0.82 0.17 240); }
     :global(.dark) :global(.cal-chip.c-purple)  { background: oklch(0.65 0.17 300 / 0.25); color: oklch(0.82 0.17 300); }
 
-    /* Mobile view */
-    @media (max-width: 480px) {
-        :global(.cal-day) { min-height: 52px; padding: 4px 6px; }
-        :global(.cal-chip) { display: none; }
+    /* 有備忘的色點（手機主要靠它） */
+    :global(.cal-dot) {
+        display: none;
+        width: 7px; height: 7px; border-radius: 50%;
+        margin-top: auto; align-self: center;
+        flex-shrink: 0;
+    }
+    :global(.cal-dot.c-default) { background: var(--primary); }
+    :global(.cal-dot.c-red)     { background: oklch(0.65 0.2 20); }
+    :global(.cal-dot.c-orange)  { background: oklch(0.72 0.18 60); }
+    :global(.cal-dot.c-green)   { background: oklch(0.65 0.17 145); }
+    :global(.cal-dot.c-blue)    { background: oklch(0.65 0.17 240); }
+    :global(.cal-dot.c-purple)  { background: oklch(0.65 0.17 300); }
+    :global(.cal-day.today .cal-dot) {
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.85);
+    }
+
+    /* Mobile：加大點擊、隱藏長 chip、改顯示色點 */
+    @media (max-width: 640px) {
+        :global(.cal-day) {
+            min-height: 48px;
+            min-width: 0;
+            padding: 6px 4px 8px;
+            border-radius: 10px;
+            touch-action: manipulation;
+        }
+        :global(.cal-day-num) { font-size: 0.95rem; }
+        :global(.cal-chip) { display: none !important; }
+        :global(.cal-dot) { display: block; }
+        .cal-sidebar-body { max-height: 200px; }
+        .cal-nav-btn { width: 2.75rem; height: 2.75rem; }
     }
 
     /* ===== Sidebar ===== */
@@ -508,6 +546,11 @@ const title = "行事曆";
             countEl.textContent = noteCount + ' 則備忘';
             countEl.classList.toggle('hidden', noteCount === 0);
         }
+        var countMob = document.getElementById('cal-note-count-mobile');
+        if (countMob) {
+            countMob.textContent = noteCount + ' 則';
+            countMob.classList.toggle('hidden', noteCount === 0);
+        }
 
         var html = '';
 
@@ -535,10 +578,11 @@ const title = "行事曆";
             if (note && note.text && note.text.trim()) {
                 var c    = note.color || 'default';
                 var snip = escHtml(note.text.trim().split('\n')[0].substring(0, 16));
-                chip = '<span class="cal-chip c-' + c + '">' + snip + '</span>';
+                chip = '<span class="cal-chip c-' + c + '">' + snip + '</span>'
+                     + '<span class="cal-dot c-' + c + '" aria-hidden="true"></span>';
             }
 
-            html += '<div class="' + cls + '" data-k="' + k + '">'
+            html += '<div class="' + cls + '" data-k="' + k + '" role="button" tabindex="0" aria-label="' + (M+1) + '月' + d + '日' + (note && note.text ? '，有備忘' : '') + '">'
                  + '<span class="cal-day-num">' + d + '</span>'
                  + chip
                  + '</div>';
@@ -553,9 +597,15 @@ const title = "行事曆";
 
         container.innerHTML = html;
 
-        // Attach click handlers to current-month cells
+        // Attach click / keyboard handlers to current-month cells
         container.querySelectorAll('.cal-day.cur').forEach(function (el) {
             el.addEventListener('click', function () { openModal(el.dataset.k); });
+            el.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openModal(el.dataset.k);
+                }
+            });
         });
 
         renderSidebar(notes, prefix);
