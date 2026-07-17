@@ -93,8 +93,6 @@ const title = "行事曆";
         </div>
     </div>
 
-</MainGridLayout>
-
 <style>
     /* 元件專屬區域變數：適應深淺色模式以確保文字高對比度 */
     .card-base {
@@ -461,12 +459,39 @@ const title = "行事曆";
     }
 </style>
 
-<script is:inline>
+<script is:inline data-swup-reload-script>
 (function () {
     var Y, M;                   // viewYear, viewMonth
     var selDate  = null;        // selected date key (YYYY-MM-DD)
     var selColor = 'default';   // currently active color label
     var saveTimer = null;
+    var controller = new AbortController();
+    var signal = controller.signal;
+
+    // Swup keeps the document alive between page visits. Tear down the
+    // previous calendar instance before its DOM is replaced so document-level
+    // handlers and pending autosaves never accumulate.
+    if (typeof window.__typelinCalendarCleanup === 'function') {
+        window.__typelinCalendarCleanup();
+    }
+    function cleanup() {
+        controller.abort();
+        clearTimeout(saveTimer);
+        if (window.__typelinCalendarCleanup === cleanup) {
+            delete window.__typelinCalendarCleanup;
+        }
+    }
+    window.__typelinCalendarCleanup = cleanup;
+    function armCleanup() {
+        document.addEventListener('astro:before-swap', cleanup, { once: true, signal: signal });
+    }
+    // On a Swup visit, wait for the current page:view event before arming the
+    // next before-swap cleanup. On a direct load, arm it once Swup is enabled.
+    if (window.swup) {
+        document.addEventListener('astro:page-load', armCleanup, { once: true, signal: signal });
+    } else {
+        document.addEventListener('swup:enable', armCleanup, { once: true, signal: signal });
+    }
 
     // Color palette map: key → CSS color value
     var COLORS = {
@@ -599,13 +624,13 @@ const title = "行事曆";
 
         // Attach click / keyboard handlers to current-month cells
         container.querySelectorAll('.cal-day.cur').forEach(function (el) {
-            el.addEventListener('click', function () { openModal(el.dataset.k); });
+            el.addEventListener('click', function () { openModal(el.dataset.k); }, { signal: signal });
             el.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     openModal(el.dataset.k);
                 }
-            });
+            }, { signal: signal });
         });
 
         renderSidebar(notes, prefix);
@@ -651,7 +676,7 @@ const title = "行事曆";
                 Y = parseInt(p[0]); M = parseInt(p[1]) - 1;
                 render();
                 openModal(k);
-            });
+            }, { signal: signal });
         });
     }
 
@@ -722,7 +747,7 @@ const title = "行事曆";
                 selColor = c;
                 updateDots();
                 doSave();
-            });
+            }, { signal: signal });
             opts.appendChild(btn);
         });
     }
@@ -781,7 +806,7 @@ const title = "行事曆";
 
         $('cal-overlay').addEventListener('click', function (e) {
             if (e.target === this) closeModal();
-        });
+        }, { signal: signal });
 
         $('cal-modal-del').onclick = function () {
             if (!selDate) return;
@@ -798,7 +823,7 @@ const title = "行事曆";
         $('cal-textarea').addEventListener('input', function () {
             clearTimeout(saveTimer);
             saveTimer = setTimeout(doSave, 600);
-        });
+        }, { signal: signal });
 
         document.addEventListener('keydown', function (e) {
             var ov = $('cal-overlay');
@@ -815,13 +840,15 @@ const title = "行事曆";
                 if (e.key === 'ArrowLeft')  { M--; if (M < 0)  { M = 11; Y--; } render(); }
                 if (e.key === 'ArrowRight') { M++; if (M > 11) { M = 0;  Y++; } render(); }
             }
-        });
+        }, { signal: signal });
     }
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', init, { once: true, signal: signal });
     } else {
         init();
     }
 })();
 </script>
+
+</MainGridLayout>

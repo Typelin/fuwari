@@ -251,12 +251,7 @@ const bannerOffset =
 
 
 		<link rel="alternate" type="application/rss+xml" title={profileConfig.name} href={`${Astro.site}rss.xml`}/>
-		<!-- Umami分析（自建） -->
-		<script defer src="https://umami.acofork.com/script.js" data-website-id="5d710dbd-3a2e-43e3-a553-97b415090c63" data-swup-ignore-script></script>
-		{/* - Umami分析（云-备用） 
-		<script defer src="https://cloud.umami.is/script.js" data-website-id="5d710dbd-3a2e-43e3-a553-97b415090c63" data-swup-ignore-script></script> */}
-		<!-- 超级吊的Umami eop -->
-		<script defer src="https://eo-umami.acofork.com/script.js" data-website-id="3f525363-5e81-4653-9491-1bd205c2a571"></script>
+		<!-- Umami 自建端點已下線；保留其他可用的分析服務，避免每頁產生 DNS 錯誤。 -->
 		<!-- 百度统计 -->
 <script data-swup-ignore-script>
 var _hmt = _hmt || [];
