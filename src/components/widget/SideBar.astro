@@ -37,6 +37,25 @@ const className = Astro.props.class;
         </div>
     </a>
 
+    <!-- Typelin 遊戲站 -->
+    <a href="https://game.typelin.me/" target="_blank" rel="noopener noreferrer"
+       aria-label="前往 Typelin 遊戲站"
+       class="rainbow-card-link block mb-4 onload-animation" style="animation-delay: 125ms">
+        <div class="rainbow-card game-card">
+            <div class="rainbow-card-inner card-base p-4">
+                <div class="flex items-center gap-3">
+                    <div class="rainbow-icon-wrapper game-icon-wrapper">
+                        <Icon name="material-symbols:stadia-controller" class="text-2xl text-white" />
+                    </div>
+                    <div>
+                        <div class="font-bold text-base dark:text-neutral-50 transition">Typelin 遊戲站</div>
+                        <div class="text-xs text-neutral-400 transition mt-0.5">原創網頁遊戲與互動作品</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+
     <!-- 課程即時狀態卡片 -->
     <ScheduleCard />
 
@@ -83,6 +102,22 @@ const className = Astro.props.class;
         border-radius: 0.5rem;
         background: linear-gradient(135deg, #7b68ee, #ff0080);
         flex-shrink: 0;
+    }
+
+    .game-card {
+        background: linear-gradient(135deg,
+            #22c55e, #06b6d4, #6366f1,
+            #a855f7, #22c55e);
+        background-size: 300% 300%;
+    }
+
+    .game-card:hover {
+        box-shadow: 0 8px 25px rgba(34, 197, 94, 0.28),
+                    0 4px 12px rgba(99, 102, 241, 0.22);
+    }
+
+    .game-icon-wrapper {
+        background: linear-gradient(135deg, #22c55e, #6366f1);
     }
 
     @keyframes rainbow-shift {
