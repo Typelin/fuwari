@@ -1,290 +1,310 @@
 ---
-title: "2026年中：Claude / GPT / Gemini / Grok 怎麼選？從排行、價格、速度到審查與封號，為什麼我最後用 Super Grok + Grok Build"
+title: "2026 年中 AI 模型怎麼選？Claude、GPT、Gemini、Grok 的真正差別，不只在排行榜"
 published: 2026-07-17
-description: "對比 Claude、GPT、Gemini（含 Antigravity）、Grok 在智能、成本、速度、實際用量與審查；說明為何主力選 Super Grok + Grok Build。"
+updated: 2026-07-18
+description: "從模型能力、Agent 工具、速度、成本、配額與使用限制，比較 Claude、GPT、Gemini、Grok；分享我如何把不同 AI 放進真正能完成專案的工作流。"
 image: "/images/posts/ai-frontier-2026-cover.png"
 tags: ["AI 技術", "大語言模型", "技術選型", "Grok", "Antigravity", "開發工具"]
 category: "💻 技術實戰"
 draft: false
 ---
 
-只看榜單第一名，很容易以為「最貴、reasoning 拉滿」就是答案。  
-真正寫專案、跑 agent、改一整個 repo 時，我更在意：**智能夠不夠用、成本扛不扛得住、回得快不快、會不會動不動拒答或砍方案**。
+每次新模型發表，網路上很快就會出現同一種問題：
 
-本文對比 **Claude、GPT、Gemini（含 Antigravity）、Grok**，並說明為什麼我把主力放在 **Super Grok + Grok Build**。
+> Claude、GPT、Gemini、Grok，到底誰最強？
 
----
+我以前也會直接找排行榜、比較分數，再替每家排一個名次。實際用 AI 寫過幾個完整專案後，我才發現這個問題少算了最重要的一半。
 
-# 一、先看總表
+真正影響工作成果的，不只有模型智力，還包括：
 
-## 1.1 五項一次對齊
+- 它被放在哪一套 Agent 工具裡
+- 能不能讀完整個專案、修改檔案和執行指令
+- 長任務跑到一半會不會撞上配額或冷卻
+- 回答速度快不快，失敗後要重試幾次
+- 遇到正常技術需求時，會不會過度拒答
+- 最後花掉的是幾美元，還是幾個小時的人力
 
-數字取公開榜與報導的**量級**，再疊使用體感。榜會動，重點看相對位置。
+所以這篇不再試圖選出一個「永遠的榜首」。我更想回答的是：**如果目標不是聊天，而是真的把網站、程式或 Agent 任務做完，四個生態系各自適合放在哪裡？**
 
-| 項目 | Claude | GPT | Gemini | Grok |
-|------|--------|-----|--------|------|
-| **智能（排行）** | 常居頂或貼頂（Fable／Opus 區） | 頂～次頂（5.6 Sol 等） | 強，尖端常略後 | 近前沿（4.5 high ≈ 54 檔） |
-| **成本** | 高（尤其 Opus／Fable） | 中高 | 中（帳號／Credits 另計） | **偏低** |
-| **速度** | 中～偏慢（深思時） | 中 | 中～快 | **偏快** |
-| **實際使用量（約 $20 級）** | 聊天夠；整天 agent 易見底 | 聊天夠；高峰限速／降智 | 看 Credits；冷卻／加購常見 | **重開發較撐** |
-| **審查程度** | 偏嚴 | 中嚴 | 中（常綁政策／帳號） | **相對鬆** |
-
-## 1.2 工具鏈也要算進去
-
-| 廠商 | 能「動手」的產品 |
-|------|------------------|
-| Claude | Claude Code 等 |
-| GPT | Codex／ChatGPT 生態 |
-| **Gemini** | **Antigravity**（開發向工作台／配額體系）＋ Workspace |
-| Grok | **Grok Build**（改檔、跑指令、接 repo） |
-
-Gemini 不能只當聊天窗看：上了 **Antigravity** 之後，價值在工作流，痛點也常在 **Credits／冷卻**，而不只是 Index 少兩分。
+> 本文資料與使用感受更新於 2026 年 7 月。模型、價格與方案變動很快，圖表只代表當時的快照。
 
 ---
 
-# 二、智能（排行）
+# 先把四件事分開：模型、檔位、工具、配額
 
-## 2.1 榜在量什麼
+很多比較文最大的問題，是把四個不同層次混在一起。
 
-[Artificial Analysis](https://artificialanalysis.ai/) 的 **Intelligence Index** 是多項評測加權後的綜合分；另有 **Coding Agent Index** 專看代理式寫碼與終端任務。
+## 模型不是產品的全部
 
-## 2.2 前沿大概長怎樣
+同一個模型放在聊天網頁、API、IDE Agent 或命令列工具裡，體驗可能完全不同。
 
-| 梯隊 | 代表 | Index 量級 | 備註 |
-|------|------|------------|------|
-| S | Claude Fable 5 max 類 | ~60 | 榜首區 |
-| S− | GPT-5.6 Sol max／xhigh／high | ~56–59 | 緊咬榜首 |
-| A+ | Claude Opus 4.8 等 | ~56 | 穩、貴 |
-| A | **Grok 4.5 (high)** | **~54** | 近前沿 |
-| A− | Gemini 旗艦檔 | 多在 Grok 後 | 生態另算 |
+| 層次 | 真正要看的問題 |
+|---|---|
+| **模型能力** | 推理、寫碼、長文與多模態能力夠不夠？ |
+| **Reasoning 檔位** | 是快速檔、平衡檔，還是願意花很久思考的最高檔？ |
+| **Agent 工具** | 能不能讀 repo、改檔、跑測試、操作 Git 與部署？ |
+| **方案與配額** | 一個月實際能跑多少長任務？高峰期會不會降速？ |
 
-## 2.3 GPT 家族：同一代也要分檔
-
-同一「GPT-5.6」底下還有 Sol／Terra／Luna 等檔位，智力與成本策略不同，不能混成一款。
+例如 GPT 家族內部就有不同定位與 reasoning 強度。只寫「GPT-5.6」而不說檔位與執行環境，資訊其實不完整。
 
 ![GPT-5.6 Sol / Terra / Luna 分檔對照](/images/posts/aa-2026-07/aa-chart-sol-terra-luna.png)
 
-*圖：Artificial Analysis 文章原圖（[GPT-5.6 has landed](https://artificialanalysis.ai/articles/gpt-5-6-has-landed)）。*
+*圖：Artificial Analysis〈[GPT-5.6 has landed](https://artificialanalysis.ai/articles/gpt-5-6-has-landed)〉中的模型分檔快照。*
 
-## 2.4 智能小結
-
-- **卷面第一**：多半仍在 Claude 最高檔或 GPT-5.6 Sol max。  
-- **近前沿又付得起**：Grok 4.5 很常落在甜區。  
-- **Gemini**：尖端 Index 未必第一，但接 Antigravity + Google 生態時，決策維度不同。
+Claude Code、Codex、Antigravity、Grok Build 也不是模型名稱，而是讓模型真正「動手做事」的工作環境。比較 Agent 時，不能只比較背後的模型分數。
 
 ---
 
-# 三、成本
+# 四個生態系的實際個性
 
-## 3.1 API 單價量級（$/M tokens）
+先說結論：這四家都已經強到能完成大部分日常工作，差別主要出現在**長任務、工具整合與使用摩擦**。
 
-| 模型族 | Input | Output |
-|--------|-------|--------|
-| **Grok 4.5** | ~$2 | ~$6 |
-| Claude Opus 級 | ~$5 | ~$25 |
-| Claude Fable 級 | ~$10 | ~$50 |
-| GPT-5.5／5.6 旗艦 | 常見 ~\$5／~\$30 區 | |
+## Claude：穩定、會整理，但高強度使用成本明顯
 
-## 3.2 任務成本：比單價更接近實戰
+Claude 的優勢一直很清楚：長文結構好、語氣穩定、閱讀大型程式碼時不容易失去上下文。需要寫文件、整理規格、審查架構或進行謹慎重構時，我仍然很願意用它。
 
-跑完一題智力評測要花多少錢，比「標價多少一兆 token」更接近日常。Grok 4.5 多次出現在「智力還行、每任務成本明顯低」的位置。
+Claude Code 也證明了 Anthropic 不只是做聊天模型。當工具能直接讀專案、執行指令和修改檔案後，Claude 的程式能力才真正變成生產力。
 
-![Cost per Intelligence Index Task（2026-07-16）](/images/posts/aa-2026-07/aa-cost-per-task-2026-07-16.png)
+但它的缺點同樣直接：高階模型昂貴，長時間 Agent 任務很容易消耗大量配額。對每天都要讓 AI 在 repo 裡工作的人來說，「很強但捨不得一直開」就是實際限制。
 
-*圖：Artificial Analysis · Cost per Intelligence Index Task（2026-07-16）。*
+**我會在這些情況選 Claude：**
 
-## 3.3 訂閱隱形成本
+- 長文、規格、技術文件與內容潤稿
+- 需要保守修改的程式碼審查
+- 複雜需求的第二意見
+- 願意用較高成本換穩定表現的任務
 
-| | Claude | GPT | Gemini | Grok |
-|--|--------|-----|--------|------|
-| API | 貴 | 中高 | 中 | **低** |
-| 訂閱側 | 配額／升級壓力 | 高峰降智 | **Credits／冷卻** | 相對單純 |
+## GPT + Codex：適合長時間深入專案
 
-API 便宜不等于 Chat 方案好用；agent 回合、長文、高峰限速都會吃掉體感。
+GPT 生態最大的優勢不是單一榜單分數，而是工具完整度。從 ChatGPT 到 API，再到能操作實際工作目錄的 Codex，模型可以一路從討論需求走到修改、測試與交付。
+
+在長時間的 repo 任務裡，Agent 是否願意持續調查、修錯、重新建置，往往比第一次回答漂不漂亮更重要。高 reasoning 檔位雖然可能等待較久，但適合需要數十分鐘持續推進的工作。
+
+它的問題是產品與檔位很多，價格和用量不能只看模型名稱。官方 API、訂閱方案、第三方渠道與不同 reasoning 設定，成本可能差非常多。
+
+**我會在這些情況選 GPT／Codex：**
+
+- 多檔案重構與完整功能開發
+- 需要長時間調查、測試、修復的 Agent 任務
+- 要同時處理程式、圖片、文件等多種內容
+- 希望從聊天一路接到實際專案操作
+
+## Gemini + Antigravity：價值在 Google 生態，風險也在方案機制
+
+Gemini 如果只拿聊天視窗比較，很容易被低估。它真正有吸引力的地方，是長上下文、多模態以及 Google 文件、搜尋、雲端服務與開發工具的整合。
+
+Antigravity 讓 Gemini 進入開發工作流後，評價標準也跟著改變：模型少幾分不一定重要，能不能把 Google 生態裡的資料和工作台串起來才重要。
+
+但 Credits、冷卻時間與方案調整會直接中斷工作流。當一套工具已經融入專案，突然限額造成的成本，不只是少幾次請求，而是必須把上下文搬到另一套 Agent 裡重來。
+
+**我會在這些情況選 Gemini／Antigravity：**
+
+- Google Workspace、雲端與搜尋相關任務
+- 超長文件、影音或多模態內容理解
+- 已經以 Google 生態為主的開發流程
+- 能接受 Credits 與方案變動風險的工作
+
+延伸閱讀：[AI 配額與方案變動筆記](/posts/ai-quota-crisis-2026/)。
+
+## Grok + Grok Build：速度快、摩擦少，適合高頻率推進
+
+Grok 的吸引力不是每一項評測都第一，而是整體使用摩擦低。回答通常直接、串流速度快，面對一般技術問題較少出現過度說教或不必要的拒答。
+
+搭配 Grok Build 後，它也不再只是 X 裡的聊天工具，而是能進入 repo、修改檔案與執行工作的 Agent。對大量試作、腦力激盪和快速推進 side project 而言，這種「叫得動、跑得快、願意一直做」的體感很重要。
+
+它的短板是生態成熟度仍不如 GPT，部分精細推理和大型重構也可能需要其他模型複核。
+
+**我會在這些情況選 Grok／Grok Build：**
+
+- 高頻率問答、研究與快速原型
+- 希望減少拒答和對話摩擦
+- 對速度與可持續使用量敏感
+- 先快速完成，再交給另一個模型審查的工作流
 
 ---
 
-# 四、速度
+# 排行榜有用，但不能直接替你做決定
 
-## 4.1 輸出速度（tok/s）
+[Artificial Analysis](https://artificialanalysis.ai/) 的 Intelligence Index、Coding Index 和速度／成本圖表，適合用來確認模型大致位於哪個梯隊。
 
-公開數據裡，Grok 4.x／4.5 常見落在 **約 80–110 tok/s** 的偏快區。深度 reasoning 還要看**首 token**：有的模型先想很久再吐字。
+但排行榜常有三個陷阱。
 
-![Output Speed（2026-07-16）](/images/posts/aa-2026-07/aa-output-speed-2026-07-16.png)
+## 一分差距，未必等於實際工作差距
 
-*圖：Artificial Analysis · Output Speed（2026-07-16）。*
+模型只要進入前沿梯隊，多數日常任務的差距已經不再明顯。真正拉開體驗的，可能是工具能否讀取專案、任務途中是否中斷，以及失敗時能不能自己恢復。
 
-## 4.2 Agent 任務耗時
+## 同模型換一個 Harness，結果就可能不同
 
-長任務不只看 tok/s，還看回合數與總牆鐘時間。Grok 4.5 在部分 agent 評測上，以較少回合跑完任務的敘事較常見。
+Coding Agent 評測不只測模型，也測模型被放在哪套工具裡。提示詞、上下文管理、終端操作與錯誤恢復策略，都會影響最後分數。
 
 ![Coding Agent 相關圖](/images/posts/aa-2026-07/aa-chart-coding-agent.png)
 
-*圖：Artificial Analysis · Coding Agent 相關圖表。*
+*圖：Artificial Analysis 的 Coding Agent 對照快照。Agent 工具本身也是能力的一部分。*
 
-## 4.3 速度小結
+## 榜單不會替你計算配額
 
-| | Claude | GPT | Gemini | Grok |
-|--|--------|-----|--------|------|
-| 串流輸出 | 中上 | 中上 | 中～快 | **快** |
-| 多輪除錯體感 | 穩但可能慢 | 穩 | 看負載 | **少拖** |
+一個榜首模型，如果每天只能認真跑少量長任務，對重度開發者未必比次一級、但能持續工作的模型更有效率。
 
----
+因此我現在看榜單的方式是：
 
-# 五、實際使用量（約 $20 方案）
-
-## 5.1 為什麼這項比榜更痛
-
-榜首模型若一天只能認真用兩小時，對 side project 等於沒買到生產力。  
-「$20 能撐幾小時 agent」往往比 Index 差兩分更關鍵。
-
-## 5.2 體感對照
-
-| 方案族（約 $20/月） | 日常聊天 | 整天 coding agent | 常見痛點 |
-|---------------------|----------|-------------------|----------|
-| Claude Pro 級 | 夠 | **易見底** | 貴模吃配額兇 |
-| ChatGPT Plus 級 | 夠 | 高峰限速 | 有號但慢／降智 |
-| Google／Gemini（含 **Antigravity**） | 視 Credits | **Credits 很痛** | 冷卻、加購、方案分級 |
-| **Super Grok 級** | 夠 | **較撐** | 外掛生態較少 |
-
-## 5.3 Gemini + Antigravity
-
-- 價值：開發向工作台、接 Google 生態。  
-- 風險：配額敘事常變成 **Credits／長冷卻**，workflow 會整條斷。  
-- 延伸：[配額與方案變動筆記](/posts/ai-quota-crisis-2026/)。
-
-## 5.4 小結
-
-| | Claude | GPT | Gemini＋Antigravity | Grok |
-|--|--------|-----|----------------------|------|
-| $20 重開發 | 偏緊 | 不穩 | Credits 風險高 | **相對扛** |
+1. 先確認模型有沒有進入可用梯隊
+2. 再比較 Agent 工具與穩定性
+3. 最後計算自己真正買得到的用量
 
 ---
 
-# 六、審查程度與服務穩定性
+# 成本不只是每百萬 Token 的價格
 
-## 6.1 審查
+API 定價很好比較，但它只代表成本的一部分。
 
-| | Claude | GPT | Gemini | Grok |
-|--|--------|-----|--------|------|
-| 整體 | **偏嚴** | 中嚴 | 中 | **相對鬆** |
-| 常見表現 | 合規強、灰區易擋 | 政策常變 | 帳號／地區綁得深 | 少說教、技術題較順 |
+我更在意以下四種成本：
 
-## 6.2 封號／砍配額（比永久 ban 更常見）
+| 成本 | 說明 |
+|---|---|
+| **請求成本** | Input、Output、快取與 reasoning token 的價格 |
+| **重試成本** | 第一次做錯後，要再燒多少輪才能修好 |
+| **配額成本** | 冷卻、限速或突然改方案造成的中斷 |
+| **切換成本** | 把專案背景重新交代給另一套 Agent 的時間 |
 
-常見形態：學生方案砍模型、Pro 改 Credits、低價檔長冷卻。  
-結果都是 **workflow 斷掉**。Grok／xAI 訂閱敘事相對單純（Super Grok + 工具面），較少「同一 $20 每季換隱形貨幣」。
+一個單價較低、但需要重做三次的模型，不一定便宜；一個很強、但在工作一半時耗盡配額的訂閱，也不一定划算。
 
-## 6.3 分數背後不一樣
+![Cost per Intelligence Index Task（2026-07-16）](/images/posts/aa-2026-07/aa-cost-per-task-2026-07-16.png)
 
-智力分相近，不代表「怎麼拿分」一樣：有的更準、有的更會拒答、有的 token 燒得很兇。選模型時要連 **token 效率與拒答風格** 一起看。
+*圖：Artificial Analysis · Cost per Intelligence Index Task（2026-07-16）。任務成本通常比單看 Token 標價更接近實際體驗。*
 
-![前沿／智力對照相關圖](/images/posts/aa-2026-07/aa-chart-frontier.png)
-
-*圖：Artificial Analysis · 前沿模型對照。*
-
----
-
-# 七、寫碼 Agent：Claude、GPT、Grok Build、Antigravity
-
-## 7.1 產品對照
-
-| | Claude | GPT | Gemini | Grok |
-|--|--------|-----|--------|------|
-| Agent 產品 | Claude Code | Codex 等 | **Antigravity** | **Grok Build** |
-| 特色 | 穩、貴 | 生態全 | 綁 Google 配額 | 一體化、成本感佳 |
-
-## 7.2 公開敘事
-
-Coding Agent 榜上，GPT-5.6 Sol 在 Codex 常居前列；Grok 4.5 在 **Grok Build** harness 也有並列與成本優勢的說法。重點不是「誰永遠第一」，而是：**你實際用的那個 harness 能不能天天開。**
-
-![Coding Agent 推文節圖](/images/posts/aa-2026-07/aa-x-coding-agent-gpt56.jpg)
-
-*圖：@ArtificialAnlys · Coding Agent Index 相關。*
+另外，官方 API、訂閱方案與第三方渠道的計費不能混為一談。看到一個任務只花幾美分，不代表所有人都能用相同價格取得相同模型；比較時必須先確認渠道、快取與計費規則。
 
 ---
 
-# 八、場景怎麼選
+# 速度要看「完成任務」，不是只看吐字速度
+
+每秒輸出多少 Token 會影響聊天手感，但 Agent 任務更重要的是總牆鐘時間。
+
+真正的完成時間大約是：
 
 ```text
-你的主場景？
-├─ 合規長文／極穩推理
-│    → Claude 高階
-├─ 外掛生態、多模態全家桶
-│    → GPT
-├─ Google 文件／雲／搜尋 + 開發台
-│    → Gemini（含 Antigravity，先算清 Credits）
-└─ 長時間寫碼 + agent + 要快 + 控成本
-     → Grok 4.5 + Grok Build
+思考等待
++ 工具呼叫
++ 建置與測試
++ 錯誤重試
++ 人類重新說明需求
+= 任務完成時間
 ```
+
+![Output Speed（2026-07-16）](/images/posts/aa-2026-07/aa-output-speed-2026-07-16.png)
+
+*圖：Artificial Analysis · Output Speed（2026-07-16）。串流速度只是工作流中的一段。*
+
+有些模型首字很快，但需要來回修正；有些高 reasoning 模型會安靜思考很久，最後卻能一次完成更多工作。對長任務而言，後者不一定比較慢。
+
+我現在會同時記錄三件事：
+
+- 第一次可用結果要等多久
+- 完成任務總共跑了幾輪
+- 最後有沒有通過建置與實際驗收
 
 ---
 
-# 九、為什麼我最終選 Super Grok + Grok Build
+# 使用限制與服務穩定性，也是產品能力
 
-## 9.1 需求：專案要推得完
+「審查嚴不嚴」很容易變成立場爭論。對開發工作來說，我更在意具體結果：正常需求是否能完成，以及服務規則是否可預期。
 
-作品集大改、部落格、本機橋接、多檔重構——  
-這種負載下，**配額牆比 Index 差 2 分更致命**。
+| 問題 | 對工作流的影響 |
+|---|---|
+| 正常技術問題被過度拒答 | 必須改寫提示或換模型 |
+| 學生／低價方案移除高階模型 | 原有工作流突然失效 |
+| Credits、限速或長冷卻 | Agent 任務被迫中斷 |
+| 帳號、地區與付款限制 | 工具無法成為可靠主力 |
 
-## 9.2 Super Grok：主腦
+Claude 通常最保守；GPT 與 Gemini 的政策和方案層級較複雜；Grok 的對話限制相對少。但「限制少」不等於答案一定正確，重要內容仍然需要驗證。
 
-1. 近前沿（~54）夠用  
-2. 成本量級低於 Opus／Fable／高檔 GPT  
-3. 輸出快  
-4. 審查少說教  
-5. 訂閱用量撐重開發  
+對我而言，最理想的服務不是完全沒有限制，而是規則清楚、正常任務能穩定完成，而且不會每隔一段時間重寫配額邏輯。
 
-## 9.3 Grok Build：手
+---
 
-聊天窗再強也是聊天窗。Build 負責讀 repo、改檔、跑指令、接 git／部署。
+# 我現在的選法：不是單押一家，而是分工
+
+如果一定要替四家排出唯一名次，文章很快就會過時。更實際的做法，是替每個模型安排它最擅長的位置。
+
+| 工作類型 | 我會優先考慮 | 原因 |
+|---|---|---|
+| 完整功能、多檔重構、長時間 Agent | **GPT／Codex** | 工具鏈完整，適合持續調查與驗證 |
+| 文件、規格、審查與第二意見 | **Claude** | 結構穩定，長文與程式閱讀表現好 |
+| Google 生態與多模態資料 | **Gemini／Antigravity** | Workspace、搜尋、雲端整合有優勢 |
+| 快速研究、試作與高頻率推進 | **Grok／Grok Build** | 回應快、摩擦少，適合大量使用 |
+| 隱私、離線與服務中斷備援 | **本機模型** | 不受帳號與雲端方案影響 |
+
+我的實際工作流更接近：
 
 ```text
-Super Grok（腦）+ Grok Build（手）= 可交付的變更
+Grok 快速發散與試作
+        ↓
+GPT / Codex 深入 repo、實作與測試
+        ↓
+Claude 做文字、架構或風險複核
+        ↓
+Gemini 處理 Google 生態與多模態任務
+        ↓
+本機模型作為隱私與斷線備援
 ```
 
-## 9.4 若主力只買別家約 $20
-
-| 主力 | 常見結局 |
-|------|----------|
-| 只 Claude Pro | 文筆香，agent 整天燒爆 |
-| 只 ChatGPT Plus | 生態好，高峰與政策不穩 |
-| 只 Gemini／Antigravity | 功能多，Credits／冷卻一改就斷 |
-| **Super Grok + Build** | 智力讓一檔，**換可預期的量與速度** |
-
-Claude／GPT 仍適合攻堅與特定 harness；  
-在 **2026年中、獨立開發者重度寫碼** 前提下，Grok 鏈的總擁有成本（錢 + 時間 + 心理）對我最優。
+順序不是固定的，重點是不要要求一個模型同時扮演所有角色。
 
 ---
 
-# 十、實務建議
+# 如果只能訂閱一套，怎麼選？
 
-1. 先定場景，再看榜  
-2. 把「$20 實際 agent 工時」寫進決策表  
-3. 主力 1 + 備援 1  
-4. Gemini 若上 Antigravity，先搞懂 Credits／冷卻  
-5. 本機模型當保險  
-6. 每季重估榜，不要每週為 1 分搬家  
+先不要問哪家分數最高，先回答自己一週花最多時間做什麼。
+
+```text
+你的主要工作？
+├─ 長時間寫程式、修改 repo、跑 Agent
+│    → 優先看 GPT / Codex，也比較 Grok Build 的可用量
+├─ 長文、研究、規格與程式審查
+│    → Claude
+├─ Google 文件、搜尋、影音與雲端
+│    → Gemini / Antigravity
+├─ 快速問答、原型、低摩擦高頻使用
+│    → Grok
+└─ 預算極低或資料不能上雲
+     → 本機模型或 API 按量組合
+```
+
+如果每月預算大約只有 20 美元，尤其要確認：
+
+1. 高階模型是不是方案常駐，而非限時提供
+2. Agent 與聊天配額是否分開
+3. 長任務會不會有冷卻或每日限制
+4. 超過配額後能否按量付費，而不是整套停用
+5. 自己是否真的需要最貴的模型處理所有工作
+
+很多時候，「平衡檔當主力、最高檔只攻堅」會比每次都把 reasoning 拉滿更有效率。
 
 ---
 
-# 十一、延伸閱讀
+# 最後答案：我不再選一個永遠的冠軍
 
-- [Artificial Analysis](https://artificialanalysis.ai/)  
-- [GPT-5.6 專文](https://artificialanalysis.ai/articles/gpt-5-6-has-landed)  
-- [@ArtificialAnlys](https://x.com/ArtificialAnlys)  
-- 站內：[AI 配額筆記](/posts/ai-quota-crisis-2026/) · [較早 LLM 比較](/posts/ai-llm-comparison-guide/)  
+如果只談模型能力，Claude 與 GPT 的最高檔通常仍在最前沿；Gemini 有其他家難以取代的 Google 與多模態整合；Grok 則用速度、使用摩擦與高頻率體驗形成自己的甜蜜點。
+
+但我現在真正願意付費的，是一套能把任務推到完成的組合：
+
+- **Grok／Grok Build**：快速想、快速試、保持推進速度
+- **GPT／Codex**：進入專案，長時間實作、修錯與驗收
+- **Claude**：需要穩定文字、審查與第二意見時使用
+- **Gemini／Antigravity**：遇到 Google 生態和多模態工作再上場
+- **本機 AI**：保留隱私、離線與服務變動時的退路
+
+榜首會換，方案會改，模型名稱也會不停增加。真正不會變的是：
+
+> **好工具不是回答時看起來最聰明，而是能在你的預算與工作流裡，把事情可靠地做完。**
 
 ---
 
-# 結語
+# 延伸閱讀
 
-榜首會換，**工時與荷包不會**。
+- [Artificial Analysis](https://artificialanalysis.ai/)
+- [GPT-5.6 模型分檔文章](https://artificialanalysis.ai/articles/gpt-5-6-has-landed)
+- [AI 配額與方案變動筆記](/posts/ai-quota-crisis-2026/)
+- [較早期的雲端 LLM 比較](/posts/ai-llm-comparison-guide/)
 
-- **Claude／GPT**：智力與 coding harness 常在最尖  
-- **Gemini + Antigravity**：Google 生態與開發台，配額邏輯要算進去  
-- **Grok 4.5 + Grok Build**：夠強、更快、更便宜、更好聊、用量較扛  
-
-> **Super Grok + Grok Build = 我付得起、用得完、推得動專案的那一套。**
-
-*Typelin · 2026-07-17*
+*Typelin · 2026-07-18 重寫*
