@@ -3,7 +3,7 @@ title: "實測！6 個模型跑相同 Prompt：誰是野狗誰是豆包？是小
 published: 2026-08-14
 updated: 2026-08-14
 description: "實測 6 大模型跑相同 Prompt！結合 grok2api 自建中轉與 xAI IP 降智假說（Issue #916/#839）、DeepSeek V4 Pro 評測爭議與定價倒掛，以及 Gemini 3.7 Flash 在日常開發與「鵜鶘騎自行車 SVG 動畫」實戰中的具體表現，提供客觀的性價比選型參考。"
-image: "/images/posts/model-eval-2026-08/cover-banner-2026-08.png"
+image: "/images/posts/model-eval-2026-08/linyi-deepseek-whale-cover.png"
 tags: ["AI 模型", "Gemini 3.7", "Grok 4.6", "DeepSeek V4", "grok2api", "模型評測", "技術選型", "Artificial Analysis"]
 category: "💻 技術實戰"
 draft: false
