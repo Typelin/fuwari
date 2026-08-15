@@ -2,7 +2,7 @@
 title: "白皮豬鬧麻了！Antigravity、GitHub Copilot 集體降低配額！禁用模型！"
 published: 2026-03-19
 description: "直擊 2026 年 3 月 AI 界的「集體背棄」：隨着 GPT 5.4 與 Claude 4.6 發布，巨頭們卻開始收割用戶。Antigravity 導入 AI Credits 變相砍配額，GitHub Copilot 則在學生方案中禁用了最強模型。"
-image: "/images/posts/github_copilot_claude_removal.png"
+image: "/images/posts/price-hike-kneel-down.png"
 tags: ["AI 工具", "技術時事", "Antigravity", "GitHub Copilot"]
 category: "📢 網站公告"
 draft: false
