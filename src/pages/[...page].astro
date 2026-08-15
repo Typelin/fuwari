@@ -4,6 +4,7 @@ import PostPage from "../components/PostPage.astro";
 import Pagination from "../components/control/Pagination.astro";
 import RightPanel from "../components/widget/RightPanel.astro";
 import TagNavigation from "../components/control/TagNavigation.astro";
+import PromotionCard from "../components/widget/PromotionCard.astro";
 import { PAGE_SIZE } from "../constants/constants";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 import { getSortedPosts } from "../utils/content-utils";
@@ -24,5 +25,6 @@ const len = page.data.length;
     <TagNavigation />
     <PostPage page={page}></PostPage>
     <Pagination class="mx-auto onload-animation" page={page} style=`animation-delay: calc(var(--content-delay) + ${(len)*50}ms)`></Pagination>
+    <PromotionCard class="onload-animation" style=`animation-delay: calc(var(--content-delay) + ${(len + 1)*50}ms)` />
     <RightPanel slot="right-panel" />
 </MainGridLayout>

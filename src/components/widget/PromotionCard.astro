@@ -1,0 +1,38 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+	class?: string;
+	style?: string;
+}
+
+const { class: className, style } = Astro.props;
+---
+
+<div class:list={["card-base card-hover p-6 md:p-7 rounded-2xl relative overflow-hidden mt-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 border border-black/5 dark:border-white/10", className]} style={style}>
+    <!-- 左側標籤與內文 -->
+    <div class="flex flex-col gap-2 flex-1">
+        <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 text-xs font-semibold rounded-md bg-[var(--primary)] text-white flex items-center gap-1 shadow-sm">
+                <Icon name="material-symbols:campaign-rounded" class="text-sm" />
+                推廣
+            </span>
+            <span class="text-xs text-50 font-medium tracking-wide">友情推薦 · 自動發卡</span>
+        </div>
+        <h2 class="text-lg md:text-xl font-bold text-90 flex items-center gap-2">
+            GPT Plus 帳號 / Gemini 成品號發卡網
+        </h2>
+        <p class="text-sm text-75 leading-relaxed">
+            朋友經營的優質卡網，內有穩定 OpenAI GPT Plus 帳號、Google Gemini 官方成品號，支援全自動發貨與售後保障。
+        </p>
+    </div>
+
+    <!-- 右側前往購買按鈕 -->
+    <a href="https://pay.ldxp.cn/shop/T2MMIX28" 
+       target="_blank" 
+       rel="noopener noreferrer sponsored"
+       class="btn-regular shrink-0 px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 bg-[var(--primary)] text-white hover:opacity-90 active:scale-95 transition-all shadow-sm">
+        <span>前往選購</span>
+        <Icon name="material-symbols:open-in-new-rounded" class="text-base" />
+    </a>
+</div>
