@@ -34,6 +34,8 @@ draft: false
 | **爭議與輕量** | DeepSeek V4 Pro 0813 (max)<br>GLM-5.2 (max)<br>GPT-5.6 Luna (max)<br>Motif 3<br>MiniMax-M3 | 53<br>53<br>52<br>47<br>45 | DeepSeek V4 Pro 僅獲 53 分，與 Flash 版本未能拉開實質代差。 |
 | **邊緣基座** | Nemotron 3 Ultra<br>Gemini 3.5 Flash-Lite<br>Solar Open2 250B | 38<br>37<br>37 | 僅適合輕量摘要與超低延遲邊緣任務，不建議用於 Agent 開發。 |
 
+![2026 年 8 月主流 AI 模型實測跑分與性價比對比卡片](/images/posts/model-eval-2026-08/aa-eval-benchmark-card.png)
+
 從基準數據來看，有兩個顯著的趨勢：
 1. **Gemini 3.7 Flash (High)** 取得了 56 分，直接跨過了 DeepSeek V4 Pro（53 分）與 GPT-5.6 Luna（52 分），緊追第一線大模型。
 2. **DeepSeek V4 Pro**（53 分）相比宣傳預期出現顯著落差，並未展現出旗艦級的代差優勢。
