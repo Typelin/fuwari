@@ -80,7 +80,41 @@ cos²φ = (3 - u)² / [3(7 - 2u - u²)]
 
 如果說數理是基本功，那麼「生成 SVG 鵜鶘騎自行車 2D 動畫」則是考驗模型的幾何空間架構、圖層層次與動態物理連動。
 
-當我向本地 Qwen3.8-27B 下達提示詞後，它長考並跑了 42 分鐘，直接輸出一整段 400+ 行、零外部圖片依賴、單一 HTML 檔打開就能跑的互動小遊戲——**《鵜鶘，踩呀！》**。
+測試用的提示詞完全相同：
+```text
+提示詞：給我 HTML，內容是 SVG 繪製一個鵜鶘騎自行車的 2D 動畫。
+檔案名稱：你的模型+XXX+.html
+```
+
+### 1. 回顧：上一篇雲端 6 大模型在同一句 Prompt 下的實測戰況
+
+為了讓大家不用特意切回上一篇文章對照，這裡直接把雲端各大模型跑同一句 Prompt 的實測截圖搬過來：
+
+* **GPT 5.6 Sol（xhigh / Codex 體系）**：腳部有旋轉，空間結構完整無 Bug，滿血旗艦水準。
+![GPT 5.6 Sol 鵜鶘騎自行車實測截圖](/images/posts/model-eval-2026-08/pelican-test-01-gpt-56-sol.png)
+
+* **DeepSeek V4 Pro（Max 思考檔位）**：腳部正常轉動無 Bug，但消耗 5 萬 Token、耗時近 8 分鐘。
+![DeepSeek V4 Pro 鵜鶘騎自行車實測截圖](/images/posts/model-eval-2026-08/pelican-test-02-deepseek-v4-pro.png)
+
+* **DeepSeek V4 Flash（Max 思考檔位）**：腳部正常轉動，生成質量完全比肩 Pro 版，性價比極高。
+![DeepSeek V4 Flash 鵜鶘騎自行車實測截圖](/images/posts/model-eval-2026-08/pelican-test-06-deepseek-v4-flash.png)
+
+* **Gemini 3.7 Flash high**：靜態色彩美感全場最高，但輪胎直接飛出畫面外、腳部完全沒動。
+![Gemini 3.7 Flash high 鵜鶘騎自行車實測截圖](/images/posts/model-eval-2026-08/pelican-test-05-gemini-37-flash.png)
+
+* **Grok 4.5 high（Console 渠道）**：腳沒有旋轉只有前後擺動，踏板完全對不上。
+![Grok 4.5 high Console 鵜鶘騎自行車實測截圖](/images/posts/model-eval-2026-08/pelican-test-04-grok-45-console.png)
+
+* **Grok 4.6 high（Build 渠道）**：因遭遇 xAI IP 風控降智，生成幾何嚴重錯位，全是 Bug。
+![Grok 4.6 high Build 鵜鶘騎自行車實測截圖](/images/posts/model-eval-2026-08/pelican-test-03-grok-46-build.png)
+
+---
+
+### 2. 本地 Qwen3.8-27B 一句 Prompt 的實測成果
+
+看完上面雲端各家的表現，再來看我們本地這顆 27B 模型的輸出：
+
+當我向本地 Qwen3.8-27B 下達完全相同的提示詞後，它長考並跑了 42 分鐘，直接輸出一整段 400+ 行、零外部圖片依賴、單一 HTML 檔打開就能跑的互動小遊戲——**《鵜鶘，踩呀！》**。
 
 ![本地 Qwen 3.8 27B 生成之鵜鶘騎自行車實際運行截圖](/images/posts/local-ai-pelican-2026-08/pelican-masterpiece-browser.png)
 
