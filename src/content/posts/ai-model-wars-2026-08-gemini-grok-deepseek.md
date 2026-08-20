@@ -1,8 +1,8 @@
 ---
-title: "實測！6 個模型跑相同 Prompt：誰是野狗誰是豆包？是小男梁還是梁太祖？GPT、Gemini、Grok、Deepseek批鬥大會。"
+title: "[8/20 更新] 實測！6 個模型跑相同 Prompt：誰是野狗誰是豆包？是小男梁還是梁太祖？GPT、Gemini、Grok、Deepseek批鬥大會。"
 published: 2026-08-14
-updated: 2026-08-14
-description: "實測 6 大模型跑相同 Prompt！結合 grok2api 自建中轉與 xAI IP 降智假說（Issue #916/#839）、DeepSeek V4 Pro 評測爭議與定價倒掛，以及 Gemini 3.7 Flash 在日常開發與「鵜鶘騎自行車 SVG 動畫」實戰中的具體表現，提供客觀的性價比選型參考。"
+updated: 2026-08-20
+description: "實測主流模型跑相同 Prompt！深度復盤 grok2api 自建中轉與 xAI IP 降智假說、真 Grok 4.6 官方 Build 滿血補測與降智前後震撼對比、DeepSeek V4 系列評測爭議，以及 Gemini 3.7 Flash 在「鵜鶘騎自行車 SVG 動畫」實戰中的具體表現。"
 image: "/images/posts/model-eval-2026-08/linyi-deepseek-whale-cover.png"
 tags: ["AI 模型", "Gemini 3.7", "Grok 4.6", "DeepSeek V4", "grok2api", "模型評測", "技術選型", "Artificial Analysis"]
 category: "💻 技術實戰"
@@ -176,37 +176,60 @@ GitHub 專案 Issues 記錄了多起具體測試案例：
 
 ---
 
+### 7. 【補測 · 滿血回歸】真 Grok 4.6 high（官方原生 Grok Build / 滿血 500K）
+* **測試環境**：官方原生 Grok Build CLI 深度推理環境（`Grok 4.6 (high) · always-approve` / 500K 上下文）
+* **指標數據**：
+  * **深度思考耗時**：1 分 39 秒（1m39s），對鳥類解剖學生理構造、自行車幾何機械傳動與 SVG 動畫視差進行全方位推導。
+  * **代碼構建與自檢**：深度思考 2.1 秒。
+  * **總工作耗時**：4 分 04 秒（Worked for 4m4s）｜ 上下文消耗：55k / 500k
+* **實測表現（降智前後震撼對比）**：
+  * **降智前（grok2api 機房 IP 靜默降階版）**：僅用 57 秒草草敷衍，生成的幾何嚴重錯位、踏板與腿部完全脫節、全身 Bug，完全是遭遇風控分流後的假 4.6。
+  * **降智後 / 真滿血（真 Grok 4.6 high）**：完成度直接封神！
+    * **生物解剖學細節**：完整側身大喉囊、長喙、頭頂微翹的小羽冠，喉囊裡甚至細膩地畫了一條小魚在探頭！
+    * **物理機械閉環**：一隻翅膀緊抓車把，另一隻翅膀自然扇動維持空中平衡；車輪、曲柄、腳蹼嚴格同相位旋轉，身體隨踏板踩踏節奏自然上下起伏。
+    * **場景動態深度**：背景海濱公路、層次分明的海浪、棕櫚樹與沙丘，滾動的車道線與海浪形成極具層次感的多層視差循環滾動動畫。
+
+![真 Grok 4.6 官方 Grok Build 終端執行截圖](/images/posts/model-eval-2026-08/pelican-test-07-real-grok-46-build-terminal.png)
+
+![真 Grok 4.6 滿血鵜鶘騎自行車 SVG 動畫瀏覽器渲染截圖](/images/posts/model-eval-2026-08/pelican-test-07-real-grok-46-build-browser.png)
+
+---
+
 ### 鵜鶘壓測橫向對比總結
 
-| 模型與渠道 | 總耗時 / Token 吞吐 | 動畫正確性 (腳部旋轉/踏板) | 靜態繪製美感 | 實務定性 |
+| 模型與渠道 | 總耗時 / 思考深度 | 動畫正確性 (腳部旋轉/踏板) | 靜態繪製美感與細節 | 實務定性 |
 | :--- | :--- | :---: | :---: | :--- |
+| **真 Grok 4.6 high (官方 Build)** | **4分04秒 (思考 1m39s)** | **完美同步旋轉 (曲柄/腳蹼/羽翼平衡)** | **神級 (海濱公路/喉囊小魚/視差背景)** | **滿血旗艦，空間幾何與美工全場登頂** |
 | **GPT 5.6 Sol (xhigh)** | 15分09秒 | 完美正常轉動 | 良好 | 滿血旗艦，結構無 Bug |
 | **DeepSeek V4 Pro Max** | 7分42秒 (75 tok/s) | 正常轉動 | 良好 | 成功通過，但成本偏高 |
 | **DeepSeek V4 Flash Max** | 6分14秒 (119 tok/s) | 正常轉動 | 良好 | 性價比首選，無 Bug |
 | **Gemini 3.7 Flash high** | 45.7秒 (極速) | 輪胎出界 / 腳不動 | 極佳 | 視覺美感佳，動畫物理邏輯有 Bug |
 | **Grok 4.5 high (Console)** | 1分47秒 (83 tok/s) | 僅前後擺動 / 對不上 | 普通 | 物理聯動未閉環 |
-| **Grok 4.6 high (Build)** | 57.4秒 | 全是 Bug / 嚴重錯位 | 差 | 遭遇 IP 降智分流 |
+| **Grok 4.6 high (Build 降智版)** | 57.4秒 | 全是 Bug / 嚴重錯位 | 差 | 遭遇 IP 降智分流 (假 4.6) |
 
 ---
 
 ## 六、 2026 年 8 月主流模型性價比天梯
 
-綜合考量廣泛日常開發基準（如 Terminal-Bench、SciCode）、Token 成本、推論延遲與風控穩定性，當前性價比排序為：
+綜合考量廣泛日常開發基準（如 Terminal-Bench、SciCode）、Token 成本、推論延遲、空間幾何能力與風控穩定性，當前性價比排序為：
 
-$$\text{Gemini 3.7 Flash} > \text{Grok 4.6 (Console / 乾淨 IP)} > \text{DeepSeek V4 Flash} > \text{DeepSeek V4 Pro}$$
+$$\text{真 Grok 4.6 (官方 Build / 滿血)} \approx \text{GPT-5.6 Sol} > \text{Gemini 3.7 Flash} > \text{DeepSeek V4 Flash} > \text{DeepSeek V4 Pro}$$
 
-> **說明**：Gemini 3.7 Flash 雖然在單一極限 SVG 動畫生成上出現物理閉環 Bug，但憑藉 56 分的綜合基準分數、超高推論速度（120+ tok/s）與極低成本（輸入約 $0.08 / 1M），依然是目前全天候高頻 Agent 開發循環的首選；若需要零誤差的複雜架構與空間幾何任務，則應交由 GPT-5.6 Sol 或 Claude Opus 5。
+> **說明**：
+> 1. **真 Grok 4.6 (官方 Build 滿血版)** 展現出頂級大模型的絕對實力，在極限空間幾何、生物解剖細節與動態閉環上與 GPT-5.6 Sol 並列第一梯隊；但必須警惕自建 grok2api 機房 IP 帶來的「靜默降階」陷阱。
+> 2. **Gemini 3.7 Flash** 雖然在單一極限 SVG 動畫生成上出現物理閉環 Bug，但憑藉 56 分的綜合基準分數、超高推論速度（120+ tok/s）與極低成本（輸入約 $0.08 / 1M），依然是目前全天候高頻 Agent 開發循環的首選。
 
 ### 主流模型綜合指標全景表
 
 | 排名 | 模型名稱 | AA 智能分數 (2026.08) | 推論速度 | 調用成本 (輸入 / 1M) | 穩定性與降智風險 | 實務定位 |
 | :---: | :--- | :---: | :---: | :---: | :---: | :--- |
-| **1** | **Gemini 3.7 Flash** | 56 分 | 極速 (120+ t/s) | 約 $0.08 (官方高額度) | 極低 (官方高額度) | 日常高頻主力首選 |
-| **2** | **Grok 4.6 (Console)** | 61 分 | 高速 (85+ t/s) | 官方標準定價 | 低 (官方 Key 滿血) | 深度任務首選 |
-| **3** | **Grok 4.6 / 4.5 (grok2api)** | 40~61 分 (視 IP) | 中等 (受限於代理) | 極低 (自建中轉) | 高 (IP 降智與風控嚴重) | 適合低成本實驗，需防降智 |
+| **1** | **真 Grok 4.6 (官方 Build)** | 61 分 | 高速 (深度思考 1m39s) | 官方 Build 專享 | 低 (官方原生滿血) | 旗艦代碼與空間幾何頂峰 |
+| **2** | **Gemini 3.7 Flash** | 56 分 | 極速 (120+ t/s) | 約 $0.08 (官方高額度) | 極低 (官方高額度) | 日常高頻主力首選 |
+| **3** | **Grok 4.6 (Console)** | 61 分 | 高速 (85+ t/s) | 官方標準定價 | 低 (官方 Key 滿血) | 深度任務首選 |
 | **4** | **DeepSeek V4 Flash** | 52 分 | 極速 (110+ t/s) | 約 $0.15 | 低 (官方穩定) | 表現中規中矩，性價比優秀 |
-| **5** | **DeepSeek V4 Pro (0813)** | 53 分 | 中速 (45+ t/s) | 偏高 (即將調漲) | 高 (性價比倒掛 / 爭議) | 較 Flash 僅高 1 分，不推薦 |
-| **6** | **Claude Opus 5 (Max)** | 63 分 | 中慢速 (30+ t/s) | 約 $15.00 | 低 (品質封頂) | 頂尖架構標竿，高預算專屬 |
+| **5** | **Grok 4.6 / 4.5 (grok2api)** | 40~61 分 (視 IP) | 中等 (受限於代理) | 極低 (自建中轉) | 高 (IP 降智與風控嚴重) | 適合低成本實驗，需防降智 |
+| **6** | **DeepSeek V4 Pro (0813)** | 53 分 | 中速 (45+ t/s) | 偏高 (即將調漲) | 高 (性價比倒掛 / 爭議) | 較 Flash 僅高 1 分，不推薦 |
+| **7** | **Claude Opus 5 (Max)** | 63 分 | 中慢速 (30+ t/s) | 約 $15.00 | 低 (品質封頂) | 頂尖架構標竿，高預算專屬 |
 
 ---
 
@@ -214,9 +237,9 @@ $$\text{Gemini 3.7 Flash} > \text{Grok 4.6 (Console / 乾淨 IP)} > \text{DeepSe
 
 大模型競爭已經不再只是單純比拼宣傳參數，實測智能、推論延遲、API 穩定度與定價策略共同決定了一個模型在真實工程場景中的價值。
 
+* **高難度架構設計與極限空間幾何**：首選 **官方真 Grok 4.6 (Build)**、**GPT 5.6 Sol** 或 **Claude Opus 5**。真 4.6 在鵜鶘騎車測試中展現的解剖學細節與物理閉環堪稱神作。
 * **日常 Agent Coding 與腳本開發**：首選 **Gemini 3.7 Flash** 與 **DeepSeek V4 Flash**。52～56 分的智能足以勝任絕大部分日常編程，速度快且成本極低。
-* **高難度架構設計與深度推理**：選擇 **Claude Opus 5**、**GPT 5.6 Sol** 或官方 **Grok 4.6 (Console)**。
-* **自建轉發服務**：若使用 `grok2api` 等中轉工具，必須搭配乾淨住宅代理與調用間隔控制，避免被 xAI 靜默分流至降階集群。
+* **自建轉發服務（grok2api）防坑指南**：若使用自建中轉，必須搭配乾淨住宅代理與調用間隔控制，否則一旦觸發 xAI 靜默分流，頂級 4.6 將瞬間退化為 57 秒的「殘缺降智版」。
 * **輕量問答與摘要**：優先選擇 **DeepSeek V4 Flash**，避免花費高額溢價在提升微弱的 DSV4 Pro 上。
 
 ---
@@ -228,5 +251,6 @@ $$\text{Gemini 3.7 Flash} > \text{Grok 4.6 (Console / 乾淨 IP)} > \text{DeepSe
 * **grok2api Issue #916**：[https://github.com/chenyme/grok2api/issues/916](https://github.com/chenyme/grok2api/issues/916)
 * **grok2api Issue #839**：[https://github.com/chenyme/grok2api/issues/839](https://github.com/chenyme/grok2api/issues/839)
 * **Google DeepMind / Gemini API 官方文檔**：[https://ai.google.dev/](https://ai.google.dev/)
-* **xAI 官方開發者平台 (Console)**：[https://console.x.ai/](https://console.x.ai/)
+* **xAI 官方開發者平台 (Console & Build)**：[https://console.x.ai/](https://console.x.ai/)
 * **DeepSeek 官方開放平台**：[https://platform.deepseek.com/](https://platform.deepseek.com/)
+
