@@ -1,0 +1,89 @@
+/* TYPELIN 側欄連結卡統一系統：玻璃底 + 左側 accent 條 + 圖示芯片 + 懸停箭頭
+   深淺色通吃（文字色走 Tailwind dark: 變體），各卡只換 --a1/--a2 定義身份。 */
+
+.tlink {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 14px;
+    border-radius: 16px;
+    background: var(--card-bg);
+    border: 1px solid rgba(130, 130, 130, 0.22);
+    text-decoration: none;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.tlink::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, var(--a1), var(--a2));
+}
+.tlink:hover {
+    transform: translateY(-2px);
+    border-color: rgba(130, 130, 130, 0.4);
+    box-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.55);
+}
+.tlink__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--a1), var(--a2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex: none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+.tlink__title {
+    font-weight: 800;
+    font-size: 15.5px;
+    line-height: 1.35;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.tlink__desc {
+    font-size: 12.5px;
+    line-height: 1.6;
+    margin-top: 2px;
+}
+.tlink__arrow {
+    margin-left: auto;
+    flex: none;
+    opacity: 0.3;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.tlink:hover .tlink__arrow {
+    opacity: 1;
+    transform: translate(3px, -3px);
+}
+
+/* 緊湊版（右欄迷你卡） */
+.tlink--sm { padding: 12px; border-radius: 14px; gap: 10px; }
+.tlink--sm .tlink__icon { width: 30px; height: 30px; border-radius: 9px; }
+.tlink--sm .tlink__title { font-size: 14px; }
+
+/* 展廳卡內名次列 */
+.trank {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(130, 130, 130, 0.22);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+.trank__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-family: ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+}

@@ -6,6 +6,7 @@ import Profile from "./Profile.astro";
 import ScheduleCard from "./ScheduleCard.astro";
 import Categories from "./Categories.astro";
 import Tags from "./Tags.astro";
+import "../../styles/tlink.css";
 
 interface Props {
 	class?: string;
@@ -19,66 +20,72 @@ const className = Astro.props.class;
         <Profile></Profile>
     </div>
 
-    <!-- 友情推廣卡網入口卡片 -->
+    <!-- Tikana 的小店（推廣） -->
     <a href="https://pay.ldxp.cn/shop/T2MMIX28" target="_blank" rel="noopener noreferrer sponsored"
        aria-label="前往 Tikana 的小店"
-       class="rainbow-card-link block mb-4 onload-animation" style="animation-delay: 75ms">
-        <div class="rainbow-card promo-card">
-            <div class="rainbow-card-inner card-base p-4">
-                <div class="flex items-center gap-3.5">
-                    <div class="rainbow-icon-wrapper promo-icon-wrapper">
-                        <Icon name="material-symbols:shopping-cart-rounded" class="text-2xl text-white" />
-                    </div>
-                    <div>
-                        <div class="font-bold text-lg dark:text-neutral-50 transition flex items-center gap-2">
-                            <span>Tikana 的小店</span>
-                            <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-amber-500 text-white leading-none shadow-sm">推廣</span>
-                        </div>
-                        <div class="text-xs text-neutral-400 transition mt-1 font-medium leading-relaxed">
-                            GPT Plus · Gemini Pro · Grok · 反重力成品號<br>
-                            <span class="text-amber-500/90 dark:text-amber-400/90">附 QQ 使用教學與售後群，歡迎提問</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+       class="tlink block mb-4 onload-animation" style="--a1: #f59e0b; --a2: #ec4899; animation-delay: 75ms">
+        <div class="tlink__icon">
+            <Icon name="material-symbols:shopping-cart-rounded" class="text-xl" />
         </div>
+        <div class="min-w-0">
+            <div class="tlink__title dark:text-neutral-50 text-neutral-800">
+                <span class="truncate">Tikana 的小店</span>
+                <span class="px-2 py-0.5 text-xs font-bold rounded-md bg-amber-500 text-white leading-none shadow-sm">推廣</span>
+            </div>
+            <div class="tlink__desc text-neutral-500 dark:text-neutral-400">GPT Plus · Gemini Pro · Grok · 反重力成品號</div>
+        </div>
+        <Icon name="material-symbols:arrow-outward" class="tlink__arrow text-xl text-neutral-500 dark:text-neutral-300" />
     </a>
 
     <!-- 個人作品集入口卡片 -->
     <a href="https://dev.typelin.me/" target="_blank" rel="noopener noreferrer"
        aria-label="前往關於我的網頁"
-       class="rainbow-card-link block mb-4 onload-animation" style="animation-delay: 100ms">
-        <div class="rainbow-card">
-            <div class="rainbow-card-inner card-base p-4">
-                <div class="flex items-center gap-3">
-                    <div class="rainbow-icon-wrapper">
-                        <Icon name="material-symbols:account-circle" class="text-2xl text-white" />
-                    </div>
-                    <div>
-                        <div class="font-bold text-base dark:text-neutral-50 transition">關於我的網頁</div>
-                        <div class="text-xs text-neutral-400 transition mt-0.5">個人介紹、專案作品與技術能力</div>
-                    </div>
-                </div>
-            </div>
+       class="tlink block mb-4 onload-animation" style="--a1: #7b68ee; --a2: #ff0080; animation-delay: 100ms">
+        <div class="tlink__icon">
+            <Icon name="material-symbols:account-circle" class="text-xl" />
         </div>
+        <div class="min-w-0">
+            <div class="tlink__title dark:text-neutral-50 text-neutral-800"><span class="truncate">關於我的網頁</span></div>
+            <div class="tlink__desc text-neutral-500 dark:text-neutral-400">個人介紹、專案作品與技術能力</div>
+        </div>
+        <Icon name="material-symbols:arrow-outward" class="tlink__arrow text-xl text-neutral-500 dark:text-neutral-300" />
     </a>
 
     <!-- Typelin 遊戲站 -->
     <a href="https://game.typelin.me/" target="_blank" rel="noopener noreferrer"
        aria-label="前往 Typelin 遊戲站"
-       class="rainbow-card-link block mb-4 onload-animation" style="animation-delay: 125ms">
-        <div class="rainbow-card game-card">
-            <div class="rainbow-card-inner card-base p-4">
-                <div class="flex items-center gap-3">
-                    <div class="rainbow-icon-wrapper game-icon-wrapper">
-                        <Icon name="material-symbols:stadia-controller" class="text-2xl text-white" />
-                    </div>
-                    <div>
-                        <div class="font-bold text-base dark:text-neutral-50 transition">Typelin 遊戲站</div>
-                        <div class="text-xs text-neutral-400 transition mt-0.5">原創網頁遊戲與互動作品</div>
-                    </div>
-                </div>
+       class="tlink block mb-4 onload-animation" style="--a1: #22c55e; --a2: #6366f1; animation-delay: 125ms">
+        <div class="tlink__icon">
+            <Icon name="material-symbols:stadia-controller" class="text-xl" />
+        </div>
+        <div class="min-w-0">
+            <div class="tlink__title dark:text-neutral-50 text-neutral-800"><span class="truncate">Typelin 遊戲站</span></div>
+            <div class="tlink__desc text-neutral-500 dark:text-neutral-400">原創網頁遊戲與互動作品</div>
+        </div>
+        <Icon name="material-symbols:arrow-outward" class="tlink__arrow text-xl text-neutral-500 dark:text-neutral-300" />
+    </a>
+
+    <!-- TYPELIN 實測展廳 -->
+    <a href="https://arena.typelin.me/" target="_blank" rel="noopener noreferrer"
+       aria-label="前往 TYPELIN 實測展廳"
+       class="tlink block mb-4 onload-animation" style="--a1: #16150f; --a2: #c8402a; animation-delay: 140ms; flex-direction: column; align-items: stretch">
+        <div class="flex items-center gap-3">
+            <div class="tlink__icon">
+                <Icon name="material-symbols:trophy" class="text-xl" />
             </div>
+            <div class="min-w-0 flex-1">
+                <div class="tlink__title dark:text-neutral-50 text-neutral-800">
+                    <span class="truncate">TYPELIN 實測展廳</span>
+                    <span class="px-2 py-0.5 text-xs font-bold rounded-md text-white leading-none shadow-sm" style="background: #c8402a">PK</span>
+                </div>
+                <div class="tlink__desc text-neutral-500 dark:text-neutral-400">同題 PK · 首批分數已公布</div>
+            </div>
+            <Icon name="material-symbols:arrow-outward" class="tlink__arrow text-xl text-neutral-500 dark:text-neutral-300" />
+        </div>
+        <div class="trank">
+            <div class="trank__row"><span class="text-neutral-500 dark:text-neutral-400">01 · OPUS 4.6</span><b style="color: #c8402a">88</b></div>
+            <div class="trank__row"><span class="text-neutral-500 dark:text-neutral-400">02 · QWEN 3.8</span><b class="dark:text-neutral-100 text-neutral-800">81</b></div>
+            <div class="trank__row"><span class="text-neutral-500 dark:text-neutral-400">03 · SPARK 1.3</span><b class="dark:text-neutral-100 text-neutral-800">75</b></div>
         </div>
     </a>
 
@@ -91,80 +98,3 @@ const className = Astro.props.class;
     </div>
 </div>
 
-<style>
-    .rainbow-card-link {
-        text-decoration: none;
-    }
-
-    .rainbow-card {
-        position: relative;
-        border-radius: 0.75rem;
-        padding: 2px;
-        background: linear-gradient(135deg,
-            #ff0080, #ff8c00, #40e0d0,
-            #7b68ee, #ff0080, #ff8c00);
-        background-size: 300% 300%;
-        animation: rainbow-shift 6s ease infinite;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .rainbow-card:hover {
-        transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 8px 25px rgba(123, 104, 238, 0.3),
-                    0 4px 12px rgba(255, 0, 128, 0.2);
-    }
-
-    .rainbow-card-inner {
-        border-radius: calc(0.75rem - 2px);
-        background: var(--card-bg);
-    }
-
-    .rainbow-icon-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 0.5rem;
-        background: linear-gradient(135deg, #7b68ee, #ff0080);
-        flex-shrink: 0;
-    }
-
-    .promo-card {
-        background: linear-gradient(135deg,
-            #f59e0b, #ec4899, #8b5cf6,
-            #06b6d4, #f59e0b);
-        background-size: 300% 300%;
-    }
-
-    .promo-card:hover {
-        box-shadow: 0 8px 25px rgba(245, 158, 11, 0.32),
-                    0 4px 12px rgba(236, 72, 153, 0.25);
-    }
-
-    .promo-icon-wrapper {
-        background: linear-gradient(135deg, #f59e0b, #ec4899);
-    }
-
-    .game-card {
-        background: linear-gradient(135deg,
-            #22c55e, #06b6d4, #6366f1,
-            #a855f7, #22c55e);
-        background-size: 300% 300%;
-    }
-
-    .game-card:hover {
-        box-shadow: 0 8px 25px rgba(34, 197, 94, 0.28),
-                    0 4px 12px rgba(99, 102, 241, 0.22);
-    }
-
-    .game-icon-wrapper {
-        background: linear-gradient(135deg, #22c55e, #6366f1);
-    }
-
-    @keyframes rainbow-shift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-</style>

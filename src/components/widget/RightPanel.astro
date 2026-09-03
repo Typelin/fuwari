@@ -7,33 +7,45 @@
 import TimeWeatherCard from "./TimeWeatherCard.astro";
 import CalendarCard from "./CalendarCard.astro";
 import { Icon } from "astro-icon/components";
+import "../../styles/tlink.css";
 ---
 
 <div class="flex flex-col gap-4 w-[14rem]">
     <TimeWeatherCard />
     <CalendarCard />
-    
+
+    <!-- 實測展廳迷你卡 -->
+    <a href="https://arena.typelin.me/" target="_blank" rel="noopener noreferrer"
+       aria-label="前往 TYPELIN 實測展廳"
+       class="tlink tlink--sm mb-4" style="--a1: #16150f; --a2: #c8402a">
+        <div class="tlink__icon">
+            <Icon name="material-symbols:trophy" class="text-base" />
+        </div>
+        <div class="min-w-0 flex-1">
+            <div class="tlink__title dark:text-neutral-50 text-neutral-800">
+                <span class="truncate">實測展廳</span>
+                <span class="px-1.5 py-0.5 text-[0.65rem] font-bold rounded text-white leading-none" style="background: #c8402a">PK</span>
+            </div>
+            <div class="tlink__desc text-neutral-500 dark:text-neutral-400">Opus 88 · Qwen 81 · Spark 75</div>
+        </div>
+        <Icon name="material-symbols:arrow-outward" class="tlink__arrow text-base text-neutral-500 dark:text-neutral-300" />
+    </a>
+
     <!-- 行事曆下方獨立推廣卡片 -->
     <a href="https://pay.ldxp.cn/shop/T2MMIX28" target="_blank" rel="noopener noreferrer sponsored"
        aria-label="前往 Tikana 的小店"
-       class="card-base card-hover p-4 rounded-xl block text-decoration-none group transition relative overflow-hidden border border-amber-500/25 hover:border-amber-500/50">
-        <div class="flex items-center gap-2 mb-2">
-            <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-500 to-pink-500 flex items-center justify-center text-white shrink-0 shadow-xs">
-                <Icon name="material-symbols:shopping-cart-rounded" class="text-base" />
-            </div>
-            <div class="font-bold text-sm dark:text-neutral-50 flex items-center gap-1.5">
-                <span>Tikana 的小店</span>
-                <span class="px-1.5 py-0.5 text-[0.65rem] font-bold rounded bg-amber-500 text-white leading-none shadow-xs">推廣</span>
-            </div>
+       class="tlink tlink--sm" style="--a1: #f59e0b; --a2: #ec4899">
+        <div class="tlink__icon">
+            <Icon name="material-symbols:shopping-cart-rounded" class="text-base" />
         </div>
-        <p class="text-xs text-75 leading-relaxed mb-2.5">
-            GPT Plus · Gemini Pro · Grok · 反重力成品號<br>
-            <span class="text-amber-600 dark:text-amber-400 font-medium">附 QQ 使用教學與售後群，歡迎提問</span>
-        </p>
-        <div class="flex items-center justify-between text-xs font-bold text-amber-600 dark:text-amber-400 group-hover:translate-x-0.5 transition">
-            <span>前往選購</span>
-            <Icon name="material-symbols:arrow-outward" class="text-sm" />
+        <div class="min-w-0 flex-1">
+            <div class="tlink__title dark:text-neutral-50 text-neutral-800">
+                <span class="truncate">Tikana 的小店</span>
+                <span class="px-1.5 py-0.5 text-[0.65rem] font-bold rounded bg-amber-500 text-white leading-none">推廣</span>
+            </div>
+            <div class="tlink__desc text-neutral-500 dark:text-neutral-400">成品號 · 教學售後群</div>
         </div>
+        <Icon name="material-symbols:arrow-outward" class="tlink__arrow text-base text-neutral-500 dark:text-neutral-300" />
     </a>
 </div>
 

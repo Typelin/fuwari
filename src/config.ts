@@ -83,6 +83,11 @@ export const navBarConfig: NavBarConfig = {
 			url: "/calendar/",
 			external: false,
 		},
+		{
+			name: "展廳",
+			url: "https://arena.typelin.me/",
+			external: true,
+		},
 	],
 };
 
