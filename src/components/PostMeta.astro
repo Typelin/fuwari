@@ -14,6 +14,7 @@ interface Props {
 	hideUpdateDate?: boolean;
 	hidePublishedDate?: boolean;
 	slug?: string;
+	maxTags?: number;
 }
 const {
 	published,
@@ -24,8 +25,11 @@ const {
 	hideUpdateDate = false,
 	hidePublishedDate = false,
 	slug,
+	maxTags,
 } = Astro.props;
 const className = Astro.props.class;
+const shownTags = maxTags != null ? tags.slice(0, maxTags) : tags;
+const hiddenCount = tags.length - shownTags.length;
 ---
 
 <div class:list={["flex flex-wrap text-neutral-500 dark:text-neutral-400 items-center gap-4 gap-x-4 gap-y-2", className]}>
@@ -73,7 +77,7 @@ const className = Astro.props.class;
                 <Icon name="material-symbols:tag-rounded" class="text-xl"></Icon>
             </div>
             <div class="flex flex-row flex-nowrap items-center">
-                {tags.map((tag, i) => (
+                {shownTags.map((tag, i) => (
                     <>
                         <div class:list={[{"hidden": i == 0}, "mx-1.5 text-[var(--meta-divider)] text-sm"]}>/</div>
                         <a href={getTagUrl(tag)} aria-label={`查看所有帶有 ${tag.trim()} 標籤的文章`}
@@ -83,6 +87,12 @@ const className = Astro.props.class;
                         </a>
                     </>
                 ))}
+                {hiddenCount > 0 && (
+                    <span class="ml-1.5 text-sm font-bold text-neutral-400 dark:text-neutral-500 whitespace-nowrap"
+                          title={tags.slice(shownTags.length).map((t) => t.trim()).join("、")}>
+                        +{hiddenCount}
+                    </span>
+                )}
             </div>
         </div>
     )}

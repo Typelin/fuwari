@@ -6,6 +6,7 @@ import RightPanel from "../components/widget/RightPanel.astro";
 import TagNavigation from "../components/control/TagNavigation.astro";
 import { PAGE_SIZE } from "../constants/constants";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
+import MobileQuickLinks from "../components/widget/MobileQuickLinks.astro";
 import { getSortedPosts } from "../utils/content-utils";
 
 export const getStaticPaths = (async ({ paginate }) => {
@@ -22,6 +23,7 @@ const len = page.data.length;
 <MainGridLayout title={page.currentPage === 1 ? undefined : `第 ${page.currentPage} 頁`}>
     <h1 class="sr-only">{page.currentPage === 1 ? "主頁" : `主頁 - 第 ${page.currentPage} 頁`}</h1>
     <TagNavigation />
+    <MobileQuickLinks />
     <PostPage page={page}></PostPage>
     <Pagination class="mx-auto onload-animation" page={page} style=`animation-delay: calc(var(--content-delay) + ${(len)*50}ms)`></Pagination>
     <RightPanel slot="right-panel" />

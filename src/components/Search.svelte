@@ -23,6 +23,22 @@ const togglePanel = () => {
 	panel?.classList.toggle("float-panel-closed");
 };
 
+onMount(() => {
+	const onKey = (e: KeyboardEvent) => {
+		if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+			e.preventDefault();
+			const desktop = document.querySelector<HTMLInputElement>('#search-bar input');
+			if (desktop && getComputedStyle(desktop).display !== "none") {
+				desktop.focus();
+			} else {
+				togglePanel();
+			}
+		}
+	};
+	window.addEventListener("keydown", onKey);
+	return () => window.removeEventListener("keydown", onKey);
+});
+
 const setPanelVisibility = (show: boolean, isDesktop: boolean): void => {
 	const panel = document.getElementById("search-panel");
 	if (!panel || !isDesktop) return;
@@ -147,10 +163,10 @@ $: search(keywordMobile, false);
 ">
     <Icon icon="material-symbols:search" class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"></Icon>
     <input placeholder="搜尋" bind:value={keywordDesktop} on:focus={() => search(keywordDesktop, true)}
-           class="transition-all pl-10 text-sm bg-transparent outline-0
+           class="transition-all pl-10 pr-12 text-sm bg-transparent outline-0
          h-full w-40 active:w-60 focus:w-60 text-black/50 dark:text-white/50"
     >
-</div>
+    <kbd class="absolute right-3 pointer-events-none text-[0.7rem] font-mono px-1.5 py-0.5 rounded border border-black/15 dark:border-white/15 text-black/35 dark:text-white/35">⌘K</kbd></div>
 
 <!-- toggle btn for phone/tablet view -->
 <button on:click={togglePanel} aria-label="Search Panel" id="search-switch"

@@ -20,6 +20,9 @@ const className = Astro.props.class;
         <Profile></Profile>
     </div>
 
+    <!-- 四張連結卡：手機由頂部橫滑列代替，此處僅 lg 以上顯示 -->
+    <div class="hidden lg:block">
+
     <!-- Tikana 的小店（推廣） -->
     <a href="https://pay.ldxp.cn/shop/T2MMIX28" target="_blank" rel="noopener noreferrer sponsored"
        aria-label="前往 Tikana 的小店"
@@ -88,6 +91,8 @@ const className = Astro.props.class;
             <div class="trank__row"><span class="text-neutral-500 dark:text-neutral-400">03 · SPARK 1.3</span><b class="dark:text-neutral-100 text-neutral-800">75</b></div>
         </div>
     </a>
+
+    </div>
 
     <!-- 課程即時狀態卡片 -->
     <ScheduleCard />
