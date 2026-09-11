@@ -2,7 +2,7 @@
 /**
  * Time & Weather Card (Desktop Right Panel)
  * - Live UTC+8 clock
- * - IP-based geolocation weather (fallback: Istanbul)
+ * - IP-based geolocation weather (fallback: Tainan)
  * - Uses wttr.in API (no API key required)
  */
 import { Icon } from "astro-icon/components";
@@ -182,6 +182,29 @@ import { Icon } from "astro-icon/components";
             : { icon: '🌙', fx: '<div class="weather-fx-moon"></div>' };
     }
 
+    function normalizeLocationLabel(label) {
+        var parts = String(label || '').split(',').map(function(p) { return p.trim(); }).filter(Boolean);
+        if (parts.length >= 2 && parts[0].toLowerCase() === parts[1].toLowerCase()) return parts[0];
+        return parts.join(', ');
+    }
+
+    function localizeWeatherDesc(desc) {
+        var raw = String(desc || '').trim();
+        var d = raw.toLowerCase();
+        if (!raw) return '--';
+        if (d.indexOf('thunder') !== -1) return '雷雨';
+        if (d.indexOf('drizzle') !== -1 || d.indexOf('light rain') !== -1) return '小雨';
+        if (d.indexOf('shower') !== -1) return '陣雨';
+        if (d.indexOf('rain') !== -1) return '有雨';
+        if (d.indexOf('snow') !== -1 || d.indexOf('ice') !== -1 || d.indexOf('blizzard') !== -1) return '降雪';
+        if (d.indexOf('partly cloudy') !== -1) return '局部多雲';
+        if (d.indexOf('overcast') !== -1) return '陰天';
+        if (d.indexOf('cloud') !== -1) return '多雲';
+        if (d.indexOf('mist') !== -1 || d.indexOf('fog') !== -1) return '有霧';
+        if (d.indexOf('sunny') !== -1 || d.indexOf('clear') !== -1) return '晴朗';
+        return raw;
+    }
+
     function fetchWeather(city, customDisplayLocation) {
         var url = 'https://wttr.in/' + encodeURIComponent(city) + '?format=j1';
         fetch(url)
@@ -209,7 +232,7 @@ import { Icon } from "astro-icon/components";
                     }
                 }
 
-                var locationName = customDisplayLocation || decodeURIComponent(city);
+                var locationName = normalizeLocationLabel(customDisplayLocation || decodeURIComponent(city));
                 // Optionally remove redundant country code if present but not needed if we provide a custom display location
                 if (!customDisplayLocation && locationName.indexOf(',') !== -1) {
                     locationName = locationName.split(',')[0].trim();
@@ -229,7 +252,7 @@ import { Icon } from "astro-icon/components";
                 if (fxEl) fxEl.innerHTML = weatherInfo.fx;
                 if (locEl) locEl.textContent = '📍 ' + locationName;
                 if (tempEl) tempEl.innerHTML = temp + '<span class="text-xl ml-1">°C</span>';
-                if (descEl) descEl.textContent = desc || '--';
+                if (descEl) descEl.textContent = localizeWeatherDesc(desc);
                 if (rainEl) rainEl.innerHTML = '<svg class="w-4 h-4 mr-1 inline-block" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C12 2 5 10.08 5 14.5C5 18.09 7.91 21 11.5 21C15.09 21 18 18.09 18 14.5C18 10.08 12 2 12 2Z"/></svg>' + chanceOfRain + '%';
                 if (humEl) humEl.innerHTML = '<svg class="w-4 h-4 mr-1 inline-block" viewBox="0 0 24 24"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,10V16H13V10H11Z"/></svg>' + humidity + '%';
 
@@ -244,9 +267,9 @@ import { Icon } from "astro-icon/components";
                 } catch(e) {}
             })
             .catch(function() {
-                // If fetch fails and city wasn't already Istanbul, try Istanbul
-                if (city !== 'Istanbul') {
-                    fetchWeather('Istanbul');
+                // If fetch fails, fall back to Tainan
+                if (city !== 'Tainan') {
+                    fetchWeather('Tainan', 'Tainan, Taiwan');
                 }
             });
     }
@@ -266,9 +289,9 @@ import { Icon } from "astro-icon/components";
 
                 if (iconEl) iconEl.textContent = cache.icon;
                 if (fxEl) fxEl.innerHTML = cache.fx || '';
-                if (locEl) locEl.textContent = '📍 ' + cache.location;
+                if (locEl) locEl.textContent = '📍 ' + normalizeLocationLabel(cache.location);
                 if (tempEl) tempEl.innerHTML = cache.temp + '<span class="text-xl ml-1">°C</span>';
-                if (descEl) descEl.textContent = cache.desc;
+                if (descEl) descEl.textContent = localizeWeatherDesc(cache.desc);
                 if (rainEl) rainEl.innerHTML = '<svg class="w-4 h-4 mr-1 inline-block" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C12 2 5 10.08 5 14.5C5 18.09 7.91 21 11.5 21C15.09 21 18 18.09 18 14.5C18 10.08 12 2 12 2Z"/></svg>' + cache.rain + '%';
                 if (humEl) humEl.innerHTML = '<svg class="w-4 h-4 mr-1 inline-block" viewBox="0 0 24 24"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,10V16H13V10H11Z"/></svg>' + cache.humidity + '%';
                 return;
@@ -279,12 +302,12 @@ import { Icon } from "astro-icon/components";
         fetch('https://ipapi.co/json/')
             .then(function(r) { return r.json(); })
             .then(function(geo) {
-                var city = (geo && geo.city) || 'Istanbul';
-                var displayLoc = geo ? ((geo.region || geo.city || 'Istanbul') + ', ' + (geo.country_name || 'Turkey')) : 'Istanbul, Turkey';
+                var city = (geo && geo.city) || 'Tainan';
+                var displayLoc = geo ? ((geo.city || geo.region || 'Tainan') + ', ' + (geo.country_name || 'Taiwan')) : 'Tainan, Taiwan';
                 fetchWeather(city, displayLoc);
             })
             .catch(function() {
-                fetchWeather('Istanbul', 'Istanbul, Turkey');
+                fetchWeather('Tainan', 'Tainan, Taiwan');
             });
     }
 
