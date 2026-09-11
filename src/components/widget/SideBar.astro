@@ -14,6 +14,7 @@ interface Props {
 }
 
 const className = Astro.props.class;
+const isHomePage = Astro.url.pathname === "/";
 ---
 <div id="sidebar" class:list={[className, "w-full"]}>
     <div class="flex flex-col w-full gap-4 mb-4">
@@ -23,6 +24,7 @@ const className = Astro.props.class;
     <!-- 四張連結卡：手機由頂部橫滑列代替，此處僅 lg 以上顯示 -->
     <div class="hidden lg:block">
 
+    {!isHomePage && (
     <!-- Tikana 的小店（推廣） -->
     <a href="https://pay.ldxp.cn/shop/T2MMIX28" target="_blank" rel="noopener noreferrer sponsored"
        aria-label="前往 Tikana 的小店"
@@ -39,6 +41,8 @@ const className = Astro.props.class;
         </div>
         <Icon name="material-symbols:arrow-outward" class="tlink__arrow text-xl text-neutral-500 dark:text-neutral-300" />
     </a>
+
+    )}
 
     <!-- 個人作品集入口卡片 -->
     <a href="https://dev.typelin.me/" target="_blank" rel="noopener noreferrer"
@@ -68,6 +72,7 @@ const className = Astro.props.class;
         <Icon name="material-symbols:arrow-outward" class="tlink__arrow text-xl text-neutral-500 dark:text-neutral-300" />
     </a>
 
+    {!isHomePage && (
     <!-- TYPELIN 實測展廳 -->
     <a href="https://arena.typelin.me/" target="_blank" rel="noopener noreferrer"
        aria-label="前往 TYPELIN 實測展廳"
@@ -92,6 +97,8 @@ const className = Astro.props.class;
         </div>
     </a>
 
+    )}
+
     </div>
 
     <!-- 課程即時狀態卡片 -->
@@ -102,4 +109,3 @@ const className = Astro.props.class;
         <Tags class="onload-animation" style="animation-delay: 200ms"></Tags>
     </div>
 </div>
-

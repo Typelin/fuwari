@@ -8,11 +8,11 @@
 import { Icon } from "astro-icon/components";
 ---
 
-<div class="card-base p-4 right-panel-card">
+<div class="card-base p-[1.05rem] right-panel-card">
     <div class="flex items-center gap-2 mb-3">
         <Icon name="material-symbols:calendar-today" class="text-lg text-[var(--primary)]" />
-        <span class="font-bold text-sm dark:text-neutral-50 text-neutral-800">行事曆</span>
-        <a href="/calendar/" class="ml-auto text-xs dark:text-white/40 text-black/40 hover:text-[var(--primary)] transition flex items-center gap-1">
+        <span class="font-bold text-[0.92rem] dark:text-neutral-50 text-neutral-800">行事曆</span>
+        <a href="/calendar/" class="ml-auto text-[0.75rem] dark:text-white/40 text-black/40 hover:text-[var(--primary)] transition flex items-center gap-1">
             編輯
             <Icon name="material-symbols:arrow-outward" class="text-xs" />
         </a>
@@ -23,7 +23,7 @@ import { Icon } from "astro-icon/components";
         <button id="rp-cal-prev" class="rp-cal-nav" aria-label="上個月">
             <Icon name="material-symbols:chevron-left" class="text-base" />
         </button>
-        <div id="rp-cal-title" class="text-sm font-bold dark:text-white/80 text-black/70">
+        <div id="rp-cal-title" class="text-[0.86rem] font-bold dark:text-white/80 text-black/70">
             --
         </div>
         <button id="rp-cal-next" class="rp-cal-nav" aria-label="下個月">
@@ -70,7 +70,7 @@ import { Icon } from "astro-icon/components";
         background: oklch(0.5 0 0 / 0.1);
     }
     .rp-cal-header {
-        font-size: 0.625rem;
+        font-size: 0.7rem;
         font-weight: 600;
         padding: 0.125rem 0;
         opacity: 0.4;
@@ -83,7 +83,7 @@ import { Icon } from "astro-icon/components";
     }
     :global(.rp-cal-day) {
         position: relative;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         aspect-ratio: 1 / 1;
         display: flex;
         align-items: center;

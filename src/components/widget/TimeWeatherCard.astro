@@ -8,18 +8,18 @@
 import { Icon } from "astro-icon/components";
 ---
 
-<div class="card-base p-4 right-panel-card">
+<div class="card-base p-[1.05rem] right-panel-card">
     <!-- Time Section -->
     <div class="flex items-center gap-2 mb-3">
         <Icon name="material-symbols:schedule" class="text-lg text-[var(--primary)]" />
-        <span class="font-bold text-sm dark:text-neutral-50 text-neutral-800">時間與天氣</span>
+        <span class="font-bold text-[0.92rem] dark:text-neutral-50 text-neutral-800">時間與天氣</span>
     </div>
 
     <div id="rp-clock" class="text-center mb-4 mt-2">
-        <div id="rp-time" class="text-4xl font-extrabold tracking-wider dark:text-white/95 text-black/90 font-mono">
+        <div id="rp-time" class="text-[1.85rem] font-extrabold tracking-[0.08em] dark:text-white/95 text-black/90 font-mono">
             --:--:--
         </div>
-        <div id="rp-date" class="text-sm mt-1 sm:mt-2 font-medium dark:text-white/70 text-black/60">
+        <div id="rp-date" class="text-[0.84rem] mt-1 sm:mt-2 font-medium dark:text-white/70 text-black/60">
             載入中...
         </div>
     </div>
@@ -28,7 +28,7 @@ import { Icon } from "astro-icon/components";
 
     <!-- Weather Section -->
     <div id="rp-weather">
-        <div id="rp-weather-location" class="text-sm font-medium dark:text-white/70 text-black/60 mb-3">
+        <div id="rp-weather-location" class="text-[0.84rem] leading-5 font-medium dark:text-white/70 text-black/60 mb-3">
             📍 定位中...
         </div>
         <div class="flex items-center gap-3 mb-2">
@@ -36,14 +36,14 @@ import { Icon } from "astro-icon/components";
                 <div id="rp-weather-fx" class="absolute inset-0 pointer-events-none"></div>
                 <div id="rp-weather-icon" class="text-3xl leading-none relative z-10 drop-shadow-md">⏳</div>
             </div>
-            <div id="rp-weather-temp" class="text-3xl font-bold dark:text-white/95 text-black/90">
+            <div id="rp-weather-temp" class="text-[1.65rem] font-bold dark:text-white/95 text-black/90">
                 --°C
             </div>
         </div>
-        <div id="rp-weather-desc" class="text-sm font-medium dark:text-white/70 text-black/60 mb-3">
+        <div id="rp-weather-desc" class="text-[0.84rem] leading-5 font-medium dark:text-white/70 text-black/60 mb-3">
             --
         </div>
-        <div class="flex items-center gap-4 text-sm font-medium dark:text-white/60 text-black/50">
+        <div class="flex items-center gap-4 text-[0.82rem] font-medium dark:text-white/60 text-black/50">
             <span id="rp-weather-rain" class="flex items-center gap-1"><Icon name="material-symbols:water-drop-outline" class="text-lg"/> --%</span>
             <span id="rp-weather-humidity" class="flex items-center gap-1"><Icon name="material-symbols:humidity-percentage" class="text-lg"/> --%</span>
         </div>

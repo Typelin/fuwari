@@ -32,14 +32,14 @@ const shownTags = maxTags != null ? tags.slice(0, maxTags) : tags;
 const hiddenCount = tags.length - shownTags.length;
 ---
 
-<div class:list={["flex flex-wrap text-neutral-500 dark:text-neutral-400 items-center gap-4 gap-x-4 gap-y-2", className]}>
+<div class:list={["flex flex-wrap text-neutral-500 dark:text-neutral-400 items-center gap-3.5 gap-x-3.5 gap-y-2.5", className]}>
     <!-- publish date -->
     {!hidePublishedDate && (
         <div class="flex items-center">
             <div class="meta-icon">
                 <Icon name="material-symbols:calendar-today-outline-rounded" class="text-xl"></Icon>
             </div>
-            <span class="text-50 text-sm font-medium">{formatDateToYYYYMMDD(published)}</span>
+            <span class="text-50 text-[13px] md:text-[0.9rem] font-medium">{formatDateToYYYYMMDD(published)}</span>
         </div>
     )}
 
@@ -50,7 +50,7 @@ const hiddenCount = tags.length - shownTags.length;
             >
                 <Icon name="material-symbols:edit-calendar-outline-rounded" class="text-xl"></Icon>
             </div>
-            <span class="text-50 text-sm font-medium">{formatDateToYYYYMMDD(updated)}</span>
+            <span class="text-50 text-[13px] md:text-[0.9rem] font-medium">{formatDateToYYYYMMDD(updated)}</span>
         </div>
     )}
 
@@ -62,7 +62,7 @@ const hiddenCount = tags.length - shownTags.length;
             </div>
             <div class="flex flex-row flex-nowrap items-center">
                 <a href={getCategoryUrl(category)} aria-label={`查看所有 ${category} 類別的文章`}
-                   class="link-lg transition text-50 text-sm font-medium
+                   class="link-lg transition text-50 text-[13px] md:text-[0.9rem] font-medium
                                 hover:text-[var(--primary)] dark:hover:text-[var(--primary)] whitespace-nowrap">
                     {category}
                 </a>
@@ -79,16 +79,16 @@ const hiddenCount = tags.length - shownTags.length;
             <div class="flex flex-row flex-nowrap items-center">
                 {shownTags.map((tag, i) => (
                     <>
-                        <div class:list={[{"hidden": i == 0}, "mx-1.5 text-[var(--meta-divider)] text-sm"]}>/</div>
+                        <div class:list={[{"hidden": i == 0}, "mx-1.5 text-[var(--meta-divider)] text-[13px] md:text-[0.9rem]"]}>/</div>
                         <a href={getTagUrl(tag)} aria-label={`查看所有帶有 ${tag.trim()} 標籤的文章`}
-                           class="link-lg transition text-50 text-sm font-medium
+                           class="link-lg transition text-50 text-[13px] md:text-[0.9rem] font-medium
                                         hover:text-[var(--primary)] dark:hover:text-[var(--primary)] whitespace-nowrap">
                             {tag.trim()}
                         </a>
                     </>
                 ))}
                 {hiddenCount > 0 && (
-                    <span class="ml-1.5 text-sm font-bold text-neutral-400 dark:text-neutral-500 whitespace-nowrap"
+                    <span class="ml-1.5 text-[13px] md:text-[0.9rem] font-bold text-neutral-400 dark:text-neutral-500 whitespace-nowrap"
                           title={tags.slice(shownTags.length).map((t) => t.trim()).join("、")}>
                         +{hiddenCount}
                     </span>
@@ -104,13 +104,13 @@ const hiddenCount = tags.length - shownTags.length;
                 <div class="meta-icon">
                     <Icon name="material-symbols:visibility-outline-rounded" class="text-xl"></Icon>
                 </div>
-                <span class="text-50 text-sm font-medium" id={`page-views-${slug}`}>-</span>
+                <span class="text-50 text-[13px] md:text-[0.9rem] font-medium" id={`page-views-${slug}`}>-</span>
             </div>
             <div class="flex items-center">
                 <div class="meta-icon">
                     <Icon name="material-symbols:person" class="text-xl"></Icon>
                 </div>
-                <span class="text-50 text-sm font-medium" id={`page-visitors-${slug}`}>-</span>
+                <span class="text-50 text-[13px] md:text-[0.9rem] font-medium" id={`page-visitors-${slug}`}>-</span>
             </div>
         </>
     )}

@@ -120,3 +120,72 @@ const mainPanelTop = siteConfig.banner.enable
     </div>
 </div>
 </Layout>
+
+
+<style is:global>
+/* 首頁採較寬的 editorial 版心：文章是主角，側欄是輔助。 */
+@media (min-width: 1024px) {
+    body.is-home #top-row {
+        max-width: 82rem;
+    }
+
+    /* Navbar 元件本身原本仍被 75rem 鎖住；首頁讓它吃滿 top-row，才會真正共線。 */
+    body.is-home #navbar > .card-base {
+        max-width: none;
+        width: 100%;
+    }
+
+    body.is-home #main-grid {
+        width: min(82rem, calc(100vw - 2rem));
+        max-width: none;
+        grid-template-columns: 15.25rem minmax(0, 1fr);
+        gap: 1rem;
+        position: relative;
+        left: 50%;
+        translate: -50% 0;
+    }
+
+    body.is-home #sidebar {
+        max-width: 15.25rem !important;
+    }
+
+    body.is-home #sidebar .card-base,
+    body.is-home #sidebar .tlink {
+        box-shadow: none;
+        border-color: color-mix(in oklab, currentColor 11%, transparent);
+    }
+
+    body.is-home #sidebar .tlink {
+        padding: 11px 12px;
+    }
+
+    body.is-home #swup-container {
+        overflow: visible;
+    }
+}
+
+@media (min-width: 1536px) {
+    body.is-home #main-grid {
+        width: 82rem;
+    }
+
+    body.is-home #right-panel-wrapper {
+        right: auto;
+        left: calc(50% + 41rem + 1rem);
+        transform: none;
+    }
+
+    body.is-home #right-panel-wrapper .card-base,
+    body.is-home #right-panel-wrapper .tlink {
+        box-shadow: none;
+        border-color: color-mix(in oklab, currentColor 10%, transparent);
+    }
+}
+
+/* 1536 左右的螢幕先把右側工具欄收起，避免內容被擠到邊緣。 */
+@media (min-width: 1536px) and (max-width: 1699px) {
+    body.is-home #right-panel-wrapper {
+        display: none;
+    }
+}
+</style>

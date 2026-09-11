@@ -4,18 +4,18 @@ import { profileConfig, siteConfig } from "../../config";
 
 const config = profileConfig;
 ---
-<div class="card-base p-3 border border-black/10 dark:border-white/10">
-    <div class="relative mx-auto mt-1 lg:mx-0 lg:mt-0 mb-3 max-w-[12rem] lg:max-w-none rounded-xl overflow-hidden" style={`--theme-hue: ${siteConfig.themeColor.hue}`}>
+<div class="card-base p-3.5 border border-black/10 dark:border-white/10">
+    <div class="relative mx-auto mt-1 lg:mt-0 mb-3 max-w-[12rem] lg:max-w-[10.75rem] rounded-xl overflow-hidden" style={`--theme-hue: ${siteConfig.themeColor.hue}`}>
         <div class="loading-bar absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-1 bg-gray-200 dark:bg-gray-700 z-10 rounded-full overflow-hidden">
             <div class="loading-progress h-full w-8 bg-[oklch(0.70_0.14_var(--theme-hue))] animate-loading-progress rounded-full"></div>
         </div>
         <img src={config.avatar} alt="Profile Image of the Author" class="w-full h-full object-cover opacity-0 transition-opacity duration-500" onload="this.style.opacity='1'; this.parentElement.querySelector('.loading-bar').style.opacity='0';"/>
     </div>
-    <div class="px-2">
-        <div class="font-bold text-xl text-center mb-1 dark:text-neutral-50 transition">{config.name}</div>
+    <div class="px-1.5">
+        <div class="font-bold text-[18px] md:text-xl text-center mb-1 dark:text-neutral-50 transition">{config.name}</div>
         <div class="h-1 w-5 bg-[var(--primary)] mx-auto rounded-full mb-2 transition"></div>
-        <div class="text-center text-neutral-400 mb-2.5 transition">{config.bio}</div>
-        <div class="flex flex-wrap gap-2 justify-center mb-1">
+        <div class="profile-bio text-center text-neutral-400 mb-3 transition">{config.bio}</div>
+        <div class="profile-links mb-1">
             {config.links.length > 1 && config.links.map(item => {
                 const isVirtual = ['discord', 'qq'].includes(item.name.toLowerCase());
                 return (
@@ -24,17 +24,17 @@ const config = profileConfig;
                         aria-label={item.name} 
                         href={isVirtual ? "#" : item.url} 
                         target={isVirtual ? "_self" : "_blank"} 
-                        class="btn-regular rounded-lg h-10 w-10 active:scale-90 discord-copy-btn relative overflow-hidden"
+                        class="btn-regular rounded-lg h-[42px] w-full active:scale-90 discord-copy-btn relative overflow-hidden"
                         data-virtual-id={isVirtual ? item.url : undefined}
                         onclick={isVirtual ? `event.preventDefault(); navigator.clipboard.writeText('${item.url}'); this.classList.add('copied'); setTimeout(() => this.classList.remove('copied'), 1500);` : undefined}
                     >
-                        <Icon name={item.icon} class="text-[1.5rem]"></Icon>
+                        <Icon name={item.icon} class="text-[1.35rem]"></Icon>
                     </a>
                 )
             })}
             {config.links.length == 1 && <a rel="me" aria-label={config.links[0].name} href={config.links[0].url} target="_blank"
                                             class="btn-regular rounded-lg h-10 gap-2 px-3 font-bold active:scale-95">
-                <Icon name={config.links[0].icon} class="text-[1.5rem]"></Icon>
+                <Icon name={config.links[0].icon} class="text-[1.35rem]"></Icon>
                 {config.links[0].name}
             </a>}
         </div>
@@ -42,24 +42,36 @@ const config = profileConfig;
         <!-- 全站訪問量統計 -->
         <div class="grid grid-cols-2 mt-3 pt-3 border-t border-neutral-300 dark:border-neutral-700">
             <div class="text-center">
-                <div class="text-xs text-neutral-500 mb-1 flex items-center justify-center gap-1">
+                <div class="text-[13px] md:text-[0.8rem] text-neutral-500 mb-1 flex items-center justify-center gap-1">
                     <Icon name="material-symbols:visibility-outline" class="text-base"></Icon>
-                    <span class="text-xs">訪問量</span>
+                    <span>訪問量</span>
                 </div>
-                <div id="site-views" class="font-bold text-lg text-neutral-700 dark:text-neutral-300">-</div>
+                <div id="site-views" class="font-bold text-[18px] md:text-lg text-neutral-700 dark:text-neutral-300">-</div>
             </div>
             <div class="text-center border-l border-neutral-300 dark:border-neutral-700">
-                <div class="text-xs text-neutral-500 mb-1 flex items-center justify-center gap-1">
+                <div class="text-[13px] md:text-[0.8rem] text-neutral-500 mb-1 flex items-center justify-center gap-1">
                     <Icon name="material-symbols:person" class="text-base"></Icon>
-                    <span class="text-xs">訪客數</span>
+                    <span>訪客數</span>
                 </div>
-                <div id="site-visitors" class="font-bold text-lg text-neutral-700 dark:text-neutral-300">-</div>
+                <div id="site-visitors" class="font-bold text-[18px] md:text-lg text-neutral-700 dark:text-neutral-300">-</div>
             </div>
         </div>
     </div>
 </div>
 
 <style>
+
+    .profile-bio {
+        font-size: 13.5px;
+        line-height: 1.65;
+    }
+
+    .profile-links {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: .4rem;
+    }
+
     .loading-bar {
         transition: opacity 0.5s ease-out;
     }

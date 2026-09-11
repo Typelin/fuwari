@@ -50,7 +50,7 @@
     gap: 8px;
 }
 .tlink__desc {
-    font-size: 12.5px;
+    font-size: 13.5px;
     line-height: 1.6;
     margin-top: 2px;
 }
@@ -66,9 +66,9 @@
 }
 
 /* 緊湊版（右欄迷你卡） */
-.tlink--sm { padding: 12px; border-radius: 14px; gap: 10px; }
+.tlink--sm { padding: 12.5px; border-radius: 14px; gap: 10px; }
 .tlink--sm .tlink__icon { width: 30px; height: 30px; border-radius: 9px; }
-.tlink--sm .tlink__title { font-size: 14px; }
+.tlink--sm .tlink__title { font-size: 14.5px; }
 
 /* 展廳卡內名次列 */
 .trank {
@@ -85,5 +85,5 @@
     align-items: baseline;
     justify-content: space-between;
     font-family: ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
-    font-size: 12px;
+    font-size: 12.75px;
 }
