@@ -1,6 +1,6 @@
 ---
 import path from "node:path";
-import type { CollectionEntry } from "astro:content";
+import { render, type CollectionEntry } from "astro:content";
 import { Icon } from "astro-icon/components";
 
 import { getDir } from "../utils/url-utils";
@@ -42,7 +42,7 @@ const hasCover = image !== undefined && image !== null && image !== "";
 
 const coverWidth = featured ? "31%" : "28.5%";
 
-const { remarkPluginFrontmatter } = await entry.render();
+const { remarkPluginFrontmatter } = await render(entry);
 ---
 <div class:list={["post-card card-base card-hover flex flex-col w-full relative", {"post-card--featured": featured}, className]} style={style}>
     <div class:list={[featured ? "post-card__body pl-9 pr-4 pt-6 pb-7 relative" : "post-card__body pl-9 pr-3 pt-5 pb-5 relative", {"w-[calc(100%_-_52px_-_12px)]": !hasCover, "w-[calc(100%_-_var(--coverWidth)_-_12px)]": hasCover}]}>
@@ -75,12 +75,12 @@ const { remarkPluginFrontmatter } = await entry.render();
             <!-- 瀏覽量 -->
             <div class="flex items-center gap-1">
                 <Icon name="material-symbols:visibility-outline" class="text-sm"></Icon>
-                <span class="cf-post-counter" data-slug={entry.slug} id={`page-views-${entry.slug}`}>-</span>
+                <span class="cf-post-counter" data-slug={entry.id} id={`page-views-${entry.id}`}>-</span>
             </div>
             <!-- 訪客數 -->
             <div class="flex items-center gap-1">
                 <Icon name="material-symbols:person" class="text-sm"></Icon>
-                <span class="cf-post-counter-visitor" id={`page-visitors-${entry.slug}`}>-</span>
+                <span class="cf-post-counter-visitor" id={`page-visitors-${entry.id}`}>-</span>
             </div>
         </div>
 

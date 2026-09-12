@@ -1,6 +1,5 @@
 import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
-import tailwind from "@astrojs/tailwind";
 import swup from "@swup/astro";
 import icon from "astro-icon";
 import { defineConfig, passthroughImageService } from "astro/config";
@@ -51,9 +50,7 @@ export default defineConfig({
       "/iku": "https://ikuuu.de/auth/register?code=Bjou",
       "/esa": "https://tianchi.aliyun.com/specials/promotion/freetier/esa?taskCode=25254&recordId=c856e61228828a0423417a767828d166"
     },
-    integrations: [tailwind({
-        nesting: true,
-		}), swup({
+    integrations: [swup({
         theme: false,
         animationClass: "transition-swup-", // see https://swup.js.org/options/#animationselector
         // the default value `transition-` cause transition delay

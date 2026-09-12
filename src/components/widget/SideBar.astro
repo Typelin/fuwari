@@ -24,8 +24,8 @@ const isHomePage = Astro.url.pathname === "/";
     <!-- 四張連結卡：手機由頂部橫滑列代替，此處僅 lg 以上顯示 -->
     <div class="hidden lg:block">
 
-    {!isHomePage && (
     <!-- Tikana 的小店（推廣） -->
+    {!isHomePage && (
     <a href="https://pay.ldxp.cn/shop/T2MMIX28" target="_blank" rel="noopener noreferrer sponsored"
        aria-label="前往 Tikana 的小店"
        class="tlink block mb-4 onload-animation" style="--a1: #f59e0b; --a2: #ec4899; animation-delay: 75ms">
@@ -72,8 +72,8 @@ const isHomePage = Astro.url.pathname === "/";
         <Icon name="material-symbols:arrow-outward" class="tlink__arrow text-xl text-neutral-500 dark:text-neutral-300" />
     </a>
 
-    {!isHomePage && (
     <!-- TYPELIN 實測展廳 -->
+    {!isHomePage && (
     <a href="https://arena.typelin.me/" target="_blank" rel="noopener noreferrer"
        aria-label="前往 TYPELIN 實測展廳"
        class="tlink block mb-4 onload-animation" style="--a1: #16150f; --a2: #c8402a; animation-delay: 140ms; flex-direction: column; align-items: stretch">
