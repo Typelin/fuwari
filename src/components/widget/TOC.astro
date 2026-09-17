@@ -32,7 +32,7 @@ let heading1Count = 1;
 const maxLevel = siteConfig.toc.depth;
 ---
 {isPostsRoute &&
-<table-of-contents id="toc-inner-wrapper" class:list={[className, "group block relative z-0 bg-[var(--float-panel-bg-opaque)] rounded-2xl p-3 w-full max-h-[calc(100vh-8rem)] overflow-y-auto overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden border border-black/5 dark:border-white/10 shadow-sm"]}>
+<table-of-contents id="toc-inner-wrapper" class:list={[className, "group block relative z-0 bg-[var(--float-panel-bg-opaque)] rounded-2xl p-3 w-full min-h-0 overflow-y-auto overflow-x-hidden border border-black/5 dark:border-white/10 shadow-sm article-toc-scroll"]}>
     {headings.filter((heading) => heading.depth < minDepth + maxLevel).map((heading) =>
             <a href={`#${heading.slug}`} class="px-3 py-2 flex items-start gap-2.5 relative transition w-full min-h-9 rounded-xl
         hover:bg-[var(--toc-btn-hover)] active:bg-[var(--toc-btn-active)] group/item

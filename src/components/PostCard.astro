@@ -104,7 +104,7 @@ const { remarkPluginFrontmatter } = await render(entry);
     </a>}
 
     {!hasCover &&
-        <a href={url} aria-label={title} class="!flex btn-regular w-[3.25rem]
+        <a href={url} aria-label={title} class="post-card__enter !flex btn-regular w-[3.25rem]
          absolute right-3 top-3 bottom-3 rounded-xl bg-[var(--enter-btn-bg)]
          hover:bg-[var(--enter-btn-bg-hover)] active:bg-[var(--enter-btn-bg-active)] active:scale-95
         ">
@@ -129,6 +129,20 @@ const { remarkPluginFrontmatter } = await render(entry);
         box-shadow: 0 20px 55px -34px color-mix(in oklab, var(--primary) 40%, rgba(0, 0, 0, .5));
     }
 
+    .post-card__body {
+        min-width: 0;
+    }
+
+    /* 文章卡跟著可用寬度縮放，不讓 125%/150% 瀏覽器縮放時標題顯得過度巨大。 */
+    .post-card--featured .post-card__title {
+        font-size: clamp(1.72rem, 1.46rem + 0.55vw, 2.05rem);
+        line-height: 1.22;
+    }
+
+    .post-card:not(.post-card--featured) .post-card__title {
+        font-size: clamp(1.4rem, 1.24rem + 0.34vw, 1.64rem);
+        line-height: 1.28;
+    }
 
     .post-card__excerpt {
         font-size: clamp(14px, .91rem + .12vw, 16px);
@@ -143,19 +157,6 @@ const { remarkPluginFrontmatter } = await render(entry);
 
     .post-card__cover {
         box-shadow: inset 0 0 0 1px color-mix(in oklab, currentColor 7%, transparent);
-    }
-
-    @media (min-width: 768px) {
-        .post-card__body {
-            min-height: 13.25rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .post-card--featured .post-card__body {
-            min-height: 15rem;
-        }
     }
 
     .featured-kicker {
@@ -177,37 +178,49 @@ const { remarkPluginFrontmatter } = await render(entry);
         opacity: .45;
     }
 
-    @media (max-width: 767px) {
-
-    .post-card__excerpt {
-        font-size: clamp(14px, .91rem + .12vw, 16px);
-        line-height: 1.68;
-    }
-
-    .post-card__stats {
-        gap: .75rem;
-        font-size: 13px;
-        line-height: 1.45;
-    }
-
-    .post-card__cover {
-        box-shadow: inset 0 0 0 1px color-mix(in oklab, currentColor 7%, transparent);
-    }
-
     @media (min-width: 768px) {
         .post-card__body {
-            min-height: 13.25rem;
+            min-height: 12rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
         .post-card--featured .post-card__body {
-            min-height: 15rem;
+            min-height: 13.75rem;
         }
     }
 
-    .featured-kicker {
+    @media (max-width: 767px) {
+        .post-card__body {
+            width: 100% !important;
+            min-height: 0;
+            padding: 1.15rem 1.15rem 1.2rem 1.4rem;
+        }
+
+        .post-card--featured .post-card__body {
+            padding-top: 1.2rem;
+        }
+
+        .post-card__cover {
+            position: relative !important;
+            inset: auto !important;
+            order: -1;
+            width: calc(100% - 1.5rem) !important;
+            height: clamp(10rem, 48vw, 13rem);
+            margin: .75rem .75rem 0;
+        }
+
+        .post-card__enter {
+            display: none !important;
+        }
+
+        .post-card__stats {
+            gap: .5rem;
+            font-size: 12px;
+        }
+
+        .featured-kicker {
             font-size: 10.5px;
             margin-bottom: .45rem;
         }

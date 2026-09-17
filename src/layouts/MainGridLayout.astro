@@ -3,10 +3,10 @@ import Footer from "@components/Footer.astro";
 import Navbar from "@components/Navbar.astro";
 import BackToTop from "@components/control/BackToTop.astro";
 import SideBar from "@components/widget/SideBar.astro";
+import ArticleNavigation from "@components/widget/ArticleNavigation.astro";
 import type { MarkdownHeading } from "astro";
 import { Icon } from "astro-icon/components";
 import ImageWrapper from "../components/misc/ImageWrapper.astro";
-import TOC from "../components/widget/TOC.astro";
 import { siteConfig } from "../config";
 import {
 	BANNER_HEIGHT,
@@ -35,6 +35,8 @@ const {
 const hasBannerCredit =
 	siteConfig.banner.enable && siteConfig.banner.credit.enable;
 const hasBannerLink = !!siteConfig.banner.credit.url;
+const isArticlePage = setOGTypeArticle === true || Astro.url.pathname.startsWith("/posts/");
+const hasArticleNavigation = isArticlePage && siteConfig.toc.enable && headings.length > 0;
 
 const mainPanelTop = siteConfig.banner.enable
 	? `calc(${BANNER_HEIGHT}vh - ${MAIN_PANEL_OVERLAPS_BANNER_HEIGHT}rem)`
@@ -62,9 +64,9 @@ const mainPanelTop = siteConfig.banner.enable
 <!-- Main content -->
 <div class="absolute w-full z-30 pointer-events-none" style=`top: ${mainPanelTop}`>
     <!-- The pointer-events-none here prevent blocking the click event of the TOC -->
-    <div class="relative max-w-[var(--page-width)] mx-auto pointer-events-auto">
-        <div id="main-grid" class="transition duration-700 w-full left-0 right-0 grid grid-cols-[17.5rem_auto] grid-rows-[auto_1fr_auto] lg:grid-rows-[auto]
-            lg:grid-cols-[17.5rem_auto] mx-auto gap-4 px-4 md:px-4"
+    <div id="main-panel-shell" class="relative max-w-[var(--page-width)] mx-auto pointer-events-auto">
+        <div id="main-grid" class="transition duration-700 w-full grid grid-cols-1 grid-rows-[auto_auto_auto] lg:grid-rows-[auto]
+            lg:grid-cols-[17.5rem_minmax(0,1fr)] mx-auto gap-4 px-4"
         >
             <!-- Banner image credit -->
             {hasBannerCredit && <a href={siteConfig.banner.credit.url} id="banner-credit" target="_blank" rel="noopener" aria-label="Visit image source"
@@ -80,20 +82,32 @@ const mainPanelTop = siteConfig.banner.enable
             </a>}
 
 
-            <SideBar class="mb-4 row-start-2 row-end-3 col-span-2 lg:row-start-1 lg:row-end-2 lg:col-span-1 lg:max-w-[17.5rem] onload-animation" headings={headings}></SideBar>
+            {hasArticleNavigation
+                ? <ArticleNavigation title={title} headings={headings} />
+                : <SideBar class="mb-4 row-start-2 col-span-1 lg:mb-0 lg:row-start-1 lg:col-start-1 lg:max-w-[17.5rem] onload-animation" headings={headings}></SideBar>
+            }
 
-            <main id="swup-container" class="transition-swup-fade col-span-2 lg:col-span-1 overflow-hidden">
-                <div id="content-wrapper" class="onload-animation">
+            <main id="swup-container" class:list={[
+                "transition-swup-fade col-span-1 min-w-0 lg:row-start-1 lg:col-start-2 overflow-hidden",
+                hasArticleNavigation ? "row-start-2" : "row-start-1",
+            ]}>
+                <div id="content-wrapper" class="onload-animation min-w-0">
                     <!-- the overflow-hidden here prevent long text break the layout-->
                     <!-- make id different from windows.swup global property -->
                     <slot></slot>
-                    <div class="footer col-span-2 onload-animation hidden lg:block">
+                    <div class="footer onload-animation hidden lg:block">
                         <Footer></Footer>
                     </div>
                 </div>
             </main>
 
-            <div class="footer col-span-2 onload-animation block lg:hidden">
+            <aside id="right-panel-wrapper" class="hidden min-w-0 lg:row-start-1 lg:col-start-3">
+                <div class="sticky top-[5.5rem]">
+                    <slot name="right-panel"></slot>
+                </div>
+            </aside>
+
+            <div class="footer col-span-1 onload-animation block lg:hidden">
                 <Footer></Footer>
             </div>
         </div>
@@ -102,51 +116,37 @@ const mainPanelTop = siteConfig.banner.enable
     </div>
 </div>
 
-<!-- The things that should be under the banner, only the TOC for now -->
-<div class="absolute w-full z-0 hidden 2xl:block" style=`top: ${mainPanelTop}`>
-    <div class="relative max-w-[var(--page-width)] mx-auto">
-        <!-- #toc needs to exist for Swup to work normally -->
-        {siteConfig.toc.enable && <div id="toc" class="w-[20rem] 3xl:w-[23rem] max-w-[calc((100vw-var(--page-width))/2-1rem)] absolute top-0 right-0 translate-x-[calc(100%+.75rem)]">
-             <div class="sticky top-[5.5rem]">
-                <TOC headings={headings}></TOC>
-             </div>
-        </div>}
-        <!-- Right Panel (desktop only, when no TOC) -->
-        <div id="right-panel-wrapper" class="absolute top-0 right-0 translate-x-[calc(100%+.5rem)]">
-            <div class="sticky top-[5.5rem]">
-                <slot name="right-panel"></slot>
-            </div>
-        </div>
-    </div>
-</div>
 </Layout>
 
 
 <style is:global>
-/* 首頁採較寬的 editorial 版心：文章是主角，側欄是輔助。 */
+/*
+ * 首頁響應式版心：
+ * - 1024–1535px：左側欄 + 文章雙欄，維持舒適閱讀寬度。
+ * - >=1536px：右側工具欄正式成為第三欄，三欄由同一個 grid 約束，不再靠 absolute 掛在版心外。
+ * 這樣瀏覽器縮放、不同桌機寬度與視窗縮放時，都不會把右欄推出 viewport。
+ */
 @media (min-width: 1024px) {
-    body.is-home #top-row {
-        max-width: 82rem;
+    body.is-home #top-row,
+    body.is-home #main-panel-shell {
+        max-width: 73.5rem;
     }
 
-    /* Navbar 元件本身原本仍被 75rem 鎖住；首頁讓它吃滿 top-row，才會真正共線。 */
     body.is-home #navbar > .card-base {
         max-width: none;
         width: 100%;
     }
 
     body.is-home #main-grid {
-        width: min(82rem, calc(100vw - 2rem));
+        width: 100%;
         max-width: none;
-        grid-template-columns: 15.25rem minmax(0, 1fr);
+        grid-template-columns: clamp(13.5rem, 18vw, 15.25rem) minmax(0, 1fr);
         gap: 1rem;
-        position: relative;
-        left: 50%;
-        translate: -50% 0;
     }
 
     body.is-home #sidebar {
         max-width: 15.25rem !important;
+        min-width: 0;
     }
 
     body.is-home #sidebar .card-base,
@@ -160,32 +160,31 @@ const mainPanelTop = siteConfig.banner.enable
     }
 
     body.is-home #swup-container {
+        min-width: 0;
         overflow: visible;
     }
 }
 
 @media (min-width: 1536px) {
+    body.is-home #top-row,
+    body.is-home #main-panel-shell {
+        max-width: 87.5rem;
+    }
+
     body.is-home #main-grid {
-        width: 82rem;
+        grid-template-columns: 15.25rem minmax(0, 1fr) 13.25rem;
     }
 
     body.is-home #right-panel-wrapper {
-        right: auto;
-        left: calc(50% + 41rem + 1rem);
-        transform: none;
+        display: block;
+        width: 13.25rem;
+        min-width: 0;
     }
 
     body.is-home #right-panel-wrapper .card-base,
     body.is-home #right-panel-wrapper .tlink {
         box-shadow: none;
         border-color: color-mix(in oklab, currentColor 10%, transparent);
-    }
-}
-
-/* 1536 左右的螢幕先把右側工具欄收起，避免內容被擠到邊緣。 */
-@media (min-width: 1536px) and (max-width: 1699px) {
-    body.is-home #right-panel-wrapper {
-        display: none;
     }
 }
 </style>
