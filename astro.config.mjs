@@ -55,7 +55,9 @@ export default defineConfig({
         animationClass: "transition-swup-", // see https://swup.js.org/options/#animationselector
         // the default value `transition-` cause transition delay
         // when the Tailwind class `transition-all` is used
-        containers: ["main", "#toc", "#right-panel-wrapper"],
+        // 每個容器都必須存在於「每一頁」，否則 swup 的 replaceContent 會回傳 false、
+        // renderPage 拋出 Container mismatch，接著 history.back() + location.assign() 變成整頁重載。
+        containers: ["main", "#left-panel-wrapper", "#right-panel-wrapper"],
         smoothScrolling: true,
         cache: true,
         preload: true,

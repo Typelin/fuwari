@@ -82,10 +82,16 @@ const mainPanelTop = siteConfig.banner.enable
             </a>}
 
 
-            {hasArticleNavigation
-                ? <ArticleNavigation title={title} headings={headings} />
-                : <SideBar class="mb-4 row-start-2 col-span-1 lg:mb-0 lg:row-start-1 lg:col-start-1 lg:max-w-[17.5rem] onload-animation" headings={headings}></SideBar>
-            }
+            <!-- Swup 容器：首頁側欄與文章導覽在此原位互換，容器本身必須每一頁都存在。 -->
+            <div id="left-panel-wrapper" class:list={[
+                "col-span-1 min-w-0 lg:row-start-1 lg:col-start-1 lg:max-w-[17.5rem]",
+                hasArticleNavigation ? "row-start-1" : "row-start-2",
+            ]}>
+                {hasArticleNavigation
+                    ? <ArticleNavigation title={title} headings={headings} />
+                    : <SideBar class="mb-4 lg:mb-0 onload-animation" headings={headings}></SideBar>
+                }
+            </div>
 
             <main id="swup-container" class:list={[
                 "transition-swup-fade col-span-1 min-w-0 lg:row-start-1 lg:col-start-2 overflow-hidden",
