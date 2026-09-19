@@ -13,6 +13,7 @@ import ReadingProgress from "@components/control/ReadingProgress.astro";
 import CFCounter from "@components/control/CFCounter.astro";
 import DeferredAnalytics from "@components/control/DeferredAnalytics.astro";
 import ConfigCarrier from "@components/ConfigCarrier.astro";
+import MotionRuntime from "@components/control/MotionRuntime.astro";
 import {
 	AUTO_MODE,
 	BANNER_HEIGHT,
@@ -256,6 +257,7 @@ const bannerOffset =
         <CFCounter />
 		<div id="bg-box"></div>
 		<ConfigCarrier></ConfigCarrier>
+		<MotionRuntime></MotionRuntime>
 		<slot />
 
 		<!-- increase the page height during page transition to prevent the scrolling animation from jumping -->
@@ -551,14 +553,9 @@ const setup = () => {
 		}
 	})
 	window.swup.hooks.on('content:replace', initCustomScrollbar)
-	window.swup.hooks.on('visit:start', (visit: {to: {url: string}}) => {
-		// change banner height immediately when a link is clicked
-		const bodyElement = document.querySelector('body')
-		if (pathsEqual(visit.to.url, url('/'))) {
-			bodyElement!.classList.add('lg:is-home', 'is-home');
-		} else {
-			bodyElement!.classList.remove('lg:is-home', 'is-home');
-		}
+	window.swup.hooks.on('visit:start', () => {
+		// 從此換頁交給 View Transition，關掉 CSS 的進場重播避免兩套動畫打架
+		document.documentElement.classList.add('motion-nav')
 
 		// increase the page height during page transition to prevent the scrolling animation from jumping
 		const heightExtend = document.getElementById('page-height-extend')
@@ -570,6 +567,19 @@ const setup = () => {
 		let toc = document.getElementById('toc-wrapper');
 		if (toc) {
 			toc.classList.add('toc-not-ready')
+		}
+	});
+
+	// 首頁/文章頁的 body class 必須在 View Transition 的更新回呼「裡面」切換。
+	// 原本掛在 visit:start，那時舊快照還沒拍，等於換頁還沒開始版面就先跳到新版面，
+	// 接著才交叉淡入 —— 看起來就是卡一下。改到 content:replace 之後，
+	// 舊快照是新版面前、新快照是新版面後，兩張都正確。
+	window.swup.hooks.on('content:replace', (visit: {to: {url: string}}) => {
+		const bodyElement = document.querySelector('body')
+		if (pathsEqual(visit.to.url, url('/'))) {
+			bodyElement!.classList.add('lg:is-home', 'is-home');
+		} else {
+			bodyElement!.classList.remove('lg:is-home', 'is-home');
 		}
 	});
 	window.swup.hooks.on('page:view', () => {

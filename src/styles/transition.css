@@ -1,12 +1,76 @@
-/* Page transition animations with Swup */
-html.is-changing .transition-swup-fade {
-    @apply transition-all duration-200
-}
-html.is-animating .transition-swup-fade {
-    @apply opacity-0 translate-y-4
+/* ============================================================
+   動態節奏 (Motion)
+   全站動畫只准引用這裡的時長與曲線。先前 #main-grid (700ms)、
+   #top-row (700/300ms)、#swup-container (200ms) 各跑各的時鐘，
+   換頁時三段動作不同步，看起來就「不順」。
+   ============================================================ */
+:root {
+    --motion-fast: 160ms;
+    --motion-base: 280ms;
+    --motion-slow: 460ms;
+    --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --motion-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-/* Fade-in animations for components */
+/* ============================================================
+   換頁動畫
+   支援 View Transitions 的瀏覽器：由瀏覽器原生接管，這裡只調時長曲線。
+   不支援的：退回 swup 的 class 淡出，行為與改動前一致。
+   ============================================================ */
+@supports not (view-transition-name: none) {
+    html.is-changing .transition-swup-fade {
+        transition:
+            opacity var(--motion-base) var(--motion-ease-out),
+            translate var(--motion-base) var(--motion-ease-out);
+    }
+    html.is-animating .transition-swup-fade {
+        opacity: 0;
+        translate: 0 1rem;
+    }
+}
+
+@supports (view-transition-name: none) {
+    @keyframes vt-new-in {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    /*
+     * 舊畫面維持全不透明墊在底下，新畫面淡入蓋上去，全程都有一張完整快照。
+     *
+     * 先前是舊畫面 160ms 先淡出、新畫面 460ms 才淡入，中間有一段兩張快照
+     * 都接近透明，透出來只剩頁面底色 —— 深色模式下就是那次全螢幕黑閃。
+     * 另外不要對整張全頁快照做 translate：它會和版面變動疊在一起，看起來更亂。
+     */
+    ::view-transition-old(root) {
+        animation: none;
+    }
+    ::view-transition-new(root) {
+        animation: vt-new-in var(--motion-base) var(--motion-ease-out) both;
+    }
+
+    /*
+     * UA 預設給兩張快照 mix-blend-mode: plus-lighter（加成疊合）。在「舊畫面
+     * 保持全不透明、新畫面淡入」的做法下，加成會讓畫面愈疊愈亮。
+     * 這裡改成一般 alpha 疊合。
+     */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        mix-blend-mode: normal;
+    }
+}
+
+/* ============================================================
+   進場動畫
+   首次載入：用 onload-animation 做逐項淡入上浮。
+   swup 接管之後：換頁交給 View Transition，這套 CSS 動畫必須關掉——
+   否則 VT 會在動畫起點拍快照（元素 opacity 為 0），交叉淡入的終點
+   會是一片空白，內容才在後面自己冒出來。進場編排改由 motion 負責。
+   ============================================================ */
 @keyframes fade-in-up {
     0% {
         transform: translateY(2rem);
@@ -18,17 +82,16 @@ html.is-animating .transition-swup-fade {
     }
 }
 
-/* Main components */
 .onload-animation {
     opacity: 0;
     animation: 300ms fade-in-up;
     animation-fill-mode: forwards;
 }
 #navbar {
-    animation-delay: 0ms
+    animation-delay: 0ms;
 }
 #sidebar {
-    animation-delay: 100ms
+    animation-delay: 100ms;
 }
 #swup-container {
     outline: none;
@@ -51,3 +114,25 @@ html.is-animating .transition-swup-fade {
 #post-container :nth-child(5) { animation-delay: calc(var(--content-delay) + 250ms) }
 #post-container :nth-child(6) { animation-delay: calc(var(--content-delay) + 325ms) }
 
+/* 只有「已經換過頁」才關掉 CSS 重播。用 swup-enabled 當條件會太早：
+   swup 在載入後就 enable，會把首頁進場動畫（最長 775ms）的尾巴切斷。 */
+html.motion-nav .onload-animation {
+    animation: none;
+    opacity: 1;
+}
+
+/* ============================================================
+   無障礙：系統要求減少動態時，換頁與進場一律不做動畫。
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation-duration: 1ms !important;
+    }
+
+    .onload-animation {
+        animation: none;
+        opacity: 1;
+    }
+}

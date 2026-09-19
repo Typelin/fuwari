@@ -1,0 +1,90 @@
+---
+// 換頁後的動態編排。
+// 換頁本身交給 View Transition（見 src/styles/transition.css），
+// 這個元件只負責「捲動觸發」。
+//
+// 曾經在這裡做過換頁後的卡片落定（y 位移 + 彈簧），已移除：
+// View Transition 已經把新頁面淡入完成，之後再讓卡片下墜回彈是重複的動作，
+// 而且 stagger 會讓它一顆一顆發生，看起來像部分卡片自己抖了一下。
+---
+
+<script>
+import { animate, inView } from "motion";
+
+const EASE_OUT = [0.22, 1, 0.36, 1] as const;
+const reduceMotion = () =>
+	window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/*
+ * motion 是逐格寫 inline transform 的，而這些元素多半帶 Tailwind 的
+ * `transition`（.card-base 就有 150ms 的 transform transition）。兩者疊起來
+ * 會被 CSS 過渡拖慢；而且動畫結束後留下的 inline transform 會蓋掉卡片 hover
+ * 的 scale。所以：動畫期間關掉 CSS transition，結束後把 inline 值清乾淨。
+ */
+function play(
+	targets: HTMLElement | HTMLElement[],
+	keyframes: Record<string, unknown>,
+	options: Record<string, unknown>,
+) {
+	const els = Array.isArray(targets) ? targets : [targets];
+	const previous = els.map((el) => el.style.transition);
+	for (const el of els) el.style.transition = "none";
+
+	const controls = animate(targets as never, keyframes as never, options as never);
+	const restore = () => {
+		els.forEach((el, i) => {
+			el.style.transition = previous[i];
+			el.style.transform = "";
+			el.style.opacity = "";
+		});
+	};
+
+	const finished = (controls as { finished?: Promise<unknown> })?.finished;
+	if (finished?.then) finished.then(restore, restore);
+	else restore();
+}
+
+/*
+ * 捲動觸發：只掛在「目前不在視窗內」的元素上。
+ * 掛到已經看得到的元素會讓它在載入後被拉回 opacity 0，產生閃爍。
+ */
+function reveal(selector: string) {
+	for (const el of document.querySelectorAll<HTMLElement>(selector)) {
+		if (el.dataset.motionReveal) continue;
+		el.dataset.motionReveal = "1";
+		if (el.getBoundingClientRect().top < window.innerHeight) continue;
+
+		// CSS 動畫在優先序上高於 inline style：只要 onload-animation 的
+		// fade-in-up（fill: forwards）還在，motion 寫的 opacity 就會被蓋掉，
+		// reveal 等於沒做。所以接手前先把這個 class 拆掉。
+		el.classList.remove("onload-animation");
+		el.style.animationDelay = "";
+
+		inView(
+			el,
+			() => {
+				play(el, { opacity: [0, 1], y: [22, 0] }, { duration: 0.55, easing: EASE_OUT });
+			},
+			{ margin: "0px 0px -8% 0px" },
+		);
+	}
+}
+
+function setupReveals() {
+	if (reduceMotion()) return;
+	reveal("main .post-card");
+	reveal(".markdown-content > *");
+	reveal(".friend-card");
+}
+
+// 首次載入與每次換頁都要重新掛：換頁後容器內容是新的 DOM。
+setupReveals();
+
+if (window.swup?.hooks) {
+	window.swup.hooks.on("visit:end", setupReveals);
+} else {
+	document.addEventListener("swup:enable", () => {
+		window.swup.hooks.on("visit:end", setupReveals);
+	});
+}
+</script>

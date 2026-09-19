@@ -47,7 +47,7 @@ const mainPanelTop = siteConfig.banner.enable
 
 <!-- Navbar -->
 <slot slot="head" name="head"></slot>
-<div id="top-row" class="z-50 pointer-events-none relative transition-all duration-700 max-w-[var(--page-width)] px-4 md:px-4 mx-auto" class:list={[""]}>
+<div id="top-row" class="z-50 pointer-events-none relative max-w-[var(--page-width)] px-4 md:px-4 mx-auto" class:list={[""]}>
     <div id="navbar-wrapper" class="pointer-events-auto sticky top-0 transition-all">
         <Navbar></Navbar>
     </div>
@@ -65,7 +65,10 @@ const mainPanelTop = siteConfig.banner.enable
 <div class="absolute w-full z-30 pointer-events-none" style=`top: ${mainPanelTop}`>
     <!-- The pointer-events-none here prevent blocking the click event of the TOC -->
     <div id="main-panel-shell" class="relative max-w-[var(--page-width)] mx-auto pointer-events-auto">
-        <div id="main-grid" class="transition duration-700 w-full grid grid-cols-1 grid-rows-[auto_auto_auto] lg:grid-rows-[auto]
+        <!-- 刻意不加 transition：版心寬度與欄寬在首頁/文章頁不同，若讓它做 700ms
+             過渡，會變成一段 grid-template-columns 的佈局動畫（非 GPU 合成，最會卡），
+             而且和 View Transition 同時跑。這裡讓版面直接落定，換頁只留一個動畫。 -->
+        <div id="main-grid" class="w-full grid grid-cols-1 grid-rows-[auto_auto_auto] lg:grid-rows-[auto]
             lg:grid-cols-[17.5rem_minmax(0,1fr)] mx-auto gap-4 px-4"
         >
             <!-- Banner image credit -->

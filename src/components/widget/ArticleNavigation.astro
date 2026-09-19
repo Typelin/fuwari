@@ -119,6 +119,8 @@ const cleanHeading = (text: string) => text.endsWith("#") ? text.slice(0, -1) : 
 </style>
 
 <script>
+let scrollObserver: ResizeObserver | undefined;
+
 function setupArticleNavigationScroll() {
     const shell = document.querySelector<HTMLElement>('.article-navigation__toc-shell');
     const toc = document.querySelector<HTMLElement>('#article-navigation #toc-inner-wrapper');
@@ -133,12 +135,23 @@ function setupArticleNavigationScroll() {
     };
 
     toc.addEventListener('scroll', update, { passive: true });
-    new ResizeObserver(update).observe(toc);
+    scrollObserver?.disconnect();
+    scrollObserver = new ResizeObserver(update);
+    scrollObserver.observe(toc);
     update();
 }
 
 setupArticleNavigationScroll();
-document.addEventListener('swup:contentReplaced', setupArticleNavigationScroll);
+
+// swup 的 DOM 事件名是 swup:<hook>，所以是 swup:visit:end，
+// 不是舊版的 swup:contentReplaced（那個永遠不會觸發）。
+if (window.swup?.hooks) {
+    window.swup.hooks.on('visit:end', setupArticleNavigationScroll);
+} else {
+    document.addEventListener('swup:enable', () => {
+        window.swup.hooks.on('visit:end', setupArticleNavigationScroll);
+    });
+}
 </script>
 
 <style is:global>

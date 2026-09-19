@@ -58,6 +58,10 @@ export default defineConfig({
         // 每個容器都必須存在於「每一頁」，否則 swup 的 replaceContent 會回傳 false、
         // renderPage 拋出 Container mismatch，接著 history.back() + location.assign() 變成整頁重載。
         containers: ["main", "#left-panel-wrapper", "#right-panel-wrapper"],
+        // 交給瀏覽器原生的 View Transitions API 做換頁動畫，時長與曲線由
+        // src/styles/transition.css 的 ::view-transition-* 統一控制。
+        // 不支援的瀏覽器 swup 會自動退回 class 驅動的淡出。
+        native: true,
         smoothScrolling: true,
         cache: true,
         preload: true,
