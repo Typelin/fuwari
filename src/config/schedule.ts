@@ -24,57 +24,38 @@ export const TIME_SLOTS: TimeSlot[] = [
 	{ period: "第7節", startTime: "14:50", endTime: "15:40" },
 	{ period: "第8節", startTime: "15:50", endTime: "16:40" },
 	{ period: "第9節", startTime: "16:50", endTime: "17:40" },
+	{ period: "第11節", startTime: "18:20", endTime: "19:05" },
+	{ period: "第12節", startTime: "19:05", endTime: "19:50" },
+	{ period: "第13節", startTime: "20:00", endTime: "20:45" },
+	{ period: "第14節", startTime: "20:45", endTime: "21:30" },
 ];
 
 export const WEEKDAYS = ["週一", "週二", "週三", "週四", "週五", "週六", "週日"] as const;
 
-// schedule[dayIndex][slotIndex] — dayIndex: 0=Mon..6=Sun, slotIndex: 0=period1..8=period9
+// schedule[dayIndex][slotIndex] — dayIndex: 0=Mon..6=Sun, slotIndex 對應 TIME_SLOTS
 // null = no class
 export const SCHEDULE: (ScheduleEntry | null)[][] = [
 	// 週一
-	[null, null, null, null, null, null, null, null, null],
+	[null, null, null, null, null, null, null, null, null, null, null, null, null],
 	// 週二
-	[
-		{ name: "導師時間", location: "J206" },
-		{ name: "電路板佈線實務", location: "J405" },
-		{ name: "電路板佈線實務", location: "J405" },
-		{ name: "電路板佈線實務", location: "J405" },
-		null, null, null, null, null,
-	],
+	[null, null, null, null, null, null, null, null, null, null, null, null, null],
 	// 週三
 	[
-		null,
-		{ name: "人工智慧實務", location: "B503" },
-		{ name: "人工智慧實務", location: "B503" },
-		{ name: "人工智慧實務", location: "B503" },
-		{ name: "工程倫理與社會", location: "I0701" },
-		{ name: "工程倫理與社會", location: "I0701" },
 		null, null, null,
+		{ name: "導師時間", location: "J206" },
+		null, null, null, null, null, null, null, null, null,
 	],
 	// 週四
 	[
-		null,
-		{ name: "動態網頁設計", location: "J401" },
-		{ name: "動態網頁設計", location: "J401" },
-		{ name: "動態網頁設計", location: "J401" },
-		{ name: "機率與統計", location: "J206" },
-		{ name: "機率與統計", location: "J206" },
-		{ name: "機率與統計", location: "J206" },
-		null, null,
+		{ name: "深度學習框架應用", location: "J201" },
+		{ name: "深度學習框架應用", location: "J201" },
+		{ name: "深度學習框架應用", location: "J201" },
+		null, null, null, null, null, null, null, null, null, null,
 	],
 	// 週五
-	[
-		null,
-		{ name: "智慧健康產品設計", location: "X201" },
-		{ name: "智慧健康產品設計", location: "X201" },
-		{ name: "智慧健康產品設計", location: "X201" },
-		null, null,
-		{ name: "日本流行產業(B)", location: "W0502" },
-		{ name: "日本流行產業(B)", location: "W0502" },
-		{ name: "日本流行產業(B)", location: "W0502" },
-	],
+	[null, null, null, null, null, null, null, null, null, null, null, null, null],
 	// 週六
-	[null, null, null, null, null, null, null, null, null],
+	[null, null, null, null, null, null, null, null, null, null, null, null, null],
 	// 週日
-	[null, null, null, null, null, null, null, null, null],
+	[null, null, null, null, null, null, null, null, null, null, null, null, null],
 ];
