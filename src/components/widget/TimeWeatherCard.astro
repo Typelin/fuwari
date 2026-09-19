@@ -133,6 +133,9 @@ import { Icon } from "astro-icon/components";
 
 <script is:inline>
 (function() {
+    // 定位失敗時的後備座標（台南）
+    var FALLBACK_LOCATION = { lat: 22.9909, lon: 120.2128, label: 'Tainan, Taiwan' };
+
     // --- Clock ---
     function updateClock() {
         var now = new Date();
@@ -154,161 +157,196 @@ import { Icon } from "astro-icon/components";
         }
     }
 
-    function getWeatherInfo(desc) {
-        var d = (desc || '').toLowerCase();
-        
-        // Priority checks
-        if (d.indexOf('thunder') !== -1) {
-            return { icon: '⛈️', fx: '<div class="weather-fx-rain"><div class="weather-fx-drop"></div><div class="weather-fx-drop"></div><div class="weather-fx-drop"></div></div>' };
-        }
-        if (d.indexOf('rain') !== -1 || d.indexOf('shower') !== -1 || d.indexOf('drizzle') !== -1 || d.indexOf('precipitation') !== -1) {
-            return { icon: '🌧️', fx: '<div class="weather-fx-rain"><div class="weather-fx-drop"></div><div class="weather-fx-drop"></div><div class="weather-fx-drop"></div></div>' };
-        }
-        if (d.indexOf('snow') !== -1 || d.indexOf('ice') !== -1 || d.indexOf('blizzard') !== -1) {
-            return { icon: '🌨️', fx: '<div class="weather-fx-cloud"></div>' };
-        }
-        if (d.indexOf('cloud') !== -1 || d.indexOf('overcast') !== -1) {
-            return { icon: '☁️', fx: '<div class="weather-fx-cloud"></div>' };
-        }
-        if (d.indexOf('mist') !== -1 || d.indexOf('fog') !== -1) {
-            return { icon: '🌫️', fx: '<div class="weather-fx-cloud"></div>' };
-        }
-        
-        // Default based on time of day
-        var hour = new Date().getHours();
-        var isDay = (hour >= 6 && hour < 18);
-        return isDay 
-            ? { icon: '☀️', fx: '<div class="weather-fx-sun"></div>' }
-            : { icon: '🌙', fx: '<div class="weather-fx-moon"></div>' };
-    }
-
     function normalizeLocationLabel(label) {
         var parts = String(label || '').split(',').map(function(p) { return p.trim(); }).filter(Boolean);
         if (parts.length >= 2 && parts[0].toLowerCase() === parts[1].toLowerCase()) return parts[0];
         return parts.join(', ');
     }
 
-    function localizeWeatherDesc(desc) {
-        var raw = String(desc || '').trim();
-        var d = raw.toLowerCase();
-        if (!raw) return '--';
-        if (d.indexOf('thunder') !== -1) return '雷雨';
-        if (d.indexOf('drizzle') !== -1 || d.indexOf('light rain') !== -1) return '小雨';
-        if (d.indexOf('shower') !== -1) return '陣雨';
-        if (d.indexOf('rain') !== -1) return '有雨';
-        if (d.indexOf('snow') !== -1 || d.indexOf('ice') !== -1 || d.indexOf('blizzard') !== -1) return '降雪';
-        if (d.indexOf('partly cloudy') !== -1) return '局部多雲';
-        if (d.indexOf('overcast') !== -1) return '陰天';
-        if (d.indexOf('cloud') !== -1) return '多雲';
-        if (d.indexOf('mist') !== -1 || d.indexOf('fog') !== -1) return '有霧';
-        if (d.indexOf('sunny') !== -1 || d.indexOf('clear') !== -1) return '晴朗';
-        return raw;
+    // --- 天氣判定 ---
+    // 只看結構化欄位，不看文字描述。
+    // 這是從 wttr.in 換過來的教訓：它的文字在雲量 80% 上下就吐
+    // "Patchy rain nearby"，但同一份資料的降水量是 0.0mm —— 文字會說下雨，
+    // 實際上一滴都沒有。所以這裡以 precipitation 為準：沒有降水量就不講雨，
+    // 改依雲量描述天空。這樣「說下雨」與「實際下雨」才不會脫鉤。
+    var CONDITIONS = {
+        thunder:          { label: '雷雨',     icon: '⛈️',  fx: 'rain' },
+        'heavy-rain':     { label: '大雨',     icon: '🌧️', fx: 'rain' },
+        rain:             { label: '有雨',     icon: '🌧️', fx: 'rain' },
+        drizzle:          { label: '小雨',     icon: '🌦️', fx: 'rain' },
+        snow:             { label: '降雪',     icon: '🌨️', fx: 'cloud' },
+        overcast:         { label: '陰天',     icon: '☁️',  fx: 'cloud' },
+        cloudy:           { label: '多雲',     icon: '☁️',  fx: 'cloud' },
+        'partly-cloudy':  { label: '局部多雲', icon: '⛅',  fx: '' },
+        clear:            { label: '晴朗',     icon: '☀️',  fx: 'sun' },
+        'clear-night':    { label: '晴朗',     icon: '🌙',  fx: 'moon' },
+        fog:              { label: '有霧',     icon: '🌫️', fx: 'cloud' }
+    };
+
+    var FX = {
+        rain: '<div class="weather-fx-rain"><div class="weather-fx-drop"></div><div class="weather-fx-drop"></div><div class="weather-fx-drop"></div></div>',
+        cloud: '<div class="weather-fx-cloud"></div>',
+        sun: '<div class="weather-fx-sun"></div>',
+        moon: '<div class="weather-fx-moon"></div>',
+        '': ''
+    };
+
+    // WMO weather code：45/48 霧、51-57 毛毛雨、61-67 雨、71-77 雪、
+    // 80-82 陣雨、85-86 陣雪、95-99 雷雨。
+    // 但代碼本身也可能過度樂觀，所以有無降水一律以 precipitation 為準。
+    function resolveCondition(current) {
+        var code = Number(current.weather_code);
+        var precip = Number(current.precipitation);
+        var cloud = Number(current.cloud_cover);
+        var isDay = Number(current.is_day) === 1;
+
+        if (code === 45 || code === 48) return 'fog';
+
+        if (!isNaN(precip) && precip > 0) {
+            if (code >= 95) return 'thunder';
+            if ((code >= 71 && code <= 77) || code === 85 || code === 86) return 'snow';
+            if (precip < 0.5) return 'drizzle';
+            if (precip < 2.5) return 'rain';
+            return 'heavy-rain';
+        }
+
+        if (!isNaN(cloud)) {
+            if (cloud >= 85) return 'overcast';
+            if (cloud >= 60) return 'cloudy';
+            if (cloud >= 25) return 'partly-cloudy';
+            return isDay ? 'clear' : 'clear-night';
+        }
+
+        return null;
     }
 
-    function fetchWeather(city, customDisplayLocation) {
-        var url = 'https://wttr.in/' + encodeURIComponent(city) + '?format=j1';
-        fetch(url)
+    // 降雨機率。Open-Meteo 的 hourly.time 是「被定位城市的當地時間」，
+    // 而 current.time 也已經是同一時區，所以用字串前 13 碼（到小時）比對就好，
+    // 完全不需要做時區換算 —— 也就不會有「拿瀏覽器時區去比當地時段」的錯。
+    function pickRainChance(hourly, currentTime) {
+        if (!hourly || !hourly.time || !hourly.time.length) return null;
+        var key = String(currentTime || '').slice(0, 13);
+        for (var i = 0; i < hourly.time.length; i++) {
+            if (String(hourly.time[i]).slice(0, 13) === key) {
+                var p = hourly.precipitation_probability && hourly.precipitation_probability[i];
+                return (p === null || p === undefined) ? null : p;
+            }
+        }
+        return null;
+    }
+
+    function weatherUrl(loc) {
+        return 'https://api.open-meteo.com/v1/forecast'
+            + '?latitude=' + loc.lat + '&longitude=' + loc.lon
+            + '&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,cloud_cover,is_day'
+            + '&hourly=precipitation_probability'
+            + '&forecast_days=1'
+            + '&timezone=auto';
+    }
+
+    var RAIN_ICON = '<svg class="w-4 h-4 mr-1 inline-block" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C12 2 5 10.08 5 14.5C5 18.09 7.91 21 11.5 21C15.09 21 18 18.09 18 14.5C18 10.08 12 2 12 2Z"/></svg>';
+    var HUMIDITY_ICON = '<svg class="w-4 h-4 mr-1 inline-block" viewBox="0 0 24 24"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,10V16H13V10H11Z"/></svg>';
+
+    function paint(view) {
+        var iconEl = document.getElementById('rp-weather-icon');
+        var fxEl = document.getElementById('rp-weather-fx');
+        var locEl = document.getElementById('rp-weather-location');
+        var tempEl = document.getElementById('rp-weather-temp');
+        var descEl = document.getElementById('rp-weather-desc');
+        var rainEl = document.getElementById('rp-weather-rain');
+        var humEl = document.getElementById('rp-weather-humidity');
+
+        if (iconEl) iconEl.textContent = view.icon;
+        if (fxEl) fxEl.innerHTML = view.fx || '';
+        if (locEl) locEl.textContent = '📍 ' + normalizeLocationLabel(view.location);
+        if (tempEl) tempEl.innerHTML = view.temp + '<span class="text-xl ml-1">°C</span>';
+        if (descEl) descEl.textContent = view.label;
+        if (rainEl) rainEl.innerHTML = RAIN_ICON + (view.rain === null ? '--' : view.rain) + '%';
+        if (humEl) humEl.innerHTML = HUMIDITY_ICON + view.humidity + '%';
+    }
+
+    var WEATHER_TTL = 30 * 60 * 1000;
+    var GEO_TTL = 7 * 24 * 60 * 60 * 1000;
+    var CACHE_VERSION = 2;
+
+    function renderFromCache() {
+        try {
+            var cache = JSON.parse(localStorage.getItem('rp-weather-cache') || '{}');
+            // 舊版是 wttr.in 的資料形狀，欄位對不上，直接忽略重抓
+            if (cache.v !== CACHE_VERSION || !cache.ts) return false;
+            if (Date.now() - cache.ts >= WEATHER_TTL) return false;
+            paint(cache);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    // 定位結果快取 7 天。ipapi.co 免費額度是每 IP 每天 1000 次，原本每次載入
+    // 都打一次，重整幾次就會被限流，然後全站訪客都被迫看到後備的台南。
+    function resolveLocation(done) {
+        try {
+            var geo = JSON.parse(localStorage.getItem('rp-geo-cache') || '{}');
+            if (geo.ts && Date.now() - geo.ts < GEO_TTL && geo.lat && geo.lon) {
+                done(geo);
+                return;
+            }
+        } catch (e) {}
+
+        fetch('https://ipapi.co/json/')
+            .then(function(r) { return r.json(); })
+            .then(function(res) {
+                if (!res || res.error || !res.latitude || !res.longitude) throw new Error('geo unavailable');
+                var loc = {
+                    ts: Date.now(),
+                    lat: res.latitude,
+                    lon: res.longitude,
+                    label: (res.city || res.region || 'Tainan') + ', ' + (res.country_name || 'Taiwan')
+                };
+                try { localStorage.setItem('rp-geo-cache', JSON.stringify(loc)); } catch (e) {}
+                done(loc);
+            })
+            .catch(function() { done(FALLBACK_LOCATION); });
+    }
+
+    function fetchWeather(loc) {
+        fetch(weatherUrl(loc))
             .then(function(r) { return r.json(); })
             .then(function(data) {
-                var current = data.current_condition && data.current_condition[0];
+                var current = data && data.current;
                 if (!current) return;
 
-                var temp = current.temp_C;
-                var desc = current.weatherDesc && current.weatherDesc[0] && current.weatherDesc[0].value;
-                var humidity = current.humidity;
-                var chanceOfRain = '0';
-
-                // Get rain chance from hourly forecast
-                var hourly = data.weather && data.weather[0] && data.weather[0].hourly;
-                if (hourly) {
-                    var now = new Date();
-                    var currentHour = now.getHours();
-                    for (var i = 0; i < hourly.length; i++) {
-                        var h = parseInt(hourly[i].time) / 100;
-                        if (h >= currentHour) {
-                            chanceOfRain = hourly[i].chanceofrain;
-                            break;
-                        }
-                    }
+                var condition = resolveCondition(current);
+                var meta = CONDITIONS[condition];
+                // 認不出來就退回後備座標再試一次，避免整張卡空白
+                if (!meta) {
+                    if (loc !== FALLBACK_LOCATION) fetchWeather(FALLBACK_LOCATION);
+                    return;
                 }
 
-                var locationName = normalizeLocationLabel(customDisplayLocation || decodeURIComponent(city));
-                // Optionally remove redundant country code if present but not needed if we provide a custom display location
-                if (!customDisplayLocation && locationName.indexOf(',') !== -1) {
-                    locationName = locationName.split(',')[0].trim();
-                }
+                var view = {
+                    v: CACHE_VERSION,
+                    ts: Date.now(),
+                    location: loc.label,
+                    temp: Math.round(Number(current.temperature_2m)),
+                    humidity: Math.round(Number(current.relative_humidity_2m)),
+                    rain: pickRainChance(data.hourly, current.time),
+                    label: meta.label,
+                    icon: meta.icon,
+                    fx: FX[meta.fx] || ''
+                };
 
-                // Update DOM
-                var weatherInfo = getWeatherInfo(desc);
-                var iconEl = document.getElementById('rp-weather-icon');
-                var fxEl = document.getElementById('rp-weather-fx');
-                var locEl = document.getElementById('rp-weather-location');
-                var tempEl = document.getElementById('rp-weather-temp');
-                var descEl = document.getElementById('rp-weather-desc');
-                var rainEl = document.getElementById('rp-weather-rain');
-                var humEl = document.getElementById('rp-weather-humidity');
-
-                if (iconEl) iconEl.textContent = weatherInfo.icon;
-                if (fxEl) fxEl.innerHTML = weatherInfo.fx;
-                if (locEl) locEl.textContent = '📍 ' + locationName;
-                if (tempEl) tempEl.innerHTML = temp + '<span class="text-xl ml-1">°C</span>';
-                if (descEl) descEl.textContent = localizeWeatherDesc(desc);
-                if (rainEl) rainEl.innerHTML = '<svg class="w-4 h-4 mr-1 inline-block" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C12 2 5 10.08 5 14.5C5 18.09 7.91 21 11.5 21C15.09 21 18 18.09 18 14.5C18 10.08 12 2 12 2Z"/></svg>' + chanceOfRain + '%';
-                if (humEl) humEl.innerHTML = '<svg class="w-4 h-4 mr-1 inline-block" viewBox="0 0 24 24"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,10V16H13V10H11Z"/></svg>' + humidity + '%';
-
-                // Cache
-                try {
-                    localStorage.setItem('rp-weather-cache', JSON.stringify({
-                        ts: Date.now(), city: city,
-                        temp: temp, desc: desc, humidity: humidity,
-                        rain: chanceOfRain, location: locationName,
-                        icon: weatherInfo.icon, fx: weatherInfo.fx
-                    }));
-                } catch(e) {}
+                paint(view);
+                try { localStorage.setItem('rp-weather-cache', JSON.stringify(view)); } catch (e) {}
             })
             .catch(function() {
-                // If fetch fails, fall back to Tainan
-                if (city !== 'Tainan') {
-                    fetchWeather('Tainan', 'Tainan, Taiwan');
-                }
+                if (loc !== FALLBACK_LOCATION) fetchWeather(FALLBACK_LOCATION);
             });
     }
 
     function loadWeather() {
-        // Check cache (30 min TTL)
-        try {
-            var cache = JSON.parse(localStorage.getItem('rp-weather-cache') || '{}');
-            if (cache.ts && Date.now() - cache.ts < 30 * 60 * 1000) {
-                var iconEl = document.getElementById('rp-weather-icon');
-                var fxEl = document.getElementById('rp-weather-fx');
-                var locEl = document.getElementById('rp-weather-location');
-                var tempEl = document.getElementById('rp-weather-temp');
-                var descEl = document.getElementById('rp-weather-desc');
-                var rainEl = document.getElementById('rp-weather-rain');
-                var humEl = document.getElementById('rp-weather-humidity');
-
-                if (iconEl) iconEl.textContent = cache.icon;
-                if (fxEl) fxEl.innerHTML = cache.fx || '';
-                if (locEl) locEl.textContent = '📍 ' + normalizeLocationLabel(cache.location);
-                if (tempEl) tempEl.innerHTML = cache.temp + '<span class="text-xl ml-1">°C</span>';
-                if (descEl) descEl.textContent = localizeWeatherDesc(cache.desc);
-                if (rainEl) rainEl.innerHTML = '<svg class="w-4 h-4 mr-1 inline-block" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C12 2 5 10.08 5 14.5C5 18.09 7.91 21 11.5 21C15.09 21 18 18.09 18 14.5C18 10.08 12 2 12 2Z"/></svg>' + cache.rain + '%';
-                if (humEl) humEl.innerHTML = '<svg class="w-4 h-4 mr-1 inline-block" viewBox="0 0 24 24"><path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,10V16H13V10H11Z"/></svg>' + cache.humidity + '%';
-                return;
-            }
-        } catch(e) {}
-
-        // IP geolocation → city name
-        fetch('https://ipapi.co/json/')
-            .then(function(r) { return r.json(); })
-            .then(function(geo) {
-                var city = (geo && geo.city) || 'Tainan';
-                var displayLoc = geo ? ((geo.city || geo.region || 'Tainan') + ', ' + (geo.country_name || 'Taiwan')) : 'Tainan, Taiwan';
-                fetchWeather(city, displayLoc);
-            })
-            .catch(function() {
-                fetchWeather('Tainan', 'Tainan, Taiwan');
-            });
+        if (renderFromCache()) return;
+        resolveLocation(fetchWeather);
     }
 
     // Init
