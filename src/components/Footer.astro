@@ -90,27 +90,36 @@ try {
         });
     }
 
+    // 訪問節點整個 session 是固定的，每次換頁都重打一次 HEAD 只是白多一個往返。
+    // 但換頁後 footer 是新的 DOM，所以快取的是「值」，每次仍要重新套用到新元素。
+    let serverInfoCache: string | null | undefined;
+
     function initServerInfo() {
         const isDevMode = localStorage.getItem("dev-mode") === "true";
         if (isDevMode) {
             const devServer = localStorage.getItem("dev-server");
             updateServerInfo(devServer);
-        } else {
-            const url = window.location.href;
-            fetch(url, { method: "HEAD" })
-                .then(response => {
-                    const server = response.headers.get('server');
-                    updateServerInfo(server);
-                })
-                .catch(error => {
-                    console.error("Failed to fetch server info:", error);
-                    updateServerInfo(null);
-                });
+            return;
         }
+        if (serverInfoCache !== undefined) {
+            updateServerInfo(serverInfoCache);
+            return;
+        }
+        fetch(window.location.href, { method: "HEAD" })
+            .then(response => {
+                serverInfoCache = response.headers.get('server');
+                updateServerInfo(serverInfoCache);
+            })
+            .catch(error => {
+                console.error("Failed to fetch server info:", error);
+                serverInfoCache = null;
+                updateServerInfo(null);
+            });
     }
 
     initServerInfo();
-    document.addEventListener('astro:after-swap', initServerInfo); // Support View Transitions if enabled
-    // Support Swup if enabled (listen to content replacement)
-    document.addEventListener('content:replace', initServerInfo);
+    // @swup/astro 會在 content:replace 時派發 astro:after-swap，這一個監聽就夠。
+    // 原本另外掛的 'content:replace' 不是 swup 的事件名（正確是 swup:content:replace），
+    // 從來沒有觸發過。
+    document.addEventListener('astro:after-swap', initServerInfo);
 </script>
