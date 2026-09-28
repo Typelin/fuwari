@@ -19,6 +19,10 @@ draft: false
 
 是 **Qwen3.8-Flash-Next，125B MoE**。
 
+先把原項目寫在前面：這套能把 125B MoE 拆到 **GPU + CPU + RAM + SSD** 協同推理的核心，來自 **[Niko1221/Strata](https://github.com/Niko1221/Strata)**。Strata 本身提供了 Qwen3.8-Flash-Next 的混合 expert 調度、KV streaming、MTP、Vision 與 OpenAI-compatible API；我這次做的是在自己的 RTX 5090 Laptop 環境上把它完整部署起來，再針對 **18GB 顯存預算、21c CPU、262K context、GPU Vision、DSH provider 與 Windows 背景常駐**做實際調整與整合。
+
+所以這篇不是「我自己寫了一個 125B 推理引擎」，而是一次 **Strata 原項目的實機部署與調優紀錄**。模型則是 Qwen 團隊的 **[Qwen3.8-Flash-Next](https://huggingface.co/Qwen/Qwen3.8-Flash-Next)**，本文使用 Strata 支援的 IQ2_XS 量化版本。
+
 ![DSH 實測 Qwen3.8-Flash-Next，該輪顯示 91 tok/s](/images/posts/strata-qwen38-2026-09/dsh-91tps.png)
 
 *這一輪是實際在 DSH 裡跑 SVG/HTML 任務。畫面右下角顯示 2 輪 2 步、91 tok/s；同一會話已到 52.7K tok，快取命中 0%。這是這一輪的實測值，不代表所有 context、prompt 都固定 91 tok/s。*
