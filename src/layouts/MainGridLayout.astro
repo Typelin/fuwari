@@ -88,7 +88,9 @@ const mainPanelTop = siteConfig.banner.enable
             <!-- Swup 容器：首頁側欄與文章導覽在此原位互換，容器本身必須每一頁都存在。 -->
             <div id="left-panel-wrapper" class:list={[
                 "col-span-1 min-w-0 lg:row-start-1 lg:col-start-1 lg:max-w-[17.5rem]",
-                hasArticleNavigation ? "row-start-1" : "row-start-2",
+                hasArticleNavigation
+                    ? "row-start-1 lg:sticky lg:top-[5.5rem] lg:self-start lg:max-h-[calc(100dvh-6.5rem)]"
+                    : "row-start-2",
             ]}>
                 {hasArticleNavigation
                     ? <ArticleNavigation title={title} headings={headings} />

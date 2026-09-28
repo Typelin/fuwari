@@ -52,7 +52,7 @@ const cleanHeading = (text: string) => text.endsWith("#") ? text.slice(0, -1) : 
 
 <!-- 桌機：首頁的個人側欄在文章頁原位切換成文章導覽。 -->
 <aside id="article-navigation" class="hidden lg:block lg:row-start-1 lg:col-start-1 min-w-0 w-full onload-animation">
-    <div class="article-navigation__rail sticky top-[5.5rem] flex min-h-0 flex-col gap-3 overflow-hidden">
+    <div class="article-navigation__rail flex min-h-0 flex-col gap-3 overflow-hidden">
         <div class="card-base shrink-0 border border-black/5 dark:border-white/10 p-3.5">
             <a href={url('/')} class="group inline-flex items-center gap-1.5 text-xs font-bold text-50 hover:text-[var(--primary)] transition mb-3">
                 <Icon name="material-symbols:arrow-back-rounded" class="text-base transition-transform group-hover:-translate-x-0.5" />
@@ -67,11 +67,8 @@ const cleanHeading = (text: string) => text.endsWith("#") ? text.slice(0, -1) : 
         </div>
 
         <div class="article-navigation__toc-shell relative min-h-0 flex-1 overflow-hidden">
-            <div class="article-navigation__scroll-hint pointer-events-none absolute right-3 top-2 z-20 rounded-full px-2 py-1 text-[10px] font-bold tracking-wide text-50">
-                SCROLL
-            </div>
             <div id="toc" class="h-full w-full min-w-0">
-                <TOC headings={headings} class="h-full max-h-none" />
+                <TOC headings={headings} class="max-h-none" />
             </div>
             <div class="article-navigation__fade pointer-events-none absolute inset-x-0 bottom-0 z-10 h-8"></div>
         </div>
@@ -80,29 +77,19 @@ const cleanHeading = (text: string) => text.endsWith("#") ? text.slice(0, -1) : 
 
 <style>
     .article-navigation__rail {
-        max-height: calc(100vh - 6.5rem);
+        max-height: calc(100dvh - 6.5rem);
     }
 
     .article-navigation__toc-shell {
-        flex: none;
-        height: clamp(14rem, calc(100vh - 17.5rem), 38rem);
-    }
-
-    .article-navigation__scroll-hint {
-        background: color-mix(in oklab, var(--float-panel-bg-opaque) 88%, transparent);
-        backdrop-filter: blur(8px);
-        opacity: 0;
-        transition: opacity .2s ease;
+        flex: 0 1 auto;
+        height: auto;
+        max-height: min(38rem, max(12rem, calc(100dvh - 17.5rem)));
     }
 
     .article-navigation__fade {
         background: linear-gradient(to bottom, transparent, var(--float-panel-bg-opaque));
         opacity: 0;
         transition: opacity .2s ease;
-    }
-
-    .article-navigation__toc-shell.is-scrollable:not(.is-scrolled) .article-navigation__scroll-hint {
-        opacity: .82;
     }
 
     .article-navigation__toc-shell.is-scrollable:not(.is-at-bottom) .article-navigation__fade {
@@ -156,10 +143,10 @@ if (window.swup?.hooks) {
 
 <style is:global>
     #article-navigation .article-toc-scroll {
-        height: 100%;
-        max-height: none;
-        padding-top: 2.4rem;
-        padding-bottom: 2rem;
+        height: auto;
+        max-height: min(38rem, max(12rem, calc(100dvh - 17.5rem)));
+        padding-top: .65rem;
+        padding-bottom: .75rem;
         scrollbar-width: thin;
         scrollbar-color: color-mix(in oklab, var(--primary) 55%, transparent) color-mix(in oklab, currentColor 8%, transparent);
         overscroll-behavior: contain;
@@ -189,7 +176,8 @@ if (window.swup?.hooks) {
 
     @media (max-height: 700px) {
         #article-navigation .article-toc-scroll {
-            padding-top: 2rem;
+            max-height: max(10rem, calc(100dvh - 15.75rem));
+            padding-top: .55rem;
         }
 
         #article-navigation .article-navigation__rail > .card-base {
