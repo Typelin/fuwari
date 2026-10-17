@@ -11,14 +11,14 @@ draft: false
 
 這幾天跟 Claude 一起做了一支動畫短片，叫《幕後》（Behind the Demo），已經放上 YouTube 了。
 
-<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;margin:1rem 0;">
-  <iframe src="https://www.youtube-nocookie.com/embed/T5c3rG8xEw4" title="《幕後》Behind the Demo" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</div>
-
 👉 YouTube 連結：[https://youtu.be/T5c3rG8xEw4](https://youtu.be/T5c3rG8xEw4)
 
 劇情是編的，不過做專題做到半夜、最後靠 AI 救回來這種事，我想應該不少人都有經驗 XD
 內容就不劇透了，有興趣可以直接看片，下面聊聊它是怎麼做出來的。
+
+<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;margin:1rem 0;">
+  <iframe src="https://www.youtube-nocookie.com/embed/T5c3rG8xEw4" title="《幕後》Behind the Demo" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 
 ---
 

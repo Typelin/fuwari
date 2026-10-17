@@ -36,9 +36,10 @@ interface Props {
 	description?: string;
 	lang?: string;
 	setOGTypeArticle?: boolean;
+	ogImage?: string;
 }
 
-let { title, banner, description, lang, setOGTypeArticle } = Astro.props;
+let { title, banner, description, lang, setOGTypeArticle, ogImage } = Astro.props;
 
 // apply a class to the body element to decide the height of the banner, only used for initial page load
 // Swup can update the body for each page visit, but it's after the page transition, causing a delay for banner height change
@@ -51,6 +52,12 @@ const configHue = siteConfig.themeColor.hue;
 if (!banner || typeof banner !== "string" || banner.trim() === "") {
 	banner = siteConfig.banner.src;
 }
+
+// Social preview image: the post cover when given, otherwise the site banner.
+// Only site-root paths and absolute URLs can be expressed as an og:image URL.
+const ogImageSrc = ogImage && (ogImage.startsWith("/") || /^https?:\/\//.test(ogImage)) ? ogImage : siteConfig.banner.src;
+const ogImageUrl = /^https?:\/\//.test(ogImageSrc) ? ogImageSrc : new URL(ogImageSrc, Astro.site ?? Astro.url).href;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
 
 // TODO don't use post cover as banner for now
 banner = siteConfig.banner.src;
@@ -106,8 +113,12 @@ const bannerOffset =
 			<meta name="keywords" content={siteConfig.keywords.join(", ")}>
 		)}
 
+		<link rel="canonical" href={canonicalUrl}>
 		<meta property="og:site_name" content={siteConfig.title}>
-		<meta property="og:url" content={Astro.url}>
+		<meta property="og:url" content={canonicalUrl}>
+		<meta property="og:image" content={ogImageUrl}>
+		<meta property="og:image:alt" content={title || siteConfig.title}>
+		<meta property="og:locale" content={siteLang.replace("-", "_")}>
 		<meta property="og:title" content={pageTitle}>
 		<meta property="og:description" content={description}>
 		{setOGTypeArticle ? (
@@ -117,11 +128,12 @@ const bannerOffset =
         )}
 
 		<meta name="twitter:card" content="summary_large_image">
-		<meta property="twitter:url" content={Astro.url}>
+		<meta property="twitter:url" content={canonicalUrl}>
+		<meta name="twitter:image" content={ogImageUrl}>
 		<meta name="twitter:title" content={pageTitle}>
 		<meta name="twitter:description" content={description}>
 
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
 		<!-- 隨機背景圖 API -->
 		<script is:inline defer data-swup-ignore-script src="https://pic.typelin.me/random.js"></script>

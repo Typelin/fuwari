@@ -1,4 +1,12 @@
 .custom-md {
+    /* Wide tables scroll inside the article instead of being clipped on narrow screens. */
+    table {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
     h1 {
         @apply text-3xl;
     }
