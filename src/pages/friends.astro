@@ -12,18 +12,18 @@ const friends = Object.values(
 );
 ---
 
-<MainGridLayout title="友链">
+<MainGridLayout title="友站連結">
     <div class="card-base p-6 md:p-8">
         <div class="flex items-center gap-2 mb-6">
             <div class="h-8 w-8 rounded-lg bg-[var(--primary)] flex items-center justify-center text-white dark:text-black/70">
                 <Icon name="material-symbols:diversity-3" class="text-[1.5rem]" />
             </div>
-            <h1 class="text-2xl font-bold text-black dark:text-white">友链</h1>
+            <h1 class="text-2xl font-bold text-black dark:text-white">友站連結</h1>
         </div>
 
-        <!-- 申请友链 -->
+        <!-- 申請友站連結 -->
             <p class="text-sm text-black/60 dark:text-white/60 mb-4">
-            如果您也想加入友链名单，<a target="_blank" rel="noopener noreferrer" href="https://github.com/Typelin/fuwari/tree/main/src/data/friends" class="transition link text-[var(--primary)] font-medium underline">请点击这里提交</a>
+            想交換友站連結嗎？<a target="_blank" rel="noopener noreferrer" href="https://github.com/Typelin/fuwari/tree/main/src/data/friends" class="transition link text-[var(--primary)] font-medium underline">到 GitHub 提交申請</a>
             </p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             {friends.map((friend) => (
@@ -33,7 +33,7 @@ const friends = Object.values(
                             <div class="loading-bar absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-1 bg-gray-200 dark:bg-gray-700 z-10 rounded-full overflow-hidden">
                                 <div class="loading-progress h-full w-8 bg-[oklch(0.70_0.14_var(--theme-hue))] animate-loading-progress rounded-full"></div>
                             </div>
-                            <img src={friend.avatar} loading="lazy" class="w-full h-full object-cover opacity-0 transition-opacity duration-500" alt={`${friend.name}的头像`} onload="this.style.opacity='1'; this.parentElement.querySelector('.loading-bar').style.opacity='0';"/>
+                            <img src={friend.avatar} loading="lazy" class="w-full h-full object-cover opacity-0 transition-opacity duration-500" alt={`${friend.name} 的頭像`} onload="this.style.opacity='1'; this.parentElement.querySelector('.loading-bar').style.opacity='0';"/>
                         </div>
                         <div class="font-bold text-black dark:text-white">{friend.name}</div>
                     </div>

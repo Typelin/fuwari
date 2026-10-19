@@ -99,8 +99,8 @@ const bannerOffset =
 ---
 
 <!DOCTYPE html>
- <html lang={siteLang} class="bg-[var(--page-bg)] transition text-[12px] md:text-[16px]"  
-	  data-overlayscrollbars-initialize>  <!-- 手机端适配 -->
+ <html lang={siteLang} class="bg-[var(--page-bg)] transition text-[14px] md:text-[16px]"  
+	  data-overlayscrollbars-initialize>  <!-- 手機根字級 14px，md 以上 16px -->
 
 	<head>
 
@@ -308,12 +308,12 @@ const bannerOffset =
 					if (!isOfficialDomain && !isLocalDev) {
 						// 创建警告弹窗
 						const shouldRedirect = confirm(
-							`⚠️ 域名安全警告\n\n` +
-							`您当前访问的域名：${currentDomain}\n` +
-							`官方域名：${officialDomains.join(', ')}\n\n` +
-							`您可能正在访问非官方网站，存在安全风险！\n\n` +
-							`点击"确定"跳转到官方网站\n` +
-							`点击"取消"继续访问当前网站（不推荐）`
+							`⚠️ 網域安全警告\n\n` +
+							`您目前造訪的網域：${currentDomain}\n` +
+							`官方網域：${officialDomains.join(', ')}\n\n` +
+							`您可能正在造訪非官方網站，存在安全風險！\n\n` +
+							`按「確定」前往官方網站\n` +
+							`按「取消」繼續瀏覽目前網站（不建議）`
 						);
 						
 						// 如果用户选择跳转到官方网站

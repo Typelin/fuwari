@@ -169,7 +169,7 @@ $: search(keywordMobile, false);
     <kbd class="absolute right-3 pointer-events-none text-[0.7rem] font-mono px-1.5 py-0.5 rounded border border-black/15 dark:border-white/15 text-black/35 dark:text-white/35">⌘K</kbd></div>
 
 <!-- toggle btn for phone/tablet view -->
-<button on:click={togglePanel} aria-label="Search Panel" id="search-switch"
+<button on:click={togglePanel} aria-label="搜尋" id="search-switch"
         class="btn-plain scale-animation xl:!hidden rounded-lg w-11 h-11 active:scale-90">
     <Icon icon="material-symbols:search" class="text-[1.25rem]"></Icon>
 </button>
