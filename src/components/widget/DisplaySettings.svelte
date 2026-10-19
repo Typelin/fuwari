@@ -115,21 +115,21 @@ onMount(() => {
             主題模式
         </div>
         <div class="flex gap-1">
-            <button aria-label="Light Mode"
+            <button aria-label="淺色模式"
                 class="w-10 h-7 rounded-md transition flex items-center justify-center active:scale-90
                 {theme === LIGHT_MODE ? 'bg-[var(--primary)] text-white' : 'bg-[var(--btn-regular-bg)] text-[var(--btn-content)] hover:bg-[var(--btn-regular-bg-hover)]'}"
                 on:click={() => switchTheme(LIGHT_MODE)}
             >
                 <Icon icon="material-symbols:wb-sunny-rounded" class="text-[1.1rem]"></Icon>
             </button>
-            <button aria-label="Dark Mode"
+            <button aria-label="深色模式"
                 class="w-10 h-7 rounded-md transition flex items-center justify-center active:scale-90
                 {theme === DARK_MODE ? 'bg-[var(--primary)] text-white' : 'bg-[var(--btn-regular-bg)] text-[var(--btn-content)] hover:bg-[var(--btn-regular-bg-hover)]'}"
                 on:click={() => switchTheme(DARK_MODE)}
             >
                 <Icon icon="material-symbols:dark-mode-rounded" class="text-[1.1rem]"></Icon>
             </button>
-            <button aria-label="Auto Mode"
+            <button aria-label="跟隨系統"
                 class="w-10 h-7 rounded-md transition flex items-center justify-center active:scale-90
                 {theme === AUTO_MODE ? 'bg-[var(--primary)] text-white' : 'bg-[var(--btn-regular-bg)] text-[var(--btn-content)] hover:bg-[var(--btn-regular-bg-hover)]'}"
                 on:click={() => switchTheme(AUTO_MODE)}
@@ -145,7 +145,7 @@ onMount(() => {
             before:absolute before:-left-3 before:top-[0.33rem]"
         >
             主題色彩
-            <button aria-label="Reset to Default" class="btn-regular w-7 h-7 rounded-md  active:scale-90"
+            <button aria-label="重設為預設值" class="btn-regular w-7 h-7 rounded-md  active:scale-90"
                     class:opacity-0={hue === defaultHue} class:pointer-events-none={hue === defaultHue} on:click={resetHue}>
                 <div class="text-[var(--btn-content)]">
                     <Icon icon="fa6-solid:arrow-rotate-left" class="text-[0.875rem]"></Icon>
@@ -153,7 +153,7 @@ onMount(() => {
             </button>
         </div>
         <div class="flex gap-1">
-            <input aria-label="Hue Value" id="hueValue" type="number" min="0" max="360" value={Math.round(hue)} on:input={(e) => hue = e.currentTarget.valueAsNumber} disabled={isRainbowMode}
+            <input aria-label="色相數值" id="hueValue" type="number" min="0" max="360" value={Math.round(hue)} on:input={(e) => hue = e.currentTarget.valueAsNumber} disabled={isRainbowMode}
                    class="transition bg-[var(--btn-regular-bg)] w-12 h-7 rounded-md text-center font-bold text-sm text-[var(--btn-content)] outline-none"
             />
         </div>
@@ -168,7 +168,7 @@ onMount(() => {
             before:w-1 before:h-4 before:rounded-md before:bg-[var(--primary)]
             before:absolute before:-left-3 before:top-[0.33rem]"
         >
-            禁用背景
+            停用背景
         </div>
         <input type="checkbox" class="toggle-switch" checked={hideBg} on:change={toggleHideBg} />
     </div>
@@ -242,7 +242,7 @@ onMount(() => {
             Server
         </div>
         <div class="flex gap-1">
-             <input aria-label="Server Value" type="text" bind:value={devServer} on:input={onDevServerChange}
+             <input aria-label="節點名稱" type="text" bind:value={devServer} on:input={onDevServerChange}
                    class="transition bg-[var(--btn-regular-bg)] w-32 h-7 rounded-md text-center font-bold text-sm text-[var(--btn-content)] outline-none"
             />
         </div>

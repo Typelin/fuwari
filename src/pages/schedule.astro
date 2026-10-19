@@ -362,7 +362,7 @@ const LUNCH_AFTER_SLOT = 3;
 
         if (currentClass) {
             var rem = currentEnd - currentMinutes;
-            statusCurrent.innerHTML = '📚 當前：<span style="color:var(--primary);font-weight:700">' + currentClass.name + '</span>（' + currentClass.location + '）— 還有 ' + fmt(rem) + ' 下課';
+            statusCurrent.innerHTML = '📚 目前：<span style="color:var(--primary);font-weight:700">' + currentClass.name + '</span>（' + currentClass.location + '）— 還有 ' + fmt(rem) + ' 下課';
         } else if (isLunch) {
             statusCurrent.innerHTML = '🍱 午休中 — 還有 ' + fmt(lunchEnd - currentMinutes);
         } else if (isWeekend) {
