@@ -89,7 +89,8 @@ export default defineConfig({
 				pluginCustomCopyButton()
 			],
 			defaultProps: {
-				wrap: true,
+				// keep lines intact and scroll sideways: wrapping breaks ASCII diagrams and aligned code on phones
+				wrap: false,
 				overridesByLang: {
 					'shellsession': {
 						showLineNumbers: false,

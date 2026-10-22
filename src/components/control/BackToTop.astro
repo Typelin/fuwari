@@ -19,6 +19,11 @@ import { Icon } from "astro-icon/components";
 </div>
 
 <style lang="stylus">
+.back-to-top-btn, .view-bg-btn
+    box-shadow: 0 0 0 1px rgba(127, 127, 127, 0.22), 0 8px 22px -8px rgba(0, 0, 0, 0.45)
+    backdrop-filter: blur(10px)
+    -webkit-backdrop-filter: blur(10px)
+
 .back-to-top-wrapper
     width: 3.75rem
     height: 3.75rem
@@ -33,7 +38,7 @@ import { Icon } from "astro-icon/components";
     font-weight: bold
     border: none
     position: fixed
-    bottom: 6rem
+    bottom: calc(1.25rem + env(safe-area-inset-bottom))
     right: 1rem
     opacity: 1
     cursor: pointer
@@ -70,6 +75,9 @@ import { Icon } from "astro-icon/components";
     transform: translateX(0)
     pointer-events: auto
     z-index: 50
+    // on phones it covered the article text and only opens the wallpaper in a new tab
+    @media (max-width: 1023px)
+        display: none !important
     @media (min-width: 1024px)
         bottom: 14rem
         right: auto
