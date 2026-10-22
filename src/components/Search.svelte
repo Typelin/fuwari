@@ -21,7 +21,42 @@ let posts: any[] = [];
 const togglePanel = () => {
 	const panel = document.getElementById("search-panel");
 	panel?.classList.toggle("float-panel-closed");
+	if (panel && !panel.classList.contains("float-panel-closed")) {
+		// phones/tablets: put the cursor straight into the panel's input
+		setTimeout(() => document.querySelector<HTMLInputElement>("#search-bar-inside input")?.focus(), 50);
+	}
 };
+
+const closePanel = () => {
+	document.getElementById("search-panel")?.classList.add("float-panel-closed");
+};
+
+/** Arrow keys move between results, Escape closes the panel. */
+const onSearchKey = (e: KeyboardEvent) => {
+	const panel = document.getElementById("search-panel");
+	if (!panel) return;
+	if (e.key === "Escape") {
+		closePanel();
+		(document.activeElement as HTMLElement | null)?.blur();
+		return;
+	}
+	if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+	const links = Array.from(panel.querySelectorAll<HTMLAnchorElement>("a.search-result"));
+	if (!links.length) return;
+	e.preventDefault();
+	const i = links.indexOf(document.activeElement as HTMLAnchorElement);
+	const next = e.key === "ArrowDown" ? (i < 0 ? 0 : Math.min(links.length - 1, i + 1)) : i - 1;
+	if (next < 0) {
+		const desktop = document.querySelector<HTMLInputElement>("#search-bar input");
+		const input = desktop && getComputedStyle(desktop).display !== "none" ? desktop : document.querySelector<HTMLInputElement>("#search-bar-inside input");
+		input?.focus();
+	} else {
+		links[next].focus();
+	}
+};
+
+const escapeHtml = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const escapeRegExp = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 onMount(() => {
 	const onKey = (e: KeyboardEvent) => {
@@ -36,7 +71,15 @@ onMount(() => {
 		}
 	};
 	window.addEventListener("keydown", onKey);
-	return () => window.removeEventListener("keydown", onKey);
+	// Escape anywhere closes an open search panel
+	const onEsc = (e: KeyboardEvent) => {
+		if (e.key === "Escape" && !document.getElementById("search-panel")?.classList.contains("float-panel-closed")) closePanel();
+	};
+	window.addEventListener("keydown", onEsc);
+	return () => {
+		window.removeEventListener("keydown", onKey);
+		window.removeEventListener("keydown", onEsc);
+	};
 });
 
 const setPanelVisibility = (show: boolean, isDesktop: boolean): void => {
@@ -50,10 +93,12 @@ const setPanelVisibility = (show: boolean, isDesktop: boolean): void => {
 	}
 };
 
+/** Escape the excerpt first (it is rendered as HTML), then mark the keyword. */
 const highlightText = (text: string, keyword: string): string => {
-	if (!keyword) return text;
-	const regex = new RegExp(`(${keyword})`, "gi");
-	return text.replace(regex, "<mark>$1</mark>");
+	const safe = escapeHtml(text);
+	if (!keyword) return safe;
+	const regex = new RegExp(`(${escapeRegExp(escapeHtml(keyword))})`, "gi");
+	return safe.replace(regex, "<mark>$1</mark>");
 };
 
 const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
@@ -107,7 +152,7 @@ const search = async (keyword: string, isDesktop: boolean): Promise<void> => {
 			});
 
 		result = searchResults;
-		setPanelVisibility(result.length > 0, isDesktop);
+		setPanelVisibility(true, isDesktop); // keep it open so "no results" is visible too
 	} catch (error) {
 		console.error("Search error:", error);
 		result = [];
@@ -134,7 +179,12 @@ onMount(async () => {
 				"";
 
 			if (contentEncoded) {
-				content = contentEncoded.replace(/<[^>]*>/g, "");
+				// decode the HTML, drop tags (including <br> written inside tables), collapse whitespace
+				const doc = parser.parseFromString(contentEncoded, "text/html");
+				content = (doc.body.textContent || "")
+					.replace(/<\/?[a-z][^>]*>/gi, " ")
+					.replace(/\s+/g, " ")
+					.trim();
 			}
 
 			return {
@@ -162,7 +212,7 @@ $: search(keywordMobile, false);
       dark:bg-white/5 dark:hover:bg-white/10 dark:focus-within:bg-white/10
 ">
     <Icon icon="material-symbols:search" class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"></Icon>
-    <input placeholder="搜尋" bind:value={keywordDesktop} on:focus={() => search(keywordDesktop, true)}
+    <input placeholder="搜尋" aria-label="搜尋文章" bind:value={keywordDesktop} on:focus={() => search(keywordDesktop, true)} on:keydown={onSearchKey}
            class="transition-all pl-10 pr-12 text-sm bg-transparent outline-0
          h-full w-36 2xl:w-40 active:w-48 focus:w-48 2xl:active:w-56 2xl:focus:w-56 text-black/50 dark:text-white/50"
     >
@@ -184,7 +234,7 @@ top-20 left-4 md:left-[unset] right-4 shadow-2xl rounded-2xl p-2">
       dark:bg-white/5 dark:hover:bg-white/10 dark:focus-within:bg-white/10
   ">
         <Icon icon="material-symbols:search" class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-black/30 dark:text-white/30"></Icon>
-        <input placeholder="Search" bind:value={keywordMobile}
+        <input placeholder="搜尋文章" aria-label="搜尋文章" type="search" enterkeyhint="search" bind:value={keywordMobile} on:keydown={onSearchKey}
                class="pl-10 absolute inset-0 text-sm bg-transparent outline-0
                focus:w-60 text-black/50 dark:text-white/50"
         >
@@ -192,13 +242,13 @@ top-20 left-4 md:left-[unset] right-4 shadow-2xl rounded-2xl p-2">
 
     <!-- search results -->
     {#each result as item}
-        <a href={item.url}
-           class="transition first-of-type:mt-2 xl:first-of-type:mt-0 group block
-       rounded-xl text-lg px-3 py-2 hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)]">
+        <a href={item.url} on:keydown={onSearchKey} on:click={closePanel}
+           class="search-result transition first-of-type:mt-2 xl:first-of-type:mt-0 group block outline-none
+       rounded-xl text-lg px-3 py-2 hover:bg-[var(--btn-plain-bg-hover)] focus-visible:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)]">
             <div class="transition text-90 inline-flex font-bold group-hover:text-[var(--primary)]">
                 {item.meta.title}<Icon icon="fa6-solid:chevron-right" class="transition text-[0.75rem] translate-x-1 my-auto text-[var(--primary)]"></Icon>
             </div>
-            <div class="transition text-xs text-white mb-1 font-mono">
+            <div class="transition text-xs text-30 mb-1 font-mono">
                 {item.urlPath}
             </div>
             <div class="transition text-sm text-50">
@@ -206,6 +256,9 @@ top-20 left-4 md:left-[unset] right-4 shadow-2xl rounded-2xl p-2">
             </div>
         </a>
     {/each}
+    {#if (keywordDesktop || keywordMobile) && result.length === 0 && !isSearching}
+        <p class="px-3 py-4 text-sm text-50">找不到符合「{keywordDesktop || keywordMobile}」的文章。</p>
+    {/if}
 </div>
 
 <style>

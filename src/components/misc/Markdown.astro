@@ -23,7 +23,8 @@ document.addEventListener("click", function (e: MouseEvent) {
             .map(el => el.textContent)
             .map(t => t === "\n" ? "" : t)
             .join("\n");
-        navigator.clipboard.writeText(code);
+        navigator.clipboard.writeText(code).catch(() => {});
+        target.setAttribute("aria-label", "已複製");
 
         const timeoutId = target.getAttribute("data-timeout-id");
         if (timeoutId) {
@@ -35,6 +36,7 @@ document.addEventListener("click", function (e: MouseEvent) {
       // 设置新的timeout并保存ID到按钮的自定义属性中
         const newTimeoutId = setTimeout(() => {
             target.classList.remove("success");
+            target.setAttribute("aria-label", "複製程式碼");
         }, 1000);
         target.setAttribute("data-timeout-id", newTimeoutId.toString());
     }

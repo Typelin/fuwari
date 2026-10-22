@@ -116,21 +116,21 @@ onMount(() => {
         </div>
         <div class="flex gap-1">
             <button aria-label="淺色模式"
-                class="w-10 h-7 rounded-md transition flex items-center justify-center active:scale-90
+                class="w-[44px] h-[44px] md:w-10 md:h-7 rounded-md transition flex items-center justify-center active:scale-90
                 {theme === LIGHT_MODE ? 'bg-[var(--primary)] text-white' : 'bg-[var(--btn-regular-bg)] text-[var(--btn-content)] hover:bg-[var(--btn-regular-bg-hover)]'}"
                 on:click={() => switchTheme(LIGHT_MODE)}
             >
                 <Icon icon="material-symbols:wb-sunny-rounded" class="text-[1.1rem]"></Icon>
             </button>
             <button aria-label="深色模式"
-                class="w-10 h-7 rounded-md transition flex items-center justify-center active:scale-90
+                class="w-[44px] h-[44px] md:w-10 md:h-7 rounded-md transition flex items-center justify-center active:scale-90
                 {theme === DARK_MODE ? 'bg-[var(--primary)] text-white' : 'bg-[var(--btn-regular-bg)] text-[var(--btn-content)] hover:bg-[var(--btn-regular-bg-hover)]'}"
                 on:click={() => switchTheme(DARK_MODE)}
             >
                 <Icon icon="material-symbols:dark-mode-rounded" class="text-[1.1rem]"></Icon>
             </button>
             <button aria-label="跟隨系統"
-                class="w-10 h-7 rounded-md transition flex items-center justify-center active:scale-90
+                class="w-[44px] h-[44px] md:w-10 md:h-7 rounded-md transition flex items-center justify-center active:scale-90
                 {theme === AUTO_MODE ? 'bg-[var(--primary)] text-white' : 'bg-[var(--btn-regular-bg)] text-[var(--btn-content)] hover:bg-[var(--btn-regular-bg-hover)]'}"
                 on:click={() => switchTheme(AUTO_MODE)}
             >
@@ -145,7 +145,7 @@ onMount(() => {
             before:absolute before:-left-3 before:top-[0.33rem]"
         >
             主題色彩
-            <button aria-label="重設為預設值" class="btn-regular w-7 h-7 rounded-md  active:scale-90"
+            <button aria-label="重設為預設值" class="btn-regular w-[44px] h-[44px] md:w-7 md:h-7 rounded-md  active:scale-90"
                     class:opacity-0={hue === defaultHue} class:pointer-events-none={hue === defaultHue} on:click={resetHue}>
                 <div class="text-[var(--btn-content)]">
                     <Icon icon="fa6-solid:arrow-rotate-left" class="text-[0.875rem]"></Icon>
