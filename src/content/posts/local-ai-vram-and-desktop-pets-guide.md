@@ -3,7 +3,7 @@ title: "本地 AI 崛起與顯存（VRAM）之戰：從大語言模型、二次�
 published: 2026-06-09
 description: "深入探討在本地端執行 AI（Local AI）的重大意義，剖析為什麼顯示卡顯存（VRAM）是決定體驗的黃金指標。並盤點 GitHub 上最熱門的本地 AI 項目，包括大語言模型（LLM）、二次元互動桌寵（Desktop Pets）與 ComfyUI 搭配 Civitai 本地生圖，帶您發揮硬體極限！"
 image: "/images/posts/civitai-featured-images-2026.png"
-tags: ["本地 AI", "VRAM 顯存", "ComfyUI", "Civitai", "二次元桌寵", "開源專案"]
+tags: ["本地 AI", "硬體調優", "ComfyUI", "Civitai", "二次元桌寵"]
 category: "💻 技術實戰"
 draft: false
 ---

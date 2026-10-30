@@ -4,7 +4,7 @@ published: 2026-09-29
 updated: 2026-09-29
 description: "在 RTX 5090 Laptop 24GB + 64GB DDR5 主機上，用 Strata 跑 Qwen3.8-Flash-Next 125B MoE：IQ2_XS、262K context、INT8 KV、MTP、GPU Vision，顯存控制在約 18GB，DSH 實際 SVG 任務一輪顯示 91 tok/s。這篇記錄完整配置、CPU/GPU 混合推理原理與真實使用代價。"
 image: "/images/posts/strata-qwen38-2026-09/dsh-91tps.png"
-tags: ["本地 AI", "Qwen 3.8", "Qwen3.8-Flash-Next", "Strata", "MoE", "RTX 5090", "DSH", "MTP", "Vision", "硬體調優"]
+tags: ["本地 AI", "Qwen", "Strata", "硬體調優"]
 category: "💻 技術實戰"
 draft: false
 ---

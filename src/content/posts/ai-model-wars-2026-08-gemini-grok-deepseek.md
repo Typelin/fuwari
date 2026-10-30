@@ -4,7 +4,7 @@ published: 2026-08-14
 updated: 2026-08-20
 description: "實測主流模型跑相同 Prompt！深度復盤 grok2api 自建中轉與 xAI IP 降智假說、真 Grok 4.6 官方 Build 滿血補測與降智前後震撼對比、DeepSeek V4 系列評測爭議，以及 Gemini 3.7 Flash 在「鵜鶘騎自行車 SVG 動畫」實戰中的具體表現。"
 image: "/images/posts/model-eval-2026-08/linyi-deepseek-whale-cover.png"
-tags: ["AI 模型", "Gemini 3.7", "Grok 4.6", "DeepSeek V4", "grok2api", "模型評測", "技術選型", "Artificial Analysis"]
+tags: ["AI 模型", "模型評測", "Gemini", "Grok", "DeepSeek"]
 category: "💻 技術實戰"
 draft: false
 ---

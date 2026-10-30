@@ -4,7 +4,7 @@ published: 2026-10-15
 updated: 2026-10-15
 description: "一支 4 分 12 秒的像素動畫短片，沒有用生成影片或生成音樂的工具，每一格畫面、每一個音都是 Claude 寫程式算出來的。這篇放影片，順便聊聊它在技術上是怎麼實現的，以及用到的開源倉庫。"
 image: "/images/posts/behind-the-demo-2026-10/thumb.png"
-tags: ["Claude", "Claude Code", "像素動畫", "程式化影片", "ESP32", "物聯網", "YouTube"]
+tags: ["Claude", "像素動畫", "程式化影片", "嵌入式系統"]
 category: "💻 技術實戰"
 draft: false
 ---
