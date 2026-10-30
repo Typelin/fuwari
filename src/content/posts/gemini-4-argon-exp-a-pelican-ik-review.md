@@ -1,10 +1,10 @@
 ---
 title: "Gemini 終於抓回來了？拆包驗證 gemini-3.8-flash-exp-a（Gemini 4 Argon 路由）：檢測方法、三大特徵與鵜鶘單車 2-Bone IK 實測"
 published: 2026-10-13
-updated: 2026-10-13
+updated: 2026-10-30
 description: "自從 Opus 4.6 之後一路掉隊的 Gemini，這次在亞太區灰測抽中 MODEL_PLACEHOLDER_M318（gemini-3.8-flash-exp-a / Gemini 4 Argon 路由）後表現判若兩人。本文整理 Google 放棄 3.5 Pro 直上 Argon 的情報脈絡、本機 SQLite gen_metadata Protobuf 拆包檢測腳本，以及同題「鵜鶘騎自行車 SVG 動畫」的 2-Bone IK 與自動看圖修 Bug 實錄。"
 image: "/images/posts/gemini-argon-2026-10/cover-sunset-fish.png"
-tags: ["AI 模型", "Gemini 4 Argon", "gemini-3.8-flash-exp-a", "Antigravity", "模型評測", "SVG 動畫", "逆向運動學", "Protobuf"]
+tags: ["AI 模型", "Gemini", "模型評測", "Antigravity", "SVG 動畫"]
 category: "💻 技術實戰"
 draft: false
 ---
@@ -204,6 +204,14 @@ for idx, size, data in cur.fetchall():
 
 *左圖（v1 修正前）：初版在 390×844 窄螢幕下左右車輪與嘴尖被切掉，小魚穿過上喙；右圖（v2 修正後）：模型自己看圖發現問題後，改用動態 `viewBox` 與修正張嘴包絡線，手機直向視口完整呈現且 0 水平溢出。*
 
+修正後的 `390×844` 手機直向實拍如下。整個自行車與鵜鶘落在視口上半，下半保留給控制列，`暫停動態`、`速度：1.0x`、`拋接鮮魚 & 響鈴 (Space)`、`切換晴晝` 四個操作全部可在單手拇指區觸及：
+
+![修正後 v2 於 390×844 手機直向視口的實拍，自行車與鵜鶘完整入鏡、控制列未被裁切](/images/posts/gemini-argon-2026-10/pelican-mobile-390x844.png)
+
+*`document.documentElement.scrollWidth === clientWidth` 於此視口成立，無水平捲動。*
+
+它甚至連「看圖」這件事都不是靠猜的——渲染腳本把截圖寫進固定路徑，再用視覺工具讀回同一張 PNG，缺陷是被**看見**才被修掉的。
+
 ### 特徵 3：思維躍升——主動採用 2-Bone 逆向運動學（IK）與次級物理動效
 
 以前測過的大多數雲端模型，在畫自行車踩踏時都會偷懶用簡單的旋轉或前後平移，結果就是腳掌跟踏板永遠對不上，或是膝蓋往後折成骨折鳥。
@@ -251,6 +259,83 @@ function solveKnee(hip, foot, l1, l2) {
 | **本地 `Qwen3.8-Flash-Next 125B`（Strata 91 tok/s）** | 純 SVG SMIL 旋轉動畫（無 JS IK） | 基礎道路捲動，無互動控制列 | 單次直出（2m54s 極速） | 勝在本地 91 tok/s 推論極速 |
 | **真 `Grok 4.6 high`（官方 Build 滿血版）** | 同相位旋轉連動 | 海濱公路 + 喉囊探頭小魚 + 多層視差 | 單次桌面端完成 | 雲端旗艦美工與動態標竿 |
 | **舊版 `Gemini 3.7 Flash high`（2026-08）** | ❌ **腳完全不動、輪胎飛出畫面** | 靜態配色佳，但動態結構崩潰 | ❌ 未自檢直接交差 | 美工及格、物理與工程閉環不及格 |
+
+---
+
+## 五之二、 檢驗方法彙整：三層證據鏈
+
+上面散在各節的驗證手段，其實是一條由內到外、由靜態到視覺的證據鏈。單獨用任何一層都會被騙，三層疊起來才沒有留白：
+
+| 層級 | 手段 | 能回答什麼 | 不能回答什麼 |
+| :--- | :--- | :--- | :--- |
+| **L1 後端 provenance** | `gen_metadata` Protobuf 拆包（`field 1.19` / `1.20` / `1.3`） | 後端實際回傳的模型端點與 Enum 編號 | 這個端點到底強不強 |
+| **L2 服務端帳本** | 唯讀 SQLite `mode=ro` 查 `requests` 表 | 每一輪請求的 `model` / `provider_model` 是否一致、`status`、耗時、token 數 | 畫面長什麼樣 |
+| **L3 渲染層** | Headless Chromium `getComputedStyle` + `getBoundingClientRect` + 看圖 | 版面幾何、溢出、重疊、互動是否真的生效 | 這個設計好不好 |
+
+### L1：後端 provenance —— 不相信顯示名稱
+
+UI 下拉選單上的顯示名稱是最不可靠的一層，模型翻牌前常常掛在別人的佔位槽位上。真正可信的是每次回傳時後端附帶的 Generator Metadata：
+
+- `field 1.19`（`string`）＝ 實際模型端點 ID，例：`gemini-3.8-flash-exp-a`
+- `field 1.20`（`map<string,string>`）＝ 內部 Enum，例：`key='model_enum'` → `'MODEL_PLACEHOLDER_M318'`
+- `field 1.3` / `1.4.1` / `1.17.2.1`（`varint`）＝ Enum 對應整數，例：`1318`
+
+這三個值必須彼此自洽。只看 `M318` 這類佔位符是沒有意義的——佔位符會換人坐，端點 ID 不會。
+
+### L2：服務端帳本 —— 用唯讀連線對帳
+
+自建 proxy 的情況下有更硬的一層：帳本。全程用 SQLite 唯讀 URI 開啟，不寫入、不改 schema、不輸出任何憑證：
+
+```python
+import sqlite3
+
+con = sqlite3.connect("file:requests.db?mode=ro", uri=True)
+rows = con.execute(
+    "SELECT id, model, provider_model, status, duration_ms,"
+    "       first_event_ms, reply_tokens"
+    "  FROM requests"
+    " WHERE model = ? AND status = 200"
+    " ORDER BY time DESC",
+    ("gemini-4-argon",),
+).fetchall()
+
+mismatch = [r for r in rows if r[1] != r[2]]
+print(f"rows={len(rows)} mismatch={len(mismatch)}")
+```
+
+關鍵是 `model != provider_model` 這一欄。**只要有一列成功的請求不一致，就代表中間被靜默改派過**。我用封存的帳本重查一次：`model='gemini-4-argon'` 共 259 列，其中 212 列成功請求（`status=200`）的 `provider_model` 全部是 `gemini-4-argon`。另外 47 列的 `provider_model` 是空的，全是取消或失敗的請求（499 / 502 / 503 / 403），上游根本沒有回應，不算改派。這也是上面 SQL 要加 `status = 200` 的原因：不篩掉失敗請求，空值會被誤算成不一致。
+
+> 注意：不同版本的 proxy schema 欄位名會變。這份 DB 用的是 `reply_tokens`，不是 `output_tokens`；先 `PRAGMA table_info(requests)` 確認再下 SQL。
+
+### L3：渲染層 —— `vite build` 綠燈不代表版面正確
+
+這是最容易自我欺騙的一層。**TypeScript 型別通過、`vite build` 成功、CSS 檔案大小正常，全部都不能證明版面是對的。** 版面錯誤有整整一類是編譯器看不見的：
+
+- `grid-template-columns` 宣告了兩欄、但 DOM 裡只有一個子元素 → 內容被塞進 32px 的窄欄，逐字折行
+- 父子層 `overflow: hidden` 加負偏移 → 標籤被裁掉，但 `elementsFromPoint` 仍回傳正確節點
+- flex 父層缺 `min-width: 0` → 子元素撐破視口，`scrollWidth > clientWidth`
+
+這些只有實際渲染才量得出來：
+
+```javascript
+const m = await page.evaluate(() => {
+  const li = document.querySelector('.critique-list li');
+  const strong = li.querySelector('strong');
+  const r = strong.getBoundingClientRect();
+  return {
+    strongW: Math.round(r.width),   // 32 → 逐字斷行；> 200 才正常
+    strongH: Math.round(r.height),  // 86.9 → 折了 7 行
+    overflow: document.documentElement.scrollWidth -
+              document.documentElement.clientWidth,
+  };
+});
+```
+
+最後一步是**看圖**。數字告訴你哪裡有問題，圖告訴你它醜在哪裡。兩者都不能省。
+
+### 這條證據鏈抓到了什麼
+
+用同一套方法，在 Gemini 4 Argon 自己的 Arena 自我介紹作品開發過程中，抓到一個模型自造的 DOM/CSS 不一致（上架前已修正，正式版的 `.critique-list li` 改回 `display: block`）：`.critique-list li` 宣告 `grid-template-columns: 32px 1fr`，但 `<li>` 裡根本沒有對應第一欄的元素——`.idx` 這條規則在整個專案裡是**死規則**。結果 `<strong>` 被壓成 32px 寬、86.9px 高，標題逐字折成七行；`<code>` 也同樣被擠成 32px，長字串溢出後直接壓在正文上，看起來像兩層文字疊在一起。`tsc` 全程綠燈，`vite build` 全程成功。
 
 ---
 
