@@ -4,7 +4,7 @@ published: 2026-07-17
 updated: 2026-07-18
 description: "從模型能力、Agent 工具、速度、成本、配額與使用限制，比較 Claude、GPT、Gemini、Grok；分享我如何把不同 AI 放進真正能完成專案的工作流。"
 image: "/images/posts/ai-frontier-2026-cover.png"
-tags: ["AI 技術", "大語言模型", "技術選型", "Grok", "Antigravity", "開發工具"]
+tags: ["AI 模型", "技術選型", "Grok", "Antigravity", "開發工具"]
 category: "💻 技術實戰"
 draft: false
 ---

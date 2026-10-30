@@ -4,7 +4,7 @@ published: 2026-08-15
 updated: 2026-08-15
 description: "接續上一篇雲端 6 大模型批鬥大會！實測開源本地端 Qwen3.8-27B 在 LM Studio 上的逆襲：純思考 9 分鐘手搓競賽立體幾何動態二面角極值，並以 2-Bone 逆向運動學（IK）、七層海濱視差、空白鍵加速與吞小魚彩蛋，寫出擊潰雲端大模型的《鵜鶘，踩呀！》互動小遊戲。文內分享 42 分鐘思維鏈，以及 24G 顯卡留顯存打遊戲看 B 站、160k 上下文不爆顯存的實戰設定。"
 image: "/images/posts/local-ai-pelican-2026-08/cover.png"
-tags: ["AI 模型", "本地模型", "LM Studio", "Qwen 3.8", "DeepSeek", "SVG 動畫", "逆向運動學", "思維鏈", "硬體調優", "開源 AI"]
+tags: ["本地 AI", "AI 模型", "Qwen", "DeepSeek", "SVG 動畫"]
 category: "💻 技術實戰"
 draft: false
 ---
