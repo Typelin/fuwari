@@ -248,11 +248,17 @@ const bannerOffset =
 				opacity: 0;
 				pointer-events: none;
 				z-index: -1;
-				transition: opacity 0.3s ease-in-out;
+				transition: opacity 1s ease-out;
 			}
 			
 			#bg-box.loaded {
 				opacity: calc(var(--bg-opacity) * var(--bg-enable));
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				#bg-box {
+					transition: none;
+				}
 			}
 		</style>
 
