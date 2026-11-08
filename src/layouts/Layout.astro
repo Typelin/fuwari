@@ -172,6 +172,12 @@ const bannerOffset =
 				}
 			}
 
+			// 重新整理時舊畫面還在螢幕上，進場動畫會讓整頁先消失再淡入，看起來像閃兩次，所以跳過
+			const navEntry = performance.getEntriesByType('navigation')[0];
+			if (navEntry && navEntry.type === 'reload') {
+				document.documentElement.classList.add('motion-nav');
+			}
+
 			// Load the hue from local storage
 			const hue = localStorage.getItem('hue') || configHue;
 			document.documentElement.style.setProperty('--hue', hue);
