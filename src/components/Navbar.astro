@@ -44,7 +44,12 @@ let links: NavBarLink[] = navBarConfig.links.map(
         </div>
         <div class="flex shrink-0 items-center">
             <!--<SearchPanel client:load>-->
-            <Search client:only="svelte"></Search>
+            <Search client:only="svelte">
+                <Fragment slot="fallback">
+                    <div class="hidden xl:block h-11 mr-2 w-36 2xl:w-40 rounded-lg bg-black/[0.04] dark:bg-white/5" aria-hidden="true"></div>
+                    <div class="xl:hidden w-11 h-11" aria-hidden="true"></div>
+                </Fragment>
+            </Search>
             {!siteConfig.themeColor.fixed && (
                     <button aria-label="顯示設定" class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90" id="display-settings-switch">
                         <Icon name="material-symbols:palette-outline" class="text-[1.25rem]"></Icon>
