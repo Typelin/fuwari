@@ -84,6 +84,27 @@ export function getBgHueRotate(): number {
 	return 0;
 }
 
+// Random background category, shared with pic.typelin.me/random.js through
+// localStorage: "other" = non-anime pool (site default), "all" = include anime.
+const RANDOM_PIC_CATEGORY_KEY = "random-pic-category";
+
+type RandomPicApi = {
+	setCategory: (category: string) => boolean;
+};
+
+export function getShowAnimeBg(): boolean {
+	return localStorage.getItem(RANDOM_PIC_CATEGORY_KEY) === "all";
+}
+
+export function setShowAnimeBg(show: boolean): void {
+	const category = show ? "all" : "other";
+	localStorage.setItem(RANDOM_PIC_CATEGORY_KEY, category);
+	// random.js re-rolls the background immediately; if it has not loaded yet,
+	// it reads the stored value on startup.
+	const api = (window as unknown as { RandomPic?: RandomPicApi }).RandomPic;
+	api?.setCategory(category);
+}
+
 export function getHideBg(): boolean {
 	const stored = localStorage.getItem("hide-bg");
 	return stored === "true";

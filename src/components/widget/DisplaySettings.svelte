@@ -16,6 +16,8 @@ import {
 	setBgHueRotate,
 	getHideBg,
 	setHideBg,
+	getShowAnimeBg,
+	setShowAnimeBg,
 	getDevMode,
 	setDevMode,
 	getDevServer,
@@ -29,6 +31,7 @@ let isRainbowMode = getRainbowMode();
 let rainbowSpeed = getRainbowSpeed();
 let bgBlur = getBgBlur();
 let hideBg = getHideBg();
+let showAnimeBg = getShowAnimeBg();
 let isDevMode = getDevMode();
 let devServer = getDevServer();
 let animationId: number;
@@ -81,6 +84,11 @@ function toggleRainbow() {
 function toggleHideBg() {
 	hideBg = !hideBg;
 	setHideBg(hideBg);
+}
+
+function toggleShowAnimeBg() {
+	showAnimeBg = !showAnimeBg;
+	setShowAnimeBg(showAnimeBg);
 }
 
 function toggleDevMode() {
@@ -171,6 +179,16 @@ onMount(() => {
             停用背景
         </div>
         <input type="checkbox" class="toggle-switch" checked={hideBg} on:change={toggleHideBg} />
+    </div>
+
+    <div class="flex flex-row gap-2 mb-3 items-center justify-between">
+        <div class="flex gap-2 font-bold text-lg text-neutral-900 dark:text-neutral-100 transition relative ml-3
+            before:w-1 before:h-4 before:rounded-md before:bg-[var(--primary)]
+            before:absolute before:-left-3 before:top-[0.33rem]"
+        >
+            顯示二次元背景
+        </div>
+        <input type="checkbox" class="toggle-switch" aria-label="顯示二次元背景" checked={showAnimeBg} on:change={toggleShowAnimeBg} />
     </div>
 
     <div class="flex flex-row gap-2 mb-3 items-center justify-between">

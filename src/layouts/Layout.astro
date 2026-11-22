@@ -136,7 +136,7 @@ const bannerOffset =
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
 		<!-- 隨機背景圖 API -->
-		<script is:inline defer data-swup-ignore-script src="https://pic.typelin.me/random.js"></script>
+		<script is:inline defer data-swup-ignore-script data-category="other" src="https://pic.typelin.me/random.js"></script>
 		{favicons.map(favicon => (
 			<link rel="icon"
 				  href={favicon.src.startsWith('/') ? url(favicon.src) : favicon.src}
